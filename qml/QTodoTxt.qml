@@ -164,9 +164,10 @@ ApplicationWindow {
     SplitView {
         anchors.fill: parent
         orientation: Qt.Horizontal
-        Rectangle {
+        TreeView {
             id: treeViewPlaceHolder
-            color: "white"
+            model: mc.filtersModel
+            //color: "white"
             width: 150
             Layout.minimumWidth: 150
             Layout.fillHeight: true

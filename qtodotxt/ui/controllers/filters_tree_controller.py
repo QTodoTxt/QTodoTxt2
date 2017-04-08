@@ -1,4 +1,5 @@
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from qtodotxt.lib.filters import ContextFilter, ProjectFilter, DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, \
     DueThisMonthFilter, DueOverdueFilter, PriorityFilter
 
@@ -12,15 +13,21 @@ from qtodotxt.lib.filters import ContextFilter, ProjectFilter, DueTodayFilter, D
 #    def selectAllTasksFilter(self): pass
 
 
+class FiltersModel(QtGui.QStandardItemModel):
+    def __init__(self, parent):
+        QtGui.QStandardItemModel.__init__(self, parent)
+        item = [QtGui.QStandardItem("AAA"), QtGui.QStandardItem("BBB"), QtGui.QStandardItem("CCCC")]
+        self.appendRow(item)
+
+
 class FiltersTreeController(QtCore.QObject):
 
     filterSelectionChanged = QtCore.pyqtSignal(list)
 
-    def __init__(self, view):
+    def __init__(self):
         QtCore.QObject.__init__(self)
-        self.view = view
-        self.view.filterSelectionChanged.connect(self.view_filterSelectionChanged)
         self._is_showing_filters = False
+        self.model = FiltersModel(self)
 
     def view_filterSelectionChanged(self, filters):
         if not self._is_showing_filters:

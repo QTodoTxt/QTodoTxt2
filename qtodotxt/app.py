@@ -102,10 +102,11 @@ def run():
     #window = MainView()
 
     engine = QQmlApplicationEngine()
+    controller = MainController(args)
+    engine.rootContext().setContextProperty("mc", controller)
     engine.load('../qml/QTodoTxt.qml')
     window = engine.rootObjects()[0]
-    controller = MainController(window, args)
-    engine.rootContext().setContextProperty("mc", controller)
+    controller.setup(window)
 
     # Connecting to a processor reading TMP file
     if needSingleton:

@@ -10,10 +10,8 @@ from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import ErrorLoadingFile, File, FileObserver
 from qtodotxt.ui.dialogs.misc_dialogs import Dialogs
 
-from qtodotxt.ui.controllers.tasks_list_controller import TasksListController
 from qtodotxt.ui.controllers.filters_tree_controller import FiltersTreeController
 from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter, CompleteTasksFilter
-from qtodotxt.ui.controllers.menu_controller import MenuController
 
 
 logger = logging.getLogger(__name__)
@@ -27,23 +25,25 @@ class MainController(QtCore.QObject):
 
     _show_toolbar = QtCore.pyqtSignal(int)
 
-    def __init__(self, view, args):
+    def __init__(self, args):
         super(MainController, self).__init__()
         self._args = args
-        self.view = view
-
+        self._tasksList = []
         # use object variable for setting only used in this class
         # others are accessed through QSettings
         self._settings = QtCore.QSettings()
-        self._tasksList = []
-
         self._show_completed = True
-        self._dialogs = Dialogs(view, 'QTodoTxt')
         self._file = File()
         self._fileObserver = FileObserver(self, self._file)
-        #self._initControllers() # not necessary anymore
         self._is_modified = False
         self._setIsModified(False)
+        self._initFiltersTree()
+
+    def setup(self, view):
+        self.view = view
+
+        self._dialogs = Dialogs(view, 'QTodoTxt')
+        #self._initControllers() # not necessary anymore
         self._fileObserver.fileChangetSig.connect(self.openFileByName)
         #self.view.closeEventSignal.connect(self.view_onCloseEvent)
         filters = self._settings.value("current_filters", ["All"])
@@ -262,13 +262,18 @@ class MainController(QtCore.QObject):
         self.taskListChanged.emit()
 
     def _initFiltersTree(self):
-        controller = self._filters_tree_controller = \
-            FiltersTreeController(self.view.filters_tree_view)
-        controller.filterSelectionChanged.connect(
-            self._onFilterSelectionChanged)
+        self._filters_tree_controller = FiltersTreeController()
+        self._filters_tree_controller.filterSelectionChanged.connect(self._onFilterSelectionChanged)
+        #self.view.filterSelectionChanged.connect(self.view_filterSelectionChanged)
 
     def _onFilterSelectionChanged(self, filters):
         self._applyFilters(filters=filters)
+
+    filtersChanged = QtCore.pyqtSignal()
+
+    @QtCore.pyqtProperty('QVariant', notify=filtersChanged)
+    def filtersModel(self):
+        return self._filters_tree_controller.model
 
     def _applyFilters(self, filters=None, searchText=None):
         # First we filter with filters tree
