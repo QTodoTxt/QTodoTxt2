@@ -104,7 +104,8 @@ def run():
     engine = QQmlApplicationEngine()
     controller = MainController(args)
     engine.rootContext().setContextProperty("mc", controller)
-    engine.load('../qml/QTodoTxt.qml')
+    path = os.path.dirname(__file__)
+    engine.load(path + '/qml/QTodoTxt.qml')
     window = engine.rootObjects()[0]
     controller.setup(window)
 
