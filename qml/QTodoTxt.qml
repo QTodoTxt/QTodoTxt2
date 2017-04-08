@@ -4,17 +4,22 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
 
-//this imports the MainControllerQml class which is exported in python
-//import MCQ 1.0
-//import MC 1.0
-
 ApplicationWindow {
+    id: root
     visible: true
     width: 640
     height: 480
-    title: qsTr("QTodoTxt")
+//    title: "QTodoTxt"
 
-    //the Actions are already defined in python, we just need to make them available to qml
+    AboutBox {
+        id: aboutBox
+        appName: "QTodoTxt"
+    }
+
+    Preferences {
+        id: preferencesWindow
+    }
+
     Action {
         id: fileNew
         iconName: "document-new"
@@ -28,7 +33,10 @@ ApplicationWindow {
         iconName: "document-open"
         text: qsTr("Open")
         shortcut: StandardKey.Open
-        onTriggered: {        }
+        onTriggered: {
+            fileDialog.selectExisting = true
+            fileDialog.open()
+        }
     }
 
     Action {
@@ -79,6 +87,22 @@ ApplicationWindow {
         checkable: true
     }
 
+    Action {
+        id: helpShowAbout
+        iconName: "help-about"
+        text: qsTr("About");
+        shortcut: "F1"
+        onTriggered: aboutBox.open()
+    }
+
+    Action {
+        id: helpShowShortcuts
+        iconName: "help-about"
+        text: qsTr("Shortcuts list");
+        shortcut: "Ctrl+F1"
+        onTriggered: aboutBox.open()
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -87,7 +111,10 @@ ApplicationWindow {
             MenuItem { action: fileSave }
             MenuItem { action: fileRevert }
             MenuSeparator {}
-            MenuItem { text: qsTr("Preferences") }
+            MenuItem {
+                text: qsTr("Preferences")
+                onTriggered: preferencesWindow.show()
+            }
             MenuSeparator {}
             MenuItem { text: qsTr("Exit");  shortcut: "Alt+F4"}
         }
@@ -104,7 +131,8 @@ ApplicationWindow {
         }
         Menu {
             title: qsTr("Help")
-            MenuItem { }
+            MenuItem { action: helpShowAbout }
+            MenuItem { action: helpShowShortcuts }
         }
     }
 
@@ -119,6 +147,17 @@ ApplicationWindow {
             ToolButton { action: editEditTask }
             //ToolButton { action:  mc.actions['showSearchAction']}
             Item { Layout.fillWidth: true }
+        }
+    }
+
+    FileDialog {
+        id: fileDialog
+        nameFilters: ["Text files (*.txt)"]
+        onAccepted: {
+            if (fileDialog.selectExisting)
+                document.fileUrl = fileUrl
+            else
+                document.saveAs(fileUrl, selectedNameFilter)
         }
     }
 
