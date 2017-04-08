@@ -18,59 +18,12 @@ import qtodotxt.ui.qTodoTxt_style_rc  # noqa: F401
 import qtodotxt.ui.qTodoTxt_dark_style_rc  # noqa: F401
 
 from qtodotxt.ui.controllers.main_controller import MainController
-from qtodotxt.ui.dialogs.misc_dialogs import Dialogs
 from qtodotxt.ui.views.main_view import MainView
 from qtodotxt.lib.file import FileObserver
 from qtodotxt.lib.tendo_singleton import SingleInstance
 
 #(Just for testing how to communicate between python and qml, see also below)
 from qtodotxt.qml_class import MainControllerQml
-
-
-class TrayIcon(QtWidgets.QSystemTrayIcon):
-    def __init__(self, main_controller):
-        self._controller = main_controller
-        self.style = ":/white_icons"
-        if str(QtCore.QSettings().value("color_schem", "")).find("dark") >= 0:
-            self.style = ":/dark_icons"
-        self._initIcon()
-
-    def _initIcon(self):
-        view = self._controller.getView()
-
-        icon = QtGui.QIcon(self.style + "/resources/qtodotxt.png")
-        QtWidgets.QSystemTrayIcon.__init__(self, icon, view)
-        self.activated.connect(self._onActivated)
-        self.setToolTip('QTodoTxt')
-
-        menu = QtWidgets.QMenu(self._controller.view)
-        create_task_action = menu.addAction(QtGui.QIcon(self.style + "/resources/TaskCreate.png"),
-                                            self.tr("Create New Task"))
-        create_task_action.triggered.connect(self._createTask)
-        toggle_visible_action = menu.addAction(self.tr("Show/Hide Window"))
-        toggle_visible_action.triggered.connect(self._controller.toggleVisible)
-        exit_action = menu.addAction(QtGui.QIcon(self.style + '/resources/ApplicationExit.png'), self.tr("Exit"))
-        exit_action.triggered.connect(self._controller.exit)
-        self.setContextMenu(menu)
-
-    def _onActivated(self, activation_reason):
-        # Tray Icon has been activated.
-        # [0] QSystemTrayIcon.Unknown       Unknown reason
-        # [1] QSystemTrayIcon.Context       The context menu for the system tray entry was requested
-        # [2] QSystemTrayIcon.DoubleClick   The system tray entry was double clicked
-        # [3] QSystemTrayIcon.Trigger       The system tray entry was clicked
-        # [4] QSystemTrayIcon.MiddleClick   The system tray entry was clicked with the middle mouse button
-        if activation_reason == QtWidgets.QSystemTrayIcon.Trigger:
-            if (int(QtCore.QSettings().value("enable_tray", 0)) and
-                    int(QtCore.QSettings().value("hide_to_tray", 0))):
-                self._controller.toggleVisible()
-            else:
-                self._createTask()
-
-    def _createTask(self):
-
-        self._controller.view.show()
-        self._controller._tasks_list_controller.createTask()
 
 
 def _parseArgs():
@@ -94,10 +47,6 @@ def _setupLogging(loglevel):
                             level=numeric_level, style='{', datefmt='%H:%M:%S')
 
 
-def _createController(args):
-    window = MainView()
-    dialogs = Dialogs(window, 'QTodoTxt')
-    return MainController(window, dialogs, args)
 
 
 def setupAnotherInstanceEvent(controller, dir):
@@ -150,35 +99,19 @@ def run():
 
     _setupLogging(args.loglevel)
     #    logger = logging.getLogger(__file__[:-3]) # in case someone wants to log here
-    controller = _createController(args)
+    #window = MainView()
 
-#the MainControllerQml class gets exported to qml: (rather for testing now)
-    qmlRegisterType(MainControllerQml, 'MCQ', 1, 0, 'MCQ')
-#    qmlRegisterType(MainController, 'MC', 1, 0, 'MC')
     engine = QQmlApplicationEngine()
-    #the main qml file containing the root element gets loaded:
     engine.load('../qml/QTodoTxt.qml')
-    #here we export an instance of a class to qml
+    window = engine.rootObjects()[0]
+    controller = MainController(window, args)
     engine.rootContext().setContextProperty("mc", controller)
 
     # Connecting to a processor reading TMP file
     if needSingleton:
         setupAnotherInstanceEvent(controller, dir)
 
-    controller.show()
-    if int(QtCore.QSettings().value("enable_tray", 0)):
-        # If the controller.show() method is not called, the todo.txt file
-        #  is not loaded.  If the controller.show() method is modified to do the
-        #  initial setup but not show the main view (or to show the main view
-        #  *after* the setup is done) then the layout is borked.
-        # This is a simple solution that solves the immediate problem, but a
-        #  rewrite of the initialization code that affords a better solution
-        #  would be worth considering at some point.
-        if int(QtCore.QSettings().value("hide_on_startup", 0)):
-            controller.view.hide()
-        icon = TrayIcon(controller)
-        icon.show()
-        controller.hasTrayIcon = True
+    controller.start()
     app.exec_()
     sys.exit()
 

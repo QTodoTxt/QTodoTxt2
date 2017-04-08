@@ -8,6 +8,7 @@ from PyQt5 import QtWidgets
 
 from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import ErrorLoadingFile, File, FileObserver
+from qtodotxt.ui.dialogs.misc_dialogs import Dialogs
 
 from qtodotxt.ui.controllers.tasks_list_controller import TasksListController
 from qtodotxt.ui.controllers.filters_tree_controller import FiltersTreeController
@@ -26,7 +27,7 @@ class MainController(QtCore.QObject):
 
     _show_toolbar = QtCore.pyqtSignal(int)
 
-    def __init__(self, view, dialogs, args):
+    def __init__(self, view, args):
         super(MainController, self).__init__()
         self._args = args
         self.view = view
@@ -34,20 +35,21 @@ class MainController(QtCore.QObject):
         # use object variable for setting only used in this class
         # others are accessed through QSettings
         self._settings = QtCore.QSettings()
+        self._tasksList = []
 
         self._show_completed = True
-        self._dialogs = dialogs
+        self._dialogs = Dialogs(view, 'QTodoTxt')
         self._file = File()
         self._fileObserver = FileObserver(self, self._file)
-        self._initControllers()
+        #self._initControllers() # not necessary anymore
         self._is_modified = False
         self._setIsModified(False)
         self._fileObserver.fileChangetSig.connect(self.openFileByName)
-        self.view.closeEventSignal.connect(self.view_onCloseEvent)
+        #self.view.closeEventSignal.connect(self.view_onCloseEvent)
         filters = self._settings.value("current_filters", ["All"])
-        self._filters_tree_controller.view.setSelectedFiltersByNames(filters)
-        self.hasTrayIcon = False
-        self._menu_controller.updateRecentFileActions()
+        #self._filters_tree_controller.view.setSelectedFiltersByNames(filters)
+        #self._menu_controller.updateRecentFileActions()
+
 
     #a dummy property for testing
     @QtCore.pyqtProperty('QString', constant=True)
@@ -59,12 +61,12 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtProperty('QVariant', notify=taskListChanged)
     def taskList(self):
-        return self._tasksListQml
+        return self._tasksList
 
-    @taskList.setter
-    def taskList(self, taskList):
-        self._tasksListQml = taskList
-        self.taskListChanged.emit()
+    #@taskList.setter
+    #def taskList(self, taskList):
+        #self._tasksListQml = taskList
+        #self.taskListChanged.emit()
 
     actionsChanged = QtCore.pyqtSignal()
 
@@ -235,9 +237,9 @@ class MainController(QtCore.QObject):
     def getView(self):
         return self.view
 
-    def show(self):
+    def start(self):
+        print("SHOW")
         self._updateView()
-        self.view.show()
         self._updateTitle()
 
         if self._args.file:
@@ -255,6 +257,9 @@ class MainController(QtCore.QObject):
             self._tasks_list_controller.createTask()
             self.save()
             self.exit()
+
+        self._tasksList = self._file.tasks
+        self.taskListChanged.emit()
 
     def _initFiltersTree(self):
         controller = self._filters_tree_controller = \
@@ -282,7 +287,7 @@ class MainController(QtCore.QObject):
             tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
         self._tasks_list_controller.showTasks(tasks)
         #here i chose to set the tasklist property, maybe its not 100% correct
-        self.taskList = tasks
+        self._tasksList = tasks
         self.taskListChanged.emit()
 
     def _initSearchText(self):
@@ -354,7 +359,7 @@ class MainController(QtCore.QObject):
         self._setIsModified(True)
         self.auto_save()
 
-    def _canExit(self):
+    def canExit(self):
         if not self._is_modified:
             return True
         button = self._dialogs.showSaveDiscardCancel(self.tr('Unsaved changes...'))
@@ -364,29 +369,11 @@ class MainController(QtCore.QObject):
         else:
             return button == QtWidgets.QMessageBox.Discard
 
-    def view_onCloseEvent(self, closeEvent):
-
-        if (self.hasTrayIcon and int(self._settings.value("close_to_tray", 0))):
-            self.view.hide()
-            closeEvent.ignore()
-            return
-
-        if self._canExit():
-            if self.filterViewAction.isChecked():  # we only save size if it is visible
-                self._settings.setValue("splitter_pos", self.view.centralWidget().sizes())
-            self._settings.setValue("current_filters", self._filters_tree_controller.view.getSelectedFilterNames())
-            self._settings.setValue("main_window_geometry", self.view.saveGeometry())
-            self._settings.setValue("main_window_state", self.view.saveState())
-
-            closeEvent.accept()
-        else:
-            closeEvent.ignore()
-
     def _setIsModified(self, is_modified):
         self._is_modified = is_modified
         self._updateTitle()
-        self._menu_controller.saveAction.setEnabled(is_modified)
-        self._menu_controller.revertAction.setEnabled(is_modified)
+        #self._menu_controller.saveAction.setEnabled(is_modified)
+        #self._menu_controller.revertAction.setEnabled(is_modified)
 
     def save(self):
         logger.debug('MainController.save called.')
@@ -413,7 +400,7 @@ class MainController(QtCore.QObject):
             title += 'Untitled'
         if self._is_modified:
             title += ' (*)'
-        self.view.setWindowTitle(title)
+        # FIXME: set title as a property read from QML
 
     def open(self):
         (filename, ok) = \
@@ -426,7 +413,7 @@ class MainController(QtCore.QObject):
                 self._dialogs.showError(str(ex))
 
     def new(self):
-        if self._canExit():
+        if self.canExit():
             self._file = File()
             self._loadFileToUI()
 
@@ -455,7 +442,7 @@ class MainController(QtCore.QObject):
         self._settings.sync()
         logger.debug('Adding {} to watchlist'.format(filename))
         self._fileObserver.addPath(self._file.filename)
-        self.updateRecentFile()
+        #self.updateRecentFile()
 
     def updateRecentFile(self):
         lastOpenedArray = self._menu_controller.getRecentFileNames()
@@ -468,23 +455,15 @@ class MainController(QtCore.QObject):
 
     def _loadFileToUI(self):
         self._setIsModified(False)
-        self._filters_tree_controller.showFilters(self._file, self._show_completed)
+        #self._filters_tree_controller.showFilters(self._file, self._show_completed)
 
     def _updateView(self):
-        wgeo = self._settings.value("main_window_geometry", None)
-        if wgeo is not None:
-            self.view.restoreGeometry(wgeo)
-        wstate = self._settings.value("main_window_state", None)
-        if wstate is not None:
-            self.view.restoreState(wstate)
-        splitterPosition = self._settings.value("splitter_pos", (200, 400))
-        splitterPosition = [int(x) for x in splitterPosition]
-        self.view.centralWidget().setSizes(splitterPosition)
-        self._restoreShowCompleted()
-        self._restoreFilterView()
-        self._restoreShowFuture()
-        self._restoreShowToolBar()
-        self._restoreShowSearch()
+        #self._restoreShowCompleted()
+        #self._restoreFilterView()
+        #self._restoreShowFuture()
+        #self._restoreShowToolBar()
+        #self._restoreShowSearch()
+        pass
 
     def _restoreShowCompleted(self):
         val = int(self._settings.value("show_completed_tasks", 1))

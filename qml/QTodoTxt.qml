@@ -14,18 +14,6 @@ ApplicationWindow {
     height: 480
     title: qsTr("QTodoTxt")
 
-    //This instanciates the MainControllerQml class:
-//    MCQ {
-//        id: mcq
-//        Component.onCompleted: console.log("hallo")
-//    }
-
-//    MC {
-//        id: mc
-//        view: parent
-//        Component.onCompleted: console.log("hallo mc")
-//    }
-
     //the Actions are already defined in python, we just need to make them available to qml
     Action {
         id: fileNew
@@ -129,7 +117,7 @@ ApplicationWindow {
             //ToolBarSeparator { }
             ToolButton { action: editNewTask }
             ToolButton { action: editEditTask }
-            ToolButton { action:  mc.actions['showSearchAction']}
+            //ToolButton { action:  mc.actions['showSearchAction']}
             Item { Layout.fillWidth: true }
         }
     }
