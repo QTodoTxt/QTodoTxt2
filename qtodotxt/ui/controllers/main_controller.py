@@ -461,7 +461,7 @@ class MainController(QtCore.QObject):
 
     def _loadFileToUI(self):
         self._setIsModified(False)
-        #self._filters_tree_controller.showFilters(self._file, self._show_completed)
+        self._filters_tree_controller.showFilters(self._file, self._show_completed)
 
     def _updateView(self):
         #self._restoreShowCompleted()
