@@ -26,6 +26,11 @@ ListView {
     spacing: 10
     focus: true
 
+    Keys.onReturnPressed: {
+        lv.currentItem.state = "edit"
+    }
+    Keys.onEscapePressed: {
+    }
     model: mc.taskList
     delegate: TaskLine {
         width: lv.width

@@ -4,24 +4,19 @@ from qtodotxt.lib.filters import ContextFilter, CompleteTasksFilter, DueFilter, 
     DueThisWeekFilter, DueTodayFilter, DueTomorrowFilter, HasContextsFilter, HasDueDateFilter, HasProjectsFilter, \
     ProjectFilter, UncategorizedTasksFilter, AllTasksFilter, PriorityFilter, HasPriorityFilter
 
-# class IFiltersTreeView(object):
-#    def addFilter(self, filter): pass
-#    def clear(self): pass
-#    def clearSelection(self): pass
-#    def selectFilter(self, filter): pass
-#    def getSelectedFilters(self): pass
-#    filterSelectionChanged = QtCore.pyqtSignal()
-#    def selectAllTasksFilter(self): pass
 
 class FilterItem(QtGui.QStandardItem):
     def __init__(self, parent, strings, flt=None, icon=None, order=None):
         QtGui.QStandardItem.__init__(self, strings)
+        self.setSelectable(True)
+        self.setEnabled(True)
         self.setData(flt, QtCore.Qt.UserRole)
+        self.filter = flt
         parent.appendRow([self])
         #if order:
             #self.setText(1, str(order))
-        #if icon:
-            #self.setIcon(0, icon)
+        if icon:
+            self.setIcon(icon)
 
 class FiltersModel(QtGui.QStandardItemModel):
     def __init__(self, parent):
@@ -38,6 +33,8 @@ class FiltersModel(QtGui.QStandardItemModel):
     def addFilter(self, flt, count):
         parent = self._filterItemByFilterType[type(flt)]
         item = QtGui.QStandardItem("{} ({})".format(flt.text, count))
+        #item.setEnabled(True)
+        #item.setSelectable(True)
         item.setData((flt), QtCore.Qt.UserRole)
         parent.appendRow([item])
 
@@ -50,11 +47,10 @@ class FiltersModel(QtGui.QStandardItemModel):
         self._allTasksItem = FilterItem(self, 'All',
                                                   AllTasksFilter(),
                                                   QtGui.QIcon(self.style + '/resources/FilterAll.png'))
-        self._dueItem = FilterItem(self, 'Due',
-                                             HasDueDateFilter(), QtGui.QIcon(self.style + '/resources/FilterDue.png'))
         self._uncategorizedTasksItem = FilterItem(
             self, 'Uncategorized',
             UncategorizedTasksFilter(), QtGui.QIcon(self.style + '/resources/FilterUncategorized.png'))
+        self._dueItem = FilterItem(self, 'Due', HasDueDateFilter(), QtGui.QIcon(self.style + '/resources/FilterDue.png'))
         self._contextsItem = FilterItem(self, 'Contexts',
                                                   HasContextsFilter(),
                                                   QtGui.QIcon(self.style + '/resources/FilterContexts.png'))
@@ -96,7 +92,7 @@ class FiltersModel(QtGui.QStandardItemModel):
     def addDueRangeFilter(self, flt, number=0, sortKey=0):
         parentItem = self._dueItem
         icon = self._filterIconByFilterType[type(flt)]
-        FilterItem(parentItem, "%s (%d)".format(flt.text, number), flt=flt, icon=icon, order=sortKey)
+        FilterItem(parentItem, "{} ({})".format(flt.text, number), flt=flt, icon=icon, order=sortKey)
         #parentItem.setExpanded(True)
         #parentItem.sortChildren(1, QtCore.Qt.AscendingOrder)
 

@@ -168,15 +168,22 @@ ApplicationWindow {
         TreeView {
             id: filtersTree
             model: mc.filtersModel
-            //color: "white"
             width: 250
+
             Layout.minimumWidth: 150
             Layout.fillHeight: true
+            //selection: ItemSelectionModel {
+                //model: mc.filtersModel
+            //}
+            selectionMode: SelectionMode.ExtendedSelection
             TableViewColumn {
                 title: "Filters"
                 role: "display"
             }
-
+            onActivated: {
+                //FIXME: check all current select items, is multi selction is allowed
+                mc.filterRequest(index)
+            }
         }
 
         ColumnLayout {
