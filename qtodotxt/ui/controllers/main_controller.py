@@ -49,7 +49,11 @@ class MainController(QtCore.QObject):
         filters = self._settings.value("current_filters", ["All"])
         #self._filters_tree_controller.view.setSelectedFiltersByNames(filters)
         #self._menu_controller.updateRecentFileActions()
-
+    
+    @QtCore.pyqtSlot('QVariant')
+    def filterRequest(self, idx):
+        item = self._filters_tree_controller.model.itemFromIndex(idx)
+        self._applyFilters(filters=[item.filter])
 
     #a dummy property for testing
     @QtCore.pyqtProperty('QString', constant=True)
@@ -282,9 +286,9 @@ class MainController(QtCore.QObject):
             filters = self._filters_tree_controller.view.getSelectedFilters()
         tasks = tasklib.filterTasks(filters, self._file.tasks)
         # Then with our search text
-        if searchText is None:
-            searchText = self.view.tasks_view.tasks_search_view.getSearchText()
-        tasks = tasklib.filterTasks([SimpleTextFilter(searchText)], tasks)
+        #if searchText is None:
+            #searchText = self.view.tasks_view.tasks_search_view.getSearchText()
+        #tasks = tasklib.filterTasks([SimpleTextFilter(searchText)], tasks)
         # with future filter if needed
         if not self.showFutureAction.isChecked():
             tasks = tasklib.filterTasks([FutureFilter()], tasks)
