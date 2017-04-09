@@ -40,6 +40,7 @@ ListView {
             console.log("rightclick")
             contextMenu.popup()
         }
+        onStateChanged: if (state === "show") lv.focus = true
     }
 
     Menu {

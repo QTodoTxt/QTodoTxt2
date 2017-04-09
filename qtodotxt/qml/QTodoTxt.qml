@@ -7,8 +7,8 @@ import QtQuick.Window 2.1
 ApplicationWindow {
     id: root
     visible: true
-    width: 640
-    height: 480
+    width: 1024
+    height: 768
 //    title: "QTodoTxt"
 
     AboutBox {
@@ -164,11 +164,12 @@ ApplicationWindow {
     SplitView {
         anchors.fill: parent
         orientation: Qt.Horizontal
+
         TreeView {
             id: filtersTree
             model: mc.filtersModel
             //color: "white"
-            width: 150
+            width: 250
             Layout.minimumWidth: 150
             Layout.fillHeight: true
             TableViewColumn {
@@ -177,19 +178,23 @@ ApplicationWindow {
             }
 
         }
+
         ColumnLayout {
             Layout.minimumWidth: 50
             Layout.fillWidth: true
+
             TextField {
                 Layout.fillWidth: true
                 visible: showSearchAction.checked
                 placeholderText: "Search"
             }
+
             TaskListView {
                 id: taskListView
                 Layout.fillHeight: true
                 Layout.fillWidth: true
             }
+
         }
     }
 
