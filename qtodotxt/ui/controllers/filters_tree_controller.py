@@ -16,8 +16,8 @@ from qtodotxt.lib.filters import ContextFilter, ProjectFilter, DueTodayFilter, D
 class FiltersModel(QtGui.QStandardItemModel):
     def __init__(self, parent):
         QtGui.QStandardItemModel.__init__(self, parent)
-        item = [QtGui.QStandardItem("AAA"), QtGui.QStandardItem("BBB"), QtGui.QStandardItem("CCCC")]
-        self.appendRow(item)
+        self.setHorizontalHeaderLabels(['Filters'])
+        self.appendRow([QtGui.QStandardItem("AAA")])
 
 
 class FiltersTreeController(QtCore.QObject):

@@ -263,6 +263,7 @@ class MainController(QtCore.QObject):
 
     def _initFiltersTree(self):
         self._filters_tree_controller = FiltersTreeController()
+        self.filtersChanged.emit()
         self._filters_tree_controller.filterSelectionChanged.connect(self._onFilterSelectionChanged)
         #self.view.filterSelectionChanged.connect(self.view_filterSelectionChanged)
 

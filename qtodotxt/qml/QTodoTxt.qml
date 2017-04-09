@@ -165,12 +165,16 @@ ApplicationWindow {
         anchors.fill: parent
         orientation: Qt.Horizontal
         TreeView {
-            id: treeViewPlaceHolder
+            id: filtersTree
             model: mc.filtersModel
             //color: "white"
             width: 150
             Layout.minimumWidth: 150
             Layout.fillHeight: true
+            TableViewColumn {
+                title: "Filters"
+                role: "display"
+            }
 
         }
         ColumnLayout {
