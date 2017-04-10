@@ -32,11 +32,7 @@ class FiltersModel(QtGui.QStandardItemModel):
 
     def addFilter(self, flt, count):
         parent = self._filterItemByFilterType[type(flt)]
-        item = QtGui.QStandardItem("{} ({})".format(flt.text, count))
-        #item.setEnabled(True)
-        #item.setSelectable(True)
-        item.setData((flt), QtCore.Qt.UserRole)
-        parent.appendRow([item])
+        item = FilterItem(parent, "{} ({})".format(flt.text, count), flt)
 
     def clear(self):
         QtGui.QStandardItemModel.clear(self)
@@ -141,43 +137,43 @@ class FiltersTreeController(QtCore.QObject):
         if not self._is_showing_filters:
             self.filterSelectionChanged.emit(filters)
 
-    def showFilters(self, file, show_completed=False):
+    def showFilters(self, mfile, show_completed=False):
         self._is_showing_filters = True
         #previouslySelectedFilters = self.view.getSelectedFilters()
         self.model.clear()
-        self._addAllContexts(file, show_completed)
-        self._addAllProjects(file, show_completed)
-        self._addAllDueRanges(file, show_completed)
-        self._addAllPriorities(file, show_completed)
-        self._updateCounter(file, show_completed)
+        self._addAllContexts(mfile, show_completed)
+        self._addAllProjects(mfile, show_completed)
+        self._addAllDueRanges(mfile, show_completed)
+        self._addAllPriorities(mfile, show_completed)
+        self._updateCounter(mfile, show_completed)
         self._is_showing_filters = False
         #self._reselect(previouslySelectedFilters)
 
-    def _updateCounter(self, file, show_completed=False):
-        rootCounters = file.getTasksCounters()
+    def _updateCounter(self, mfile, show_completed=False):
+        rootCounters = mfile.getTasksCounters()
         self.model.updateTopLevelTitles(rootCounters, show_completed)
 
-    def _addAllContexts(self, file, show_completed):
-        contexts = file.getAllContexts(show_completed)
+    def _addAllContexts(self, mfile, show_completed):
+        contexts = mfile.getAllContexts(show_completed)
         for context, number in contexts.items():
             filter = ContextFilter(context)
             self.model.addFilter(filter, number)
 
-    def _addAllProjects(self, file, show_completed):
-        projects = file.getAllProjects(show_completed)
+    def _addAllProjects(self, mfile, show_completed):
+        projects = mfile.getAllProjects(show_completed)
         for project, number in projects.items():
             filter = ProjectFilter(project)
             self.model.addFilter(filter, number)
 
-    def _addAllPriorities(self, file, show_completed):
-        priorities = file.getAllPriorities(show_completed)
+    def _addAllPriorities(self, mfile, show_completed):
+        priorities = mfile.getAllPriorities(show_completed)
         for priority, number in priorities.items():
             filter = PriorityFilter(priority)
             self.model.addFilter(filter, number)
 
-    def _addAllDueRanges(self, file, show_completed):
+    def _addAllDueRanges(self, mfile, show_completed):
 
-        dueRanges, rangeSorting = file.getAllDueRanges(show_completed)
+        dueRanges, rangeSorting = mfile.getAllDueRanges(show_completed)
 
         for range, number in dueRanges.items():
             if range == 'Today':

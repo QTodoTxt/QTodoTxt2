@@ -191,31 +191,6 @@ class MainController(QtCore.QObject):
     def _onSearchTextChanged(self, searchText):
         self._applyFilters(searchText=searchText)
 
-    def _initContextualMenu(self):
-
-        # Context menu
-        # controller.view.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self._tasks_list_controller.view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self._tasks_list_controller.view.customContextMenuRequested.connect(self.showContextMenu)
-        self._contextMenu = QtWidgets.QMenu(self.view)
-        self._contextMenu.addAction(self._tasks_list_controller.createTaskAction)
-        self._contextMenu.addAction(self._tasks_list_controller.createTaskActionOnTemplate)
-        self._contextMenu.addAction(self._tasks_list_controller.editTaskAction)
-        self._contextMenu.addAction(self._tasks_list_controller.copySelectedTasksAction)
-        self._contextMenu.addAction(self._tasks_list_controller.addLinkAction)
-        self._contextMenu.addSeparator()
-        self._contextMenu.addAction(self._tasks_list_controller.completeSelectedTasksAction)
-        if int(self._settings.value("show_delete", 1)):
-            self._contextMenu.addAction(self._tasks_list_controller.deleteSelectedTasksAction)
-        self._contextMenu.addSeparator()
-        self._contextMenu.addAction(self._tasks_list_controller.increasePrioritySelectedTasksAction)
-        self._contextMenu.addAction(self._tasks_list_controller.decreasePrioritySelectedTasksAction)
-
-    def showContextMenu(self, position):
-        tasks = self._tasks_list_controller.view.getSelectedTasks()
-        if tasks:
-            self._contextMenu.exec_(self._tasks_list_controller.view.mapToGlobal(position))
-
     def _tasks_list_taskDeleted(self, task):
         self._file.tasks.remove(task)
         self._onFileUpdated()
