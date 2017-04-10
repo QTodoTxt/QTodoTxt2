@@ -8,9 +8,8 @@ from PyQt5 import QtWidgets
 
 from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import ErrorLoadingFile, File, FileObserver
-from qtodotxt.ui.dialogs.misc_dialogs import Dialogs
 
-from qtodotxt.ui.controllers.filters_tree_controller import FiltersTreeController
+from qtodotxt.controllers.filters_tree_controller import FiltersTreeController
 from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter, CompleteTasksFilter
 
 
@@ -43,7 +42,6 @@ class MainController(QtCore.QObject):
     def setup(self, view):
         self.view = view
 
-        self._dialogs = Dialogs(view, 'QTodoTxt')
         #self._initControllers() # not necessary anymore
         self._fileObserver.fileChangetSig.connect(self.openFileByName)
         #self.view.closeEventSignal.connect(self.view_onCloseEvent)

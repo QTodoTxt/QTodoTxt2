@@ -17,8 +17,7 @@ import qtodotxt.ui.pyqt5_style_rc  # noqa: F401
 import qtodotxt.ui.qTodoTxt_style_rc  # noqa: F401
 import qtodotxt.ui.qTodoTxt_dark_style_rc  # noqa: F401
 
-from qtodotxt.ui.controllers.main_controller import MainController
-from qtodotxt.ui.views.main_view import MainView
+from qtodotxt.controllers.main_controller import MainController
 from qtodotxt.lib.file import FileObserver
 from qtodotxt.lib.tendo_singleton import SingleInstance
 
