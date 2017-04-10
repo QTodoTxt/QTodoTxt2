@@ -46,7 +46,7 @@ Loader {
 
     Component {
         id: editorComp
-        TextField {
+        TextArea {
             id: editor
 //            width: loader.width
 //            anchors.verticalCenter: parent.verticalCenter

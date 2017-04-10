@@ -32,7 +32,8 @@ class MainController(QtCore.QObject):
         # use object variable for setting only used in this class
         # others are accessed through QSettings
         self._settings = QtCore.QSettings()
-        self._show_completed = True
+        self._showCompleted = True
+        self._showFuture = True
         self._file = File()
         self._fileObserver = FileObserver(self, self._file)
         self._is_modified = False
@@ -55,12 +56,6 @@ class MainController(QtCore.QObject):
         item = self._filters_tree_controller.model.itemFromIndex(idx)
         self._applyFilters(filters=[item.filter])
 
-    #a dummy property for testing
-    @QtCore.pyqtProperty('QString', constant=True)
-    def test(self):
-        return "test Property"
-
-    #------- the property for the list of tasks -------
     taskListChanged = QtCore.pyqtSignal()
 
     @QtCore.pyqtProperty('QVariant', notify=taskListChanged)
@@ -77,6 +72,26 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtProperty('QVariant', notify=actionsChanged)
     def actions(self):
         return self._actions
+    
+    showFutureChanged = QtCore.pyqtSignal()
+
+    @QtCore.pyqtProperty('bool', notify=showFutureChanged)
+    def showFuture(self):
+        return self._showFuture
+
+    @showFuture.setter
+    def showFuture(self, val):
+        self._showFuture = val
+ 
+    showCompletedChanged = QtCore.pyqtSignal()
+
+    @QtCore.pyqtProperty('bool', notify=showCompletedChanged)
+    def showCompleted(self):
+        return self._showCompleted
+
+    @showFuture.setter
+    def showCompleted(self, val):
+        self._showCompleted = val
 
 
     def auto_save(self):
@@ -96,150 +111,9 @@ class MainController(QtCore.QObject):
         menu = self.view.menuBar()
         self._menu_controller = MenuController(self, menu)
 
-    def _initActions(self):
-        self._actions = {}
-        self.filterViewAction = QtWidgets.QAction(QtGui.QIcon(self.view.style + '/resources/sidepane.png'),
-                                                  self.tr('Show &Filters'), self)
-        self._actions['filterViewAction'] = self.filterViewAction
-        self.filterViewAction.setCheckable(True)
-        self.filterViewAction.setShortcuts(['Ctrl+Shift+F'])
-        self.filterViewAction.triggered.connect(self._toggleFilterView)
-
-        self.showFutureAction = QtWidgets.QAction(QtGui.QIcon(self.view.style + '/resources/future.png'),
-                                                  self.tr('Show future &Tasks'), self)
-        self.showFutureAction.setCheckable(True)
-        self.showFutureAction.setShortcuts(['Ctrl+Shift+T'])
-        self.showFutureAction.triggered.connect(self._toggleShowFuture)
-
-        self.showCompletedAction = QtWidgets.QAction(QtGui.QIcon(self.view.style + '/resources/show_completed.png'),
-                                                     self.tr('Show &Completed tasks'), self)
-        self.showCompletedAction.setCheckable(True)
-        self.showCompletedAction.setShortcuts(['Ctrl+Shift+C'])
-        self.showCompletedAction.triggered.connect(self._toggleShowCompleted)
-
-        self.archiveAction = QtWidgets.QAction(QtGui.QIcon(self.view.style + '/resources/archive.png'),
-                                               self.tr('&Archive completed tasks'), self)
-        self.archiveAction.setShortcuts(['Ctrl+Shift+A'])
-        self.archiveAction.triggered.connect(self._archive_all_done_tasks)
-
-        self.showToolBarAction = QtWidgets.QAction(self.tr('Show tool&Bar'), self)
-        self.showToolBarAction.setCheckable(True)
-        self.showToolBarAction.setShortcuts(['Ctrl+Shift+B'])
-        self.showToolBarAction.triggered.connect(self._toggleShowToolBar)
-
-        self.showSearchAction = QtWidgets.QAction(QtGui.QIcon(self.view.style + '/resources/ActionSearch.png'),
-                                                  self.tr('Show search bar'), self)
-        self.showSearchAction.setCheckable(True)
-        self.showSearchAction.setShortcuts(['Ctrl+F'])
-        self.showSearchAction.triggered.connect(self._toggleShowSearch)
-        self._actions['showSearchAction'] = self.showSearchAction
-        self.actionsChanged.emit()
-
-    def _initToolBar(self):
-        toolbar = self.view.addToolBar("Main Toolbar")
-        toolbar.setObjectName("mainToolbar")
-
-        toolbar.addAction(self.filterViewAction)
-        toolbar.addAction(self.showFutureAction)
-        toolbar.addAction(self.showCompletedAction)
-        toolbar.addAction(self.showSearchAction)
-
-        toolbar.addSeparator()
-
-        toolbar.addAction(self._menu_controller.openAction)
-        toolbar.addAction(self._menu_controller.saveAction)
-        toolbar.addSeparator()
-        toolbar.addAction(self._tasks_list_controller.createTaskAction)
-        toolbar.addAction(self._tasks_list_controller.createTaskActionOnTemplate)
-        toolbar.addAction(self._tasks_list_controller.editTaskAction)
-        toolbar.addAction(self._tasks_list_controller.copySelectedTasksAction)
-        toolbar.addSeparator()
-        toolbar.addAction(self._tasks_list_controller.completeSelectedTasksAction)
-        if int(self._settings.value("show_delete", 0)):
-            toolbar.addAction(self._tasks_list_controller.deleteSelectedTasksAction)
-        toolbar.addSeparator()
-        toolbar.addAction(self._tasks_list_controller.increasePrioritySelectedTasksAction)
-        toolbar.addAction(self._tasks_list_controller.decreasePrioritySelectedTasksAction)
-        toolbar.addSeparator()
-        toolbar.addAction(self.archiveAction)
-
-        toolbar.addSeparator()
-        toolbar.addAction(self._tasks_list_controller.addLinkAction)
-
-        self._show_toolbar.connect(toolbar.setVisible)
-
-    def _toggleShowToolBar(self):
-        if self.showToolBarAction.isChecked():
-            self._settings.setValue("show_toolbar", 1)
-            self._toolbar_visibility_changed(1)
-        else:
-            self._settings.setValue("show_toolbar", 0)
-            self._toolbar_visibility_changed(0)
-
-    def _toggleShowSearch(self):
-        if self.showSearchAction.isChecked():
-            self._settings.setValue("show_search", 1)
-            self.view.tasks_view.tasks_search_view.setVisible(True)
-        else:
-            self._settings.setValue("show_search", 0)
-            self.view.tasks_view.tasks_search_view.setVisible(False)
-            self.view.tasks_view.tasks_search_view.setText("")
-
-    def _toggleShowCompleted(self):
-        if self.showCompletedAction.isChecked():
-            self._settings.setValue("show_completed_tasks", 1)
-            self._show_completed = True
-            self.updateFilters()
-        else:
-            self._settings.setValue("show_completed_tasks", 0)
-            self._show_completed = False
-            self.updateFilters()
-        self._filters_tree_controller.showFilters(self._file, self._show_completed)
-
-    def _toggleShowFuture(self):
-        if self.showFutureAction.isChecked():
-            self._settings.setValue("show_future_tasks", 1)
-            self.updateFilters()
-        else:
-            self._settings.setValue("show_future_tasks", 0)
-            self.updateFilters()
-
-    def _restoreShowFuture(self):
-        val = int(self._settings.value("show_future_tasks", 1))
-        if val:
-            self.showFutureAction.setChecked(True)
-            self._toggleShowFuture()
-        else:
-            self.showFutureAction.setChecked(False)
-            self._toggleShowFuture()
-
-    def _toggleFilterView(self):
-        if self.filterViewAction.isChecked():
-            self._settings.setValue("show_filter_tree", 1)
-            self._filters_tree_controller.view.show()
-        else:
-            self._settings.setValue("splitter_pos", self.view.centralWidget().sizes())
-            self._settings.setValue("show_filter_tree", 0)
-            self._filters_tree_controller.view.hide()
-
-    def _restoreFilterView(self):
-        val = int(self._settings.value("show_filter_tree", 1))
-        if val:
-            self.filterViewAction.setChecked(True)
-            self._toggleFilterView()
-        else:
-            self.filterViewAction.setChecked(False)
-            self._toggleFilterView()
-
-    def _toolbar_visibility_changed(self, val):
-        self._show_toolbar.emit(val)
-
     def exit(self):
         self.view.close()
         sys.exit()
-
-    def getView(self):
-        return self.view
 
     def start(self):
         print("SHOW")
@@ -290,13 +164,11 @@ class MainController(QtCore.QObject):
             #searchText = self.view.tasks_view.tasks_search_view.getSearchText()
         #tasks = tasklib.filterTasks([SimpleTextFilter(searchText)], tasks)
         # with future filter if needed
-        if not self.showFutureAction.isChecked():
+        if not self._showFuture:
             tasks = tasklib.filterTasks([FutureFilter()], tasks)
         # with complete filter if needed
-        if not CompleteTasksFilter() in filters and not self.showCompletedAction.isChecked():
+        if not CompleteTasksFilter() in filters and not self._showCompleted:
             tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
-        self._tasks_list_controller.showTasks(tasks)
-        #here i chose to set the tasklist property, maybe its not 100% correct
         self._tasksList = tasks
         self.taskListChanged.emit()
 
@@ -365,7 +237,7 @@ class MainController(QtCore.QObject):
         self._onFileUpdated()
 
     def _onFileUpdated(self):
-        self._filters_tree_controller.showFilters(self._file, self._show_completed)
+        self._filters_tree_controller.showFilters(self._file, self._showCompleted)
         self._setIsModified(True)
         self.auto_save()
 
@@ -465,7 +337,7 @@ class MainController(QtCore.QObject):
 
     def _loadFileToUI(self):
         self._setIsModified(False)
-        self._filters_tree_controller.showFilters(self._file, self._show_completed)
+        self._filters_tree_controller.showFilters(self._file, self._showCompleted)
 
     def _updateView(self):
         #self._restoreShowCompleted()
@@ -476,12 +348,12 @@ class MainController(QtCore.QObject):
         pass
 
     def _restoreShowCompleted(self):
-        val = int(self._settings.value("show_completed_tasks", 1))
+        val = int(self._settings.value("showCompleted_tasks", 1))
         if val:
-            self._show_completed = True
+            self._showCompleted = True
             self.showCompletedAction.setChecked(True)
         else:
-            self._show_completed = False
+            self._showCompleted = False
             self.showCompletedAction.setChecked(False)
 
     def _restoreShowToolBar(self):
