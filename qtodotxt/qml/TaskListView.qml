@@ -2,7 +2,9 @@ import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 ListView {
-    id: lv
+    id: listView
+    property var taskList
+
     function editCurrentTask() {
         if (currentItem !== null) {
             currentItem.state = "edit"
@@ -15,16 +17,8 @@ ListView {
 
     highlight:
         Rectangle {
-//        width: 180; height: 40
-//        color: "lightsteelblue"; radius: 5
-//        y: lv.currentItem.y
-//        Behavior on y {
-//            SpringAnimation {
-//                spring: 3
-//                damping: 0.2
-//            }
-//        }
         color: systemPalette.highlight
+        opacity: 0.5
     }
 
     highlightFollowsCurrentItem: true
@@ -32,25 +26,25 @@ ListView {
     focus: true
 
     Keys.onReturnPressed: {
-        lv.currentItem.state = "edit"
+        listView.currentItem.state = "edit"
     }
     Keys.onEscapePressed: {
     }
-    model: mc.taskList
+    model: taskList
     delegate: TaskLine {
-        width: lv.width
+        width: listView.width
 
-        text: mc.taskList[model.index].text
-        html: mc.taskList[model.index].html
+        text: taskList[model.index].text//mc.taskList[model.index].text
+        html: taskList[model.index].html//mc.taskList[model.index].html
 
         current: (currentIndex === model.index)
 
-        onActivated: lv.currentIndex = model.index
+        onActivated: listView.currentIndex = model.index
         onShowContextMenu: {
             console.log("rightclick")
             contextMenu.popup()
         }
-        onStateChanged: if (state === "show") lv.focus = true
+        onStateChanged: if (state === "show") listView.focus = true
     }
 
     Menu {

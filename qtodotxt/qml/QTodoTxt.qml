@@ -5,12 +5,18 @@ import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
 import QtQml.Models 2.2
 
+//import QTodoTxt 1.0
+
 ApplicationWindow {
     id: root
     visible: true
     width: 1024
     height: 768
-    title: mc.title
+    title: mainController.title
+
+//    MainController {
+//        id: mainController
+//    }
 
     AboutBox {
         id: aboutBox
@@ -146,7 +152,7 @@ ApplicationWindow {
             //ToolBarSeparator { }
             ToolButton { action: editNewTask }
             ToolButton { action: editEditTask }
-            //ToolButton { action:  mc.actions['showSearchAction']}
+            //ToolButton { action:  mainController.actions['showSearchAction']}
             Item { Layout.fillWidth: true }
         }
     }
@@ -156,9 +162,9 @@ ApplicationWindow {
         nameFilters: ["Text files (*.txt)"]
         onAccepted: {
             if (fileDialog.selectExisting)
-                document.fileUrl = fileUrl
+                document.fileUrl = fileUrl //FIXME
             else
-                document.saveAs(fileUrl, selectedNameFilter)
+                document.saveAs(fileUrl, selectedNameFilter) //FIXME
         }
     }
 
@@ -168,12 +174,12 @@ ApplicationWindow {
 
         TreeView {
             id: filtersTree
-            model: mc.filtersModel
+            model: mainController.filtersModel
             width: 250
             Layout.minimumWidth: 150
             Layout.fillHeight: true
             selection: ItemSelectionModel {
-                model: mc.filtersModel
+                model: mainController.filtersModel
             }
     
             selectionMode: SelectionMode.ExtendedSelection
@@ -182,11 +188,11 @@ ApplicationWindow {
                 role: "display"
             }
             onClicked: {
-                mc.filterRequest(index)
+                mainController.filterRequest(index)
             }
             onActivated: {
                 //FIXME: check all current select items, is multi selction is allowed
-                mc.filterRequest(index)
+                mainController.filterRequest(index)
             }
         }
 
@@ -199,7 +205,7 @@ ApplicationWindow {
                 visible: showSearchAction.checked
                 placeholderText: "Search"
                 Keys.onPressed: {
-                    mc.searchText = text
+                    mainController.searchText = text
                 }
             }
 
@@ -207,6 +213,8 @@ ApplicationWindow {
                 id: taskListView
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                taskList: mainController.taskList
             }
 
         }

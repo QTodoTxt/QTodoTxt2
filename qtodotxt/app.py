@@ -22,7 +22,7 @@ from qtodotxt.lib.file import FileObserver
 from qtodotxt.lib.tendo_singleton import SingleInstance
 
 #(Just for testing how to communicate between python and qml, see also below)
-#from qtodotxt.qml_class import MainControllerQml
+from qtodotxt.qml_class import MainControllerQml
 
 
 def _parseArgs():
@@ -102,7 +102,7 @@ def run():
 
     engine = QQmlApplicationEngine()
     controller = MainController(args)
-    engine.rootContext().setContextProperty("mc", controller)
+    engine.rootContext().setContextProperty("mainController", controller)
     path = os.path.dirname(__file__)
     engine.load(path + '/qml/QTodoTxt.qml')
     window = engine.rootObjects()[0]
