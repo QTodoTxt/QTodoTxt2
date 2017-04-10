@@ -36,8 +36,7 @@ class MainController(QtCore.QObject):
         self._showFuture = True
         self._file = File()
         self._fileObserver = FileObserver(self, self._file)
-        self._is_modified = False
-        self._setIsModified(False)
+        self.modified = False
         self._initFiltersTree()
 
     def setup(self, view):
@@ -63,7 +62,8 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtProperty('QVariant', notify=taskListChanged)
     def taskList(self):
         return self._tasksList
-
+    
+    # not dure we should enable that
     #@taskList.setter
     #def taskList(self, taskList):
         #self._tasksListQml = taskList
@@ -74,7 +74,7 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtProperty('QVariant', notify=actionsChanged)
     def actions(self):
         return self._actions
-    
+
     showFutureChanged = QtCore.pyqtSignal()
 
     @QtCore.pyqtProperty('bool', notify=showFutureChanged)
@@ -84,17 +84,29 @@ class MainController(QtCore.QObject):
     @showFuture.setter
     def showFuture(self, val):
         self._showFuture = val
- 
+        self._showFutureChanged.emit(val)
+
+    searchTextChanged = QtCore.pyqtSignal(str)
+
+    @QtCore.pyqtProperty('QString', notify=searchTextChanged)
+    def searchText(self):
+        return self._searchText
+
+    @searchText.setter
+    def searchText(self, txt):
+        self._searchText = txt
+        self.searchTextChanged.emit(txt)
+
     showCompletedChanged = QtCore.pyqtSignal()
 
     @QtCore.pyqtProperty('bool', notify=showCompletedChanged)
     def showCompleted(self):
         return self._showCompleted
 
-    @showFuture.setter
+    @showCompleted.setter
     def showCompleted(self, val):
         self._showCompleted = val
-
+        self.showCompleted.emit(val)
 
     def auto_save(self):
         if int(self._settings.value("auto_save", 1)):
@@ -119,7 +131,6 @@ class MainController(QtCore.QObject):
 
     def start(self):
         print("SHOW")
-        self._updateView()
         self._updateTitle()
 
         if self._args.file:
@@ -162,9 +173,8 @@ class MainController(QtCore.QObject):
             filters = self._filters_tree_controller.view.getSelectedFilters()
         tasks = tasklib.filterTasks(filters, self._file.tasks)
         # Then with our search text
-        #if searchText is None:
-            #searchText = self.view.tasks_view.tasks_search_view.getSearchText()
-        #tasks = tasklib.filterTasks([SimpleTextFilter(searchText)], tasks)
+        if searchText:
+            tasks = tasklib.filterTasks([SimpleTextFilter(searchText)], tasks)
         # with future filter if needed
         if not self._showFuture:
             tasks = tasklib.filterTasks([FutureFilter()], tasks)
@@ -180,15 +190,6 @@ class MainController(QtCore.QObject):
 
     def _onSearchTextChanged(self, searchText):
         self._applyFilters(searchText=searchText)
-
-    def _initTasksList(self):
-        controller = self._tasks_list_controller = \
-            TasksListController(self.view.tasks_view.tasks_list_view, self._file)
-
-        controller.taskCreated.connect(self._tasks_list_taskCreated)
-        controller.taskModified.connect(self._tasks_list_taskModified)
-        controller.taskDeleted.connect(self._tasks_list_taskDeleted)
-        controller.taskArchived.connect(self._tasks_list_taskArchived)
 
     def _initContextualMenu(self):
 
@@ -240,11 +241,11 @@ class MainController(QtCore.QObject):
 
     def _onFileUpdated(self):
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
-        self._setIsModified(True)
+        self.modified = True
         self.auto_save()
 
     def canExit(self):
-        if not self._is_modified:
+        if not self._modified:
             return True
         button = self._dialogs.showSaveDiscardCancel(self.tr('Unsaved changes...'))
         if button == QtWidgets.QMessageBox.Save:
@@ -253,11 +254,16 @@ class MainController(QtCore.QObject):
         else:
             return button == QtWidgets.QMessageBox.Discard
 
-    def _setIsModified(self, is_modified):
-        self._is_modified = is_modified
+    modifiedChanged = QtCore.pyqtSignal(bool)
+
+    @QtCore.pyqtProperty('bool', notify=modifiedChanged)
+    def modified(self):
+        self._modified
+
+    @modified.setter
+    def modified(self, val):
+        self._modified = val
         self._updateTitle()
-        #self._menu_controller.saveAction.setEnabled(is_modified)
-        #self._menu_controller.revertAction.setEnabled(is_modified)
 
     def save(self):
         logger.debug('MainController.save called.')
@@ -271,7 +277,7 @@ class MainController(QtCore.QObject):
             self._file.save(filename)
             self._settings.setValue("last_open_file", filename)
             self._settings.sync()
-            self._setIsModified(False)
+            self._modfied = True
             logger.debug('Adding {} to watchlist'.format(filename))
             self._fileObserver.addPath(self._file.filename)
 
@@ -282,7 +288,7 @@ class MainController(QtCore.QObject):
             title += filename
         else:
             title += 'Untitled'
-        if self._is_modified:
+        if self._modified:
             title += ' (*)'
         # FIXME: set title as a property read from QML
 
@@ -316,8 +322,7 @@ class MainController(QtCore.QObject):
         except Exception as ex:
             currentfile = self._settings.value("last_open_file", "")
             if currentfile == filename:
-                self.showError(self.tr("Current file '{}' is not available.\nException: {}").
-                                        format(filename, ex))
+                self.showError(self.tr("Current file '{}' is not available.\nException: {}").format(filename, ex))
             else:
                 self.showError(self.tr("Error opening file: {}.\n Exception:{}").format(filename, ex))
             return
@@ -338,69 +343,8 @@ class MainController(QtCore.QObject):
         self._menu_controller.updateRecentFileActions()
 
     def _loadFileToUI(self):
-        self._setIsModified(False)
+        self._modified = False
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
-
-    def _updateView(self):
-        #self._restoreShowCompleted()
-        #self._restoreFilterView()
-        #self._restoreShowFuture()
-        #self._restoreShowToolBar()
-        #self._restoreShowSearch()
-        pass
-
-    def _restoreShowCompleted(self):
-        val = int(self._settings.value("showCompleted_tasks", 1))
-        if val:
-            self._showCompleted = True
-            self.showCompletedAction.setChecked(True)
-        else:
-            self._showCompleted = False
-            self.showCompletedAction.setChecked(False)
-
-    def _restoreShowToolBar(self):
-        val = int(self._settings.value("show_toolbar", 1))
-        if val:
-            self._toolbar_visibility_changed(1)
-            self.showToolBarAction.setChecked(True)
-        else:
-            self._toolbar_visibility_changed(0)
-            self.showToolBarAction.setChecked(False)
-
-    def _restoreShowSearch(self):
-        val = int(self._settings.value("show_search", 1))
-        if val:
-            self.view.tasks_view.tasks_search_view.setVisible(True)
-            self.showSearchAction.setChecked(True)
-        else:
-            self.view.tasks_view.tasks_search_view.setVisible(False)
-            self.showSearchAction.setChecked(False)
 
     def updateFilters(self):
         self._onFilterSelectionChanged(self._filters_tree_controller.view.getSelectedFilters())
-
-    def toggleVisible(self):
-        if self.view.isMinimized() or self.view.isHidden():
-            self.view.show()
-            self.view.activateWindow()
-        else:
-            self.view.hide()
-
-    def anotherInstanceEvent(self, dir):
-        tFile = dir + "/qtodo.tmp"
-        if not os.path.isfile(tFile):
-            return
-        time.sleep(0.01)
-        f = open(tFile, 'r+b')
-        line = f.readline()
-        line = line.strip()
-        if line == b"1":
-            self.view.show()
-            self.view.activateWindow()
-        if line == b"2":
-            self.view.show()
-            self.view.activateWindow()
-            self._tasks_list_controller.createTask()
-
-        f.close()
-        os.remove(tFile)
