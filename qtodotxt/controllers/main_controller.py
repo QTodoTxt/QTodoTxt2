@@ -23,6 +23,7 @@ FILENAME_FILTERS = ';;'.join([
 class MainController(QtCore.QObject):
 
     _show_toolbar = QtCore.pyqtSignal(int)
+    error = QtCore.pyqtSignal(str)
 
     def __init__(self, args):
         super(MainController, self).__init__()
@@ -48,6 +49,9 @@ class MainController(QtCore.QObject):
         filters = self._settings.value("current_filters", ["All"])
         #self._filters_tree_controller.view.setSelectedFiltersByNames(filters)
         #self._menu_controller.updateRecentFileActions()
+
+    def showError(self, msg):
+        self.error.emit(msg)
     
     @QtCore.pyqtSlot('QVariant')
     def filterRequest(self, idx):
@@ -127,7 +131,7 @@ class MainController(QtCore.QObject):
             try:
                 self.openFileByName(filename)
             except ErrorLoadingFile as ex:
-                self._dialogs.showError(str(ex))
+                self.showError(str(ex))
 
         if self._args.quickadd:
             self._tasks_list_controller.createTask()
@@ -290,7 +294,7 @@ class MainController(QtCore.QObject):
             try:
                 self.openFileByName(filename)
             except ErrorLoadingFile as ex:
-                self._dialogs.showError(str(ex))
+                self.showError(str(ex))
 
     def new(self):
         if self.canExit():
@@ -302,7 +306,7 @@ class MainController(QtCore.QObject):
             try:
                 self.openFileByName(self._file.filename)
             except ErrorLoadingFile as ex:
-                self._dialogs.showError(str(ex))
+                self.showError(str(ex))
 
     def openFileByName(self, filename):
         logger.debug('MainController.openFileByName called with filename="{}"'.format(filename))
@@ -312,10 +316,10 @@ class MainController(QtCore.QObject):
         except Exception as ex:
             currentfile = self._settings.value("last_open_file", "")
             if currentfile == filename:
-                self._dialogs.showError(self.tr("Current file '{}' is not available.\nException: {}").
+                self.showError(self.tr("Current file '{}' is not available.\nException: {}").
                                         format(filename, ex))
             else:
-                self._dialogs.showError(self.tr("Error opening file: {}.\n Exception:{}").format(filename, ex))
+                self.showError(self.tr("Error opening file: {}.\n Exception:{}").format(filename, ex))
             return
         self._loadFileToUI()
         self._settings.setValue("last_open_file", filename)
