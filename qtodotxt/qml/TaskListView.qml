@@ -9,17 +9,22 @@ ListView {
         }
     }
 
+    SystemPalette {
+        id: systemPalette
+    }
+
     highlight:
         Rectangle {
-        width: 180; height: 40
-        color: "lightsteelblue"; radius: 5
-        y: lv.currentItem.y
-        Behavior on y {
-            SpringAnimation {
-                spring: 3
-                damping: 0.2
-            }
-        }
+//        width: 180; height: 40
+//        color: "lightsteelblue"; radius: 5
+//        y: lv.currentItem.y
+//        Behavior on y {
+//            SpringAnimation {
+//                spring: 3
+//                damping: 0.2
+//            }
+//        }
+        color: systemPalette.highlight
     }
 
     highlightFollowsCurrentItem: true
