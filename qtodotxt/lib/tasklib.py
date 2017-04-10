@@ -51,7 +51,7 @@ class Task(QtCore.QObject):
     def _reset(self):
         self.contexts = []
         self.projects = []
-        self.priority = ""
+        self._priority = ""
         self.is_complete = False
         self.completion_date = None
         self.creation_date = None
@@ -80,7 +80,7 @@ class Task(QtCore.QObject):
             if self.completion_date:
                 words = words[1:]
         elif re.search(r'^\([A-Z]\)$', words[0]):
-            self.priority = words[0][1:-1]
+            self._priority = words[0][1:-1]
             words = words[1:]
 
         dato = self._parseDate(words[0])
@@ -107,6 +107,9 @@ class Task(QtCore.QObject):
     def html(self):
         return self.toHtml()
 
+    @QtCore.pyqtProperty('QString', notify=modified)
+    def priority(self):
+        return self._priority
 
     def _parseWord(self, word):
         if len(word) > 1:
@@ -217,25 +220,25 @@ class Task(QtCore.QObject):
     def increasePriority(self):
         if self.is_complete:
             return
-        if not self.priority:
-            self.priority = self._lowest_priority
-            self._text = "({}) {}".format(self.priority, self._text)
-        elif self.priority != self._highest_priority:
-            self.priority = chr(ord(self.priority) - 1)
-            self._text = "({}) {}".format(self.priority, self._text[4:])
+        if not self._priority:
+            self._priority = self._lowest_priority
+            self._text = "({}) {}".format(self._priority, self._text)
+        elif self._priority != self._highest_priority:
+            self._priority = chr(ord(self._priority) - 1)
+            self._text = "({}) {}".format(self._priority, self._text[4:])
         self.modified.emit(self)
 
     def decreasePriority(self):
         if self.is_complete:
             return
-        if self.priority >= self._lowest_priority:
-            self.priority = ""
+        if self._priority >= self._lowest_priority:
+            self._priority = ""
             self._text = self._text[4:]
-            self._text = self._text.replace("({})".format(self.priority), "", 1)
-        elif self.priority:
-            oldpriority = self.priority
-            self.priority = chr(ord(self.priority) + 1)
-            self._text = self._text.replace("({})".format(oldpriority), "({})".format(self.priority), 1)
+            self._text = self._text.replace("({})".format(self._priority), "", 1)
+        elif self._priority:
+            oldpriority = self._priority
+            self._priority = chr(ord(self._priority) + 1)
+            self._text = self._text.replace("({})".format(oldpriority), "({})".format(self._priority), 1)
         self.modified.emit(self)
 
     def __eq__(self, other):
@@ -244,12 +247,12 @@ class Task(QtCore.QObject):
     def __lt__(self, other):
         if self.is_complete != other.is_complete:
             return self._lowerCompleteness(other)
-        if self.priority != other.priority:
-            if not self.priority:
+        if self._priority != other.priority:
+            if not self._priority:
                 return True
             if not other.priority:
                 return False
-            return self.priority > other.priority
+            return self._priority > other.priority
         # order the other tasks alphabetically
         return self._text > other.text
 

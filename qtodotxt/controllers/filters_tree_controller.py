@@ -18,6 +18,7 @@ class FilterItem(QtGui.QStandardItem):
         if icon:
             self.setIcon(icon)
 
+
 class FiltersModel(QtGui.QStandardItemModel):
     def __init__(self, parent):
         QtGui.QStandardItemModel.__init__(self, parent)
