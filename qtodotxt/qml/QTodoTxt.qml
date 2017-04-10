@@ -170,7 +170,6 @@ ApplicationWindow {
             id: filtersTree
             model: mc.filtersModel
             width: 250
-
             Layout.minimumWidth: 150
             Layout.fillHeight: true
             selection: ItemSelectionModel {
@@ -181,6 +180,9 @@ ApplicationWindow {
             TableViewColumn {
                 title: "Filters"
                 role: "display"
+            }
+            onClicked: {
+                mc.filterRequest(index)
             }
             onActivated: {
                 //FIXME: check all current select items, is multi selction is allowed
@@ -196,6 +198,9 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 visible: showSearchAction.checked
                 placeholderText: "Search"
+                Keys.onPressed: {
+                    mc.searchText = text
+                }
             }
 
             TaskListView {

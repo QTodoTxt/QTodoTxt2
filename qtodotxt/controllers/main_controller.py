@@ -96,6 +96,7 @@ class MainController(QtCore.QObject):
     @searchText.setter
     def searchText(self, txt):
         self._searchText = txt
+        self._applyFilters(searchText=txt)
         self.searchTextChanged.emit(txt)
 
     showCompletedChanged = QtCore.pyqtSignal()
@@ -122,17 +123,7 @@ class MainController(QtCore.QObject):
         self._initToolBar()
         self._initSearchText()
 
-    def _initMenuBar(self):
-        menu = self.view.menuBar()
-        self._menu_controller = MenuController(self, menu)
-
-    def exit(self):
-        self.view.close()
-        sys.exit()
-
     def start(self):
-        print("SHOW")
-
         if self._args.file:
             filename = self._args.file
         else:
@@ -157,7 +148,6 @@ class MainController(QtCore.QObject):
         self._filters_tree_controller = FiltersTreeController()
         self.filtersChanged.emit()
         self._filters_tree_controller.filterSelectionChanged.connect(self._onFilterSelectionChanged)
-        #self.view.filterSelectionChanged.connect(self.view_filterSelectionChanged)
 
     def _onFilterSelectionChanged(self, filters):
         self._applyFilters(filters=filters)
@@ -170,27 +160,20 @@ class MainController(QtCore.QObject):
 
     def _applyFilters(self, filters=None, searchText=None):
         # First we filter with filters tree
-        if filters is None:
-            filters = self._filters_tree_controller.view.getSelectedFilters()
+        #if filters is None:
+            #filters = self._filters_tree_controller.view.getSelectedFilters()
         tasks = tasklib.filterTasks(filters, self._file.tasks)
         # Then with our search text
-        if searchText:
+        if self._searchText:
             tasks = tasklib.filterTasks([SimpleTextFilter(searchText)], tasks)
         # with future filter if needed
         if not self._showFuture:
             tasks = tasklib.filterTasks([FutureFilter()], tasks)
         # with complete filter if needed
-        if not CompleteTasksFilter() in filters and not self._showCompleted:
+        if not self._showCompleted and ( not filters or not CompleteTasksFilter() in filters): 
             tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
         self._tasksList = tasks
         self.taskListChanged.emit()
-
-    def _initSearchText(self):
-        self.view.tasks_view.tasks_search_view.searchTextChanged.connect(
-            self._onSearchTextChanged)
-
-    def _onSearchTextChanged(self, searchText):
-        self._applyFilters(searchText=searchText)
 
     def _tasks_list_taskDeleted(self, task):
         self._file.tasks.remove(task)
@@ -329,5 +312,3 @@ class MainController(QtCore.QObject):
         self._modified = False
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
 
-    def updateFilters(self):
-        self._onFilterSelectionChanged(self._filters_tree_controller.view.getSelectedFilters())

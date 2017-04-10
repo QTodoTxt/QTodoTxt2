@@ -274,7 +274,7 @@ def dateString(date):
 
 
 def filterTasks(filters, tasks):
-    if None in filters:  # FIXME: why??? if a filter is None we can just ignore it
+    if filters is None:
         return tasks
 
     filteredTasks = []
