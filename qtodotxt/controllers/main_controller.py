@@ -38,6 +38,7 @@ class MainController(QtCore.QObject):
         self._fileObserver = FileObserver(self, self._file)
         self.modified = False
         self._initFiltersTree()
+        self._title = "QTodoTxt"
 
     def setup(self, view):
         self.view = view
@@ -131,7 +132,6 @@ class MainController(QtCore.QObject):
 
     def start(self):
         print("SHOW")
-        self._updateTitle()
 
         if self._args.file:
             filename = self._args.file
@@ -151,6 +151,7 @@ class MainController(QtCore.QObject):
 
         self._tasksList = self._file.tasks
         self.taskListChanged.emit()
+        self._updateTitle()
 
     def _initFiltersTree(self):
         self._filters_tree_controller = FiltersTreeController()
@@ -265,7 +266,14 @@ class MainController(QtCore.QObject):
             title += 'Untitled'
         if self._modified:
             title += ' (*)'
-        # FIXME: set title as a property read from QML
+        self._title = title
+        self.titleChanged.emit(self._title)
+
+    titleChanged = QtCore.pyqtSignal(str)
+
+    @QtCore.pyqtProperty('QString', notify=titleChanged)
+    def title(self):
+        return self._title
 
     def open(self):
         (filename, ok) = \

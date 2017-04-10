@@ -3,13 +3,14 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
+import QtQml.Models 2.2
 
 ApplicationWindow {
     id: root
     visible: true
     width: 1024
     height: 768
-//    title: "QTodoTxt"
+    title: mc.title
 
     AboutBox {
         id: aboutBox
@@ -172,9 +173,10 @@ ApplicationWindow {
 
             Layout.minimumWidth: 150
             Layout.fillHeight: true
-            //selection: ItemSelectionModel {
-                //model: mc.filtersModel
-            //}
+            selection: ItemSelectionModel {
+                model: mc.filtersModel
+            }
+    
             selectionMode: SelectionMode.ExtendedSelection
             TableViewColumn {
                 title: "Filters"

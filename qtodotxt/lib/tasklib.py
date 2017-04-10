@@ -93,7 +93,6 @@ class Task(QtCore.QObject):
             self._parseWord(word)
         self._text = line
 
-    #its a qt property now to be available in qml
     @QtCore.pyqtProperty('QString', notify=modified)
     def text(self):
         return self._text
