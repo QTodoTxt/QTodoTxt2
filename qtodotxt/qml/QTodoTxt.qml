@@ -228,8 +228,9 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 visible: showSearchAction.checked
                 placeholderText: "Search"
-                Keys.onPressed: {
+                onTextChanged: {
                     mainController.searchText = text
+                    searchField.focus = true
                 }
             }
 
