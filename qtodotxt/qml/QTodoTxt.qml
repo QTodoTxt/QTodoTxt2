@@ -98,6 +98,22 @@ ApplicationWindow {
     }
 
     Action {
+        id: editIncreasePriority
+        iconName: "plus"
+        text: qsTr("Increase Priority")
+        shortcut: "+"
+        onTriggered: {        }
+    }
+
+    Action {
+        id: editDecreasePriority
+        iconName: "minus"
+        text: qsTr("Decrease Priority")
+        shortcut: "-"
+        onTriggered: {        }
+    }
+
+    Action {
         id: showSearchAction
         iconName: "search"
         text: qsTr("Show Search Field")
@@ -151,6 +167,9 @@ ApplicationWindow {
             MenuItem { action: editEditTask }
             MenuSeparator {}
             MenuItem { action: editCompleteTasks}
+            MenuSeparator {}
+            MenuItem { action: editIncreasePriority}
+            MenuItem { action: editDecreasePriority}
         }
         Menu {
             title: qsTr("View")
@@ -169,13 +188,18 @@ ApplicationWindow {
         visible: showToolBarAction.checked
         RowLayout {
             anchors.fill: parent
-            MenuSeparator{}
+            ToolButton { action: showSearchAction}
+            ToolButton { action: showToolBarAction}
+            ToolBarSeparator { }
             ToolButton { action: fileOpen }
             ToolButton { action: fileSave }
-            //ToolBarSeparator { }
+            ToolBarSeparator { }
             ToolButton { action: editNewTask }
             ToolButton { action: editEditTask }
-            //ToolButton { action:  mainController.actions['showSearchAction']}
+            ToolButton { action: editCompleteTasks}
+            ToolBarSeparator { }
+            ToolButton { action: editIncreasePriority}
+            ToolButton { action: editDecreasePriority}
             Item { Layout.fillWidth: true }
         }
     }
