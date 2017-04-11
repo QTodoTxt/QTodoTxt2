@@ -22,7 +22,6 @@ FILENAME_FILTERS = ';;'.join([
 
 class MainController(QtCore.QObject):
 
-    _show_toolbar = QtCore.pyqtSignal(int)
     error = QtCore.pyqtSignal(str)
 
     def __init__(self, args):
@@ -58,6 +57,18 @@ class MainController(QtCore.QObject):
     def filterRequest(self, idx):
         item = self._filters_tree_controller.model.itemFromIndex(idx)
         self._applyFilters(filters=[item.filter])
+
+    #@QtCore.pyqtSlot(result='int')
+    @QtCore.pyqtSlot('QString', 'int', result='int')
+    def newTask(self, text='', after=None):
+        task = tasklib.Task('')
+        print("Inserting task after", after)
+        if after is None:
+            after = len(self._tasksList) - 1
+        self._tasksList.insert(after + 1, task)
+        #self._file.tasks.append(task) # should be added here too... something strange,,,
+        self.taskListChanged.emit()
+        return after + 1
 
     taskListChanged = QtCore.pyqtSignal()
 

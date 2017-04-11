@@ -72,12 +72,17 @@ ApplicationWindow {
         onTriggered: {        }
     }
 
+
     Action {
         id: editNewTask
         iconName: "list-add"
         text: qsTr("Create New Task")
         shortcut: "Ins"
-        onTriggered: {        }
+        onTriggered: {
+            var idx = mainController.newTask('', taskListView.currentIndex)
+            taskListView.currentIndex = idx
+            taskListView.editCurrentTask()
+        }
     }
 
     Action {
