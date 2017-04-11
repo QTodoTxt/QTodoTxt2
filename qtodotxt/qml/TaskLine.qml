@@ -50,26 +50,48 @@ Loader {
 
             text: taskLine.text
             focus: true
-//            onEditingFinished: {
-//                taskLine.state = "show"
-//            }
+            onEditingFinished: {
+                taskLine.state = "show"
+            }
             //            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
 
             onTextChanged: {
+                completionModel.completionPrefix = text
                 completionList.visible = true
-                completionList.focus = true
+//                completionList.focus = true
             }
 
-            CompletionModel {
+            onCursorPositionChanged: {
+                completionModel.cursorPosition = cursorPosition
+            }
+
+            ListModel {
                 id: completionModel
-                sourceModel: ["(A)", "(B)", "(C)"]
-                completionPrefix: editor.text
+                property var sourceModel: ["(A)", "(B)", "(C)"]
+                property string completionPrefix: parent.text
+                property int cursorPosition: parent.cursorPosition
+
+                onCompletionPrefixChanged: {
+                    clear()
+                    if (cursorPosition && completionPrefix) {
+                    var strToCursor = completionPrefix.substring(0,cursorPosition)
+                    var curWord = strToCursor.match(/.*\s(.+)/)[1]
+                    if (curWord === "(") populateModel()
+                }
+                }
+
+                function populateModel() {
+                    sourceModel.forEach(function(i){
+                    append({"text": i})
+                    })
+                }
+
             }
 
             ListView {
                 id: completionList
-                x: editor.cursorRectangle.x + editor.cursorRectangle.width
-                y: editor.cursorRectangle.y + editor.cursorRectangle.height
+                x: parent.cursorRectangle.x + parent.cursorRectangle.width
+                y: parent.cursorRectangle.y + parent.cursorRectangle.height
                 visible: completionModel.count > 0
                 model: completionModel
                 delegate: Label { text: modelData }
