@@ -102,7 +102,9 @@ ApplicationWindow {
         iconName: "plus"
         text: qsTr("Increase Priority")
         shortcut: "+"
-        onTriggered: {        }
+        onTriggered: {
+            taskListView.model[taskListView.currentIndex].increasePriority()
+        }
     }
 
     Action {
@@ -110,7 +112,9 @@ ApplicationWindow {
         iconName: "minus"
         text: qsTr("Decrease Priority")
         shortcut: "-"
-        onTriggered: {        }
+        onTriggered: {
+            taskListView.model[taskListView.currentIndex].decreasePriority()
+        }
     }
 
     Action {

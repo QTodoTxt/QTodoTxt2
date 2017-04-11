@@ -215,7 +215,8 @@ class Task(QtCore.QObject):
         """
         htmlizer = TaskHtmlizer()
         return htmlizer.task2html(self)
-
+    
+    @QtCore.pyqtSlot()
     def increasePriority(self):
         if self.is_complete:
             return
@@ -227,6 +228,7 @@ class Task(QtCore.QObject):
             self._text = "({}) {}".format(self._priority, self._text[4:])
         self.modified.emit(self)
 
+    @QtCore.pyqtSlot()
     def decreasePriority(self):
         if self.is_complete:
             return
