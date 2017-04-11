@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 
 
 Loader {
-    id: loader
+    id: taskLine
     property string text: ""
     property string html: ""
 
@@ -22,18 +22,18 @@ Loader {
             property alias lblHeight: label.height
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
-                loader.activated()
-                if (mouse.button === Qt.RightButton) loader.showContextMenu()
+                taskLine.activated()
+                if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
             }
             onDoubleClicked: {
-                loader.activated()
-                loader.state = "edit"
+                taskLine.activated()
+                taskLine.state = "edit"
             }
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
-                text: loader.html
-                width: loader.width
+                text: taskLine.html
+                width: taskLine.width
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
                 onLinkActivated: {
@@ -48,15 +48,15 @@ Loader {
         id: editorComp
         TextArea {
             id: editor
-//            width: loader.width
+//            width: taskLine.width
 //            anchors.verticalCenter: parent.verticalCenter
 
-            text: loader.text
+            text: taskLine.text
             focus: true
             onEditingFinished: {
-                loader.state = "show"
+                taskLine.state = "show"
             }
-            //            onActiveFocusChanged: if (!activeFocus) loader.state = "show"
+            //            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
         }
     }
 
@@ -64,17 +64,17 @@ Loader {
         State {
             name: "show"
             PropertyChanges {
-                target: loader
+                target: taskLine
                 sourceComponent: labelComp
-                height: loader.item.lblHeight + 10
+                height: taskLine.item.lblHeight + 10
             }
         },
         State {
             name: "edit"
             PropertyChanges {
-                target: loader
+                target: taskLine
                 sourceComponent: editorComp
-                height: loader.item.implicitHeight + 10
+                height: taskLine.item.contentHeight + 10
             }
         }
     ]
