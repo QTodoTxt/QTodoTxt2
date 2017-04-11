@@ -4,16 +4,20 @@ import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
 import QtQml.Models 2.2
+import Qt.labs.settings 1.0
 
 //import QTodoTxt 1.0
 
 ApplicationWindow {
-    id: root
+    id: window
     visible: true
     width: 1024
     height: 768
     title: mainController.title
-
+    Settings {
+        property alias window_width: window.width
+        property alias window_height: window.height
+    }
 //    MainController {
 //        id: mainController
 //    }
@@ -178,6 +182,9 @@ ApplicationWindow {
             width: 250
             Layout.minimumWidth: 150
             Layout.fillHeight: true
+            Settings {
+                property alias filters_tree_width: filtersTree.width
+            }
             selection: ItemSelectionModel {
                 model: mainController.filtersModel
             }

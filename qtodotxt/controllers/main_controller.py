@@ -39,6 +39,7 @@ class MainController(QtCore.QObject):
         self.modified = False
         self._initFiltersTree()
         self._title = "QTodoTxt"
+        self._searchText = ""
 
     def setup(self, view):
         self.view = view
