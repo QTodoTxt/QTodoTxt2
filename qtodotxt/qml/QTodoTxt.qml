@@ -15,8 +15,15 @@ ApplicationWindow {
     height: 768
     title: mainController.title
     Settings {
+        category: "WindowState"
         property alias window_width: window.width
         property alias window_height: window.height
+        property alias filters_tree_width: filtersTree.width
+    }
+    Settings {
+        category: "VisibleWidgets"
+        property alias search_field_visible: showSearchAction.checked
+        property alias toolbar_visible: showToolBarAction.checked
     }
 //    MainController {
 //        id: mainController
@@ -99,6 +106,15 @@ ApplicationWindow {
     }
 
     Action {
+        id: showToolBarAction
+        //iconName: "toolbar"
+        text: qsTr("Show ToolBar")
+        shortcut: "Ctrl+T"
+        checkable: true
+        checked: true
+    }
+
+    Action {
         id: helpShowAbout
         iconName: "help-about"
         text: qsTr("About");
@@ -139,6 +155,7 @@ ApplicationWindow {
         Menu {
             title: qsTr("View")
             MenuItem { action: showSearchAction}
+            MenuItem { action: showToolBarAction}
         }
         Menu {
             title: qsTr("Help")
@@ -148,6 +165,8 @@ ApplicationWindow {
     }
 
     toolBar: ToolBar {
+        id: toobar
+        visible: showToolBarAction.checked
         RowLayout {
             anchors.fill: parent
             MenuSeparator{}
@@ -182,9 +201,6 @@ ApplicationWindow {
             width: 250
             Layout.minimumWidth: 150
             Layout.fillHeight: true
-            Settings {
-                property alias filters_tree_width: filtersTree.width
-            }
             selection: ItemSelectionModel {
                 model: mainController.filtersModel
             }
@@ -208,6 +224,7 @@ ApplicationWindow {
             Layout.fillWidth: true
 
             TextField {
+                id: searchField
                 Layout.fillWidth: true
                 visible: showSearchAction.checked
                 placeholderText: "Search"
