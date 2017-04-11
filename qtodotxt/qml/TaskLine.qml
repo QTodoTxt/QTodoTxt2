@@ -1,5 +1,5 @@
 import QtQuick 2.2
-import QtQuick.Controls 1.2
+import QtQuick.Controls 1.4
 
 
 Loader {
@@ -36,10 +36,7 @@ Loader {
                 width: taskLine.width
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
-                onLinkActivated: {
-                    console.log(link)
-                    Qt.openUrlExternally(link)
-                }
+                onLinkActivated:  Qt.openUrlExternally(link)
             }
         }
     }
@@ -53,12 +50,35 @@ Loader {
 
             text: taskLine.text
             focus: true
-            onEditingFinished: {
-                taskLine.state = "show"
-            }
+//            onEditingFinished: {
+//                taskLine.state = "show"
+//            }
             //            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
+
+            onTextChanged: {
+                completionList.visible = true
+                completionList.focus = true
+            }
+
+            CompletionModel {
+                id: completionModel
+                sourceModel: ["(A)", "(B)", "(C)"]
+                completionPrefix: editor.text
+            }
+
+            ListView {
+                id: completionList
+                x: editor.cursorRectangle.x + editor.cursorRectangle.width
+                y: editor.cursorRectangle.y + editor.cursorRectangle.height
+                visible: completionModel.count > 0
+                model: completionModel
+                delegate: Label { text: modelData }
+                height: contentHeight
+            }
+
         }
     }
+
 
     states: [
         State {

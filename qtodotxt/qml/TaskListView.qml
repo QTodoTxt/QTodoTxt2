@@ -34,16 +34,13 @@ ListView {
     delegate: TaskLine {
         width: listView.width
 
-        text: taskList[model.index].text//mc.taskList[model.index].text
-        html: taskList[model.index].html//mc.taskList[model.index].html
+        text: taskList[model.index].text
+        html: taskList[model.index].html
 
         current: (currentIndex === model.index)
 
         onActivated: listView.currentIndex = model.index
-        onShowContextMenu: {
-            console.log("rightclick")
-            contextMenu.popup()
-        }
+        onShowContextMenu: contextMenu.popup()
         onStateChanged: if (state === "show") listView.focus = true
     }
 
