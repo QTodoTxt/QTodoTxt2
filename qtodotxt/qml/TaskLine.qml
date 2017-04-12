@@ -11,6 +11,8 @@ Loader {
     onCurrentChanged: if (!current) state = "show"
     signal activated()
     signal showContextMenu()
+    signal inputAccepted(string newText)
+    onInputAccepted: state = "show"
 
     state: "show"
     sourceComponent: labelComp
@@ -56,6 +58,9 @@ Loader {
             onEditingFinished: {
                 taskLine.state = "show"
             }
+            Keys.onReturnPressed: taskLine.inputAccepted(editor.text)
+            Keys.onEnterPressed: taskLine.inputAccepted(editor.text)
+
             //            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
         }
     }

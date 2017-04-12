@@ -82,11 +82,11 @@ class MainController(QtCore.QObject):
         #self._tasksListQml = taskList
         #self.taskListChanged.emit()
 
-    actionsChanged = QtCore.pyqtSignal()
+    #actionsChanged = QtCore.pyqtSignal()
 
-    @QtCore.pyqtProperty('QVariant', notify=actionsChanged)
-    def actions(self):
-        return self._actions
+    #@QtCore.pyqtProperty('QVariant', notify=actionsChanged)
+    #def actions(self):
+    #    return self._actions
 
     showFutureChanged = QtCore.pyqtSignal()
 
