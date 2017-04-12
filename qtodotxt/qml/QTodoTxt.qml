@@ -29,6 +29,15 @@ ApplicationWindow {
 //        id: mainController
 //    }
 
+    onClosing: {
+        console.log("Closing, modified is:", mainController.modified)
+        if ( mainController.canExit() ) {
+            close.accepted = true
+        } else {
+            console.log("FIXME: popup dialog and as for saving")
+        }
+    }
+
     AboutBox {
         id: aboutBox
         appName: "QTodoTxt"
@@ -82,6 +91,16 @@ ApplicationWindow {
             var idx = mainController.newTask('', taskListView.currentIndex)
             taskListView.currentIndex = idx
             taskListView.editCurrentTask()
+        }
+    }
+
+    Action {
+        id: deleteTask
+        iconName: "list-delete"
+        text: qsTr("Delete Task")
+        shortcut: "Del"
+        onTriggered: {
+            mainController.deleteTask(taskListView.currentIndex)
         }
     }
 
@@ -174,6 +193,7 @@ ApplicationWindow {
             title: qsTr("Edit")
             MenuItem { action: editNewTask }
             MenuItem { action: editEditTask }
+            MenuItem { action: deleteTask }
             MenuSeparator {}
             MenuItem { action: editCompleteTasks}
             MenuSeparator {}
@@ -205,6 +225,7 @@ ApplicationWindow {
             ToolBarSeparator { }
             ToolButton { action: editNewTask }
             ToolButton { action: editEditTask }
+            ToolButton { action: deleteTask }
             ToolButton { action: editCompleteTasks}
             ToolBarSeparator { }
             ToolButton { action: editIncreasePriority}

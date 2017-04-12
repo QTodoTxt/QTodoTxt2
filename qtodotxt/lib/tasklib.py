@@ -277,7 +277,7 @@ def dateString(date):
 
 def filterTasks(filters, tasks):
     if filters is None:
-        return tasks
+        return tasks[:]
 
     filteredTasks = []
     for task in tasks:

@@ -39,16 +39,8 @@ class MainController(QtCore.QObject):
         self._initFiltersTree()
         self._title = "QTodoTxt"
         self._searchText = ""
-
-    def setup(self, view):
-        self.view = view
-
-        #self._initControllers() # not necessary anymore
         self._fileObserver.fileChangetSig.connect(self.openFileByName)
-        #self.view.closeEventSignal.connect(self.view_onCloseEvent)
         filters = self._settings.value("current_filters", ["All"])
-        #self._filters_tree_controller.view.setSelectedFiltersByNames(filters)
-        #self._menu_controller.updateRecentFileActions()
 
     def showError(self, msg):
         self.error.emit(msg)
@@ -58,35 +50,31 @@ class MainController(QtCore.QObject):
         item = self._filters_tree_controller.model.itemFromIndex(idx)
         self._applyFilters(filters=[item.filter])
 
-    #@QtCore.pyqtSlot(result='int')
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
         task = tasklib.Task('')
-        print("Inserting task after", after)
         if after is None:
             after = len(self._tasksList) - 1
-        self._tasksList.insert(after + 1, task)
-        #self._file.tasks.append(task) # should be added here too... something strange,,,
+        self._file.tasks.append(task)
+        self._tasksList.insert(after + 1, task) # force the new task to be visible
+        self.modified = True
         self.taskListChanged.emit()
         return after + 1
+
+    @QtCore.pyqtSlot('QVariant')
+    def deleteTask(self, task):
+        if not isinstance(task, tasklib.Task):
+            # if task is not a task assume it is an int
+            task = self._file.tasks[task]
+        self._file.tasks.remove(task)
+        self.modified = True
+        self._applyFilters()  # update filtered list for UI
 
     taskListChanged = QtCore.pyqtSignal()
 
     @QtCore.pyqtProperty('QVariant', notify=taskListChanged)
     def taskList(self):
         return self._tasksList
-    
-    # not dure we should enable that
-    #@taskList.setter
-    #def taskList(self, taskList):
-        #self._tasksListQml = taskList
-        #self.taskListChanged.emit()
-
-    #actionsChanged = QtCore.pyqtSignal()
-
-    #@QtCore.pyqtProperty('QVariant', notify=actionsChanged)
-    #def actions(self):
-    #    return self._actions
 
     showFutureChanged = QtCore.pyqtSignal()
 
@@ -152,7 +140,7 @@ class MainController(QtCore.QObject):
             self.save()
             self.exit()
 
-        self._tasksList = self._file.tasks
+        self._tasksList = self._file.tasks[:]
         self.taskListChanged.emit()
         self._updateTitle()
 
@@ -187,22 +175,6 @@ class MainController(QtCore.QObject):
         self._tasksList = tasks
         self.taskListChanged.emit()
 
-    def _tasks_list_taskDeleted(self, task):
-        self._file.tasks.remove(task)
-        self._onFileUpdated()
-
-    def _tasks_list_taskCreated(self, task):
-        self._file.tasks.append(task)
-        self._onFileUpdated()
-
-    def _tasks_list_taskModified(self):
-        self._onFileUpdated()
-
-    def _tasks_list_taskArchived(self, task):
-        self._file.saveDoneTask(task)
-        self._file.tasks.remove(task)
-        self._onFileUpdated()
-
     def _archive_all_done_tasks(self):
         done = [task for task in self._file.tasks if task.is_complete]
         for task in done:
@@ -215,26 +187,17 @@ class MainController(QtCore.QObject):
         self.modified = True
         self.auto_save()
 
-    def canExit(self):
-        if not self._modified:
-            return True
-        button = self._dialogs.showSaveDiscardCancel(self.tr('Unsaved changes...'))
-        if button == QtWidgets.QMessageBox.Save:
-            self.save()
-            return True
-        else:
-            return button == QtWidgets.QMessageBox.Discard
-
     modifiedChanged = QtCore.pyqtSignal(bool)
 
     @QtCore.pyqtProperty('bool', notify=modifiedChanged)
     def modified(self):
-        self._modified
+        return self._modified
 
     @modified.setter
     def modified(self, val):
         self._modified = val
         self._updateTitle()
+        self.modifiedChanged.emit(val)
 
     def save(self):
         logger.debug('MainController.save called.')
@@ -280,6 +243,11 @@ class MainController(QtCore.QObject):
             except ErrorLoadingFile as ex:
                 self.showError(str(ex))
 
+    @QtCore.pyqtSlot(result='bool')
+    def canExit(self):
+        self.auto_save()
+        return self.modified
+
     def new(self):
         if self.canExit():
             self._file = File()
@@ -321,6 +289,6 @@ class MainController(QtCore.QObject):
         self._menu_controller.updateRecentFileActions()
 
     def _loadFileToUI(self):
-        self._modified = False
+        self.modified = False
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
 

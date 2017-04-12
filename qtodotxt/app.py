@@ -97,16 +97,12 @@ def run():
         setupSingleton(args, me)
 
     _setupLogging(args.loglevel)
-    #    logger = logging.getLogger(__file__[:-3]) # in case someone wants to log here
-    #window = MainView()
 
     engine = QQmlApplicationEngine()
     controller = MainController(args)
     engine.rootContext().setContextProperty("mainController", controller)
     path = os.path.dirname(__file__)
     engine.load(path + '/qml/QTodoTxt.qml')
-    window = engine.rootObjects()[0]
-    controller.setup(window)
 
     # Connecting to a processor reading TMP file
     if needSingleton:
