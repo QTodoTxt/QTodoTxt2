@@ -114,13 +114,12 @@ Loader {
                     filteredList.forEach(function(i){
                         append({"text": i})
                     })
-                    if (count > 0) completionRect.visible = true
+//                    if (count > 0) completionRect.enabled = true
                 }
             }
 
             Rectangle {
                 id: completionRect
-                //                visible: completionModel.count > 0
                 x: parent.cursorRectangle.x + parent.cursorRectangle.width
                 y: parent.cursorRectangle.y + parent.cursorRectangle.height
                 height: completionList.contentHeight
@@ -143,7 +142,9 @@ Loader {
                     }
 
                     keyNavigationWraps: true
-                    Keys.onEscapePressed: completionRect.visible = false
+
+                    Keys.enabled: completionModel.count > 0
+                    Keys.onEscapePressed: completionRect.enabled = false
                     Keys.onReturnPressed:
                         editor.insert(editor.cursorPosition, completionModel.get(currentIndex).text)
                 }
