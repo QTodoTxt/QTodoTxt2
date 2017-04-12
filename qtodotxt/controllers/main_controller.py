@@ -39,8 +39,11 @@ class MainController(QtCore.QObject):
         self._initFiltersTree()
         self._title = "QTodoTxt"
         self._searchText = ""
-        self._fileObserver.fileChangetSig.connect(self.openFileByName)
+        self._fileObserver.fileChangetSig.connect(self.open)
         filters = self._settings.value("current_filters", ["All"])
+
+    def _taskModified(self, task):
+        self.modified = True
 
     def showError(self, msg):
         self.error.emit(msg)
@@ -53,6 +56,7 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
         task = tasklib.Task('')
+        task.modified.connect(self._taskModified)
         if after is None:
             after = len(self._tasksList) - 1
         self._file.tasks.append(task)
@@ -131,7 +135,7 @@ class MainController(QtCore.QObject):
 
         if filename:
             try:
-                self.openFileByName(filename)
+                self.open(filename)
             except ErrorLoadingFile as ex:
                 self.showError(str(ex))
 
@@ -233,16 +237,6 @@ class MainController(QtCore.QObject):
     def title(self):
         return self._title
 
-    def open(self):
-        (filename, ok) = \
-            QtWidgets.QFileDialog.getOpenFileName(self.view, filter=FILENAME_FILTERS)
-
-        if ok and filename:
-            try:
-                self.openFileByName(filename)
-            except ErrorLoadingFile as ex:
-                self.showError(str(ex))
-
     @QtCore.pyqtSlot(result='bool')
     def canExit(self):
         self.auto_save()
@@ -253,15 +247,8 @@ class MainController(QtCore.QObject):
             self._file = File()
             self._loadFileToUI()
 
-    def revert(self):
-        if self._dialogs.showConfirm(self.tr('Revert to saved file (and lose unsaved changes)?')):
-            try:
-                self.openFileByName(self._file.filename)
-            except ErrorLoadingFile as ex:
-                self.showError(str(ex))
-
-    def openFileByName(self, filename):
-        logger.debug('MainController.openFileByName called with filename="{}"'.format(filename))
+    def open(self, filename):
+        logger.debug('MainController.open called with filename="{}"'.format(filename))
         self._fileObserver.clear()
         try:
             self._file.load(filename)
@@ -274,9 +261,10 @@ class MainController(QtCore.QObject):
             return
         self._loadFileToUI()
         self._settings.setValue("last_open_file", filename)
-        self._settings.sync()
         logger.debug('Adding {} to watchlist'.format(filename))
         self._fileObserver.addPath(self._file.filename)
+        for task in self._file.tasks:
+            task.modified.connect(self._taskModified)
         #self.updateRecentFile()
 
     def updateRecentFile(self):
