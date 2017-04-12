@@ -6,6 +6,7 @@ Loader {
     id: taskLine
     property string text: ""
     property string html: ""
+    property string priority: ""
 
     property bool current: false
     onCurrentChanged: if (!current) state = "show"
@@ -32,15 +33,22 @@ Loader {
                 taskLine.state = "edit"
             }
             Label {
+                id: prioLbl
+                anchors.verticalCenter: parent.verticalCenter
+                width: 20
+                text: taskLine.priority
+            }
+            Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.left: prioLbl.right
                 text: taskLine.html
-                width: taskLine.width
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
                 onLinkActivated:  Qt.openUrlExternally(link)
             }
-        }
+            }
     }
 
     Component {

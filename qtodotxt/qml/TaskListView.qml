@@ -35,6 +35,7 @@ ListView {
 
         text: taskList[model.index].text
         html: taskList[model.index].html
+        priority: taskList[model.index].priority
 
         current: (currentIndex === model.index)
 
