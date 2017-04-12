@@ -14,7 +14,7 @@ class FilterItem(QtGui.QStandardItem):
         self.filter = flt
         parent.appendRow([self])
         #if order:
-            #self.setText(1, str(order))
+        #self.setText(1, str(order))
         if icon:
             self.setIcon(icon)
 
@@ -42,24 +42,21 @@ class FiltersModel(QtGui.QStandardItemModel):
 
     def _addDefaultTreeItems(self):
         self._allTasksItem = FilterItem(self, 'All',
-                                                  AllTasksFilter(),
-                                                  QtGui.QIcon(self.style + '/resources/FilterAll.png'))
-        self._uncategorizedTasksItem = FilterItem(
-            self, 'Uncategorized',
-            UncategorizedTasksFilter(), QtGui.QIcon(self.style + '/resources/FilterUncategorized.png'))
-        self._dueItem = FilterItem(self, 'Due', HasDueDateFilter(), QtGui.QIcon(self.style + '/resources/FilterDue.png'))
+                                        AllTasksFilter(), QtGui.QIcon(self.style + '/resources/FilterAll.png'))
+        self._uncategorizedTasksItem = FilterItem(self, 'Uncategorized',
+                                                  UncategorizedTasksFilter(),
+                                                  QtGui.QIcon(self.style + '/resources/FilterUncategorized.png'))
+        self._dueItem = FilterItem(self, 'Due', HasDueDateFilter(),
+                                   QtGui.QIcon(self.style + '/resources/FilterDue.png'))
         self._contextsItem = FilterItem(self, 'Contexts',
-                                                  HasContextsFilter(),
-                                                  QtGui.QIcon(self.style + '/resources/FilterContexts.png'))
+                                        HasContextsFilter(), QtGui.QIcon(self.style + '/resources/FilterContexts.png'))
         self._projectsItem = FilterItem(self, 'Projects',
-                                                  HasProjectsFilter(),
-                                                  QtGui.QIcon(self.style + '/resources/FilterProjects.png'))
+                                        HasProjectsFilter(), QtGui.QIcon(self.style + '/resources/FilterProjects.png'))
         self._priorityItem = FilterItem(self, 'Priorities',
-                                                  HasPriorityFilter(),
-                                                  QtGui.QIcon(self.style + '/resources/FilterComplete.png'))
+                                        HasPriorityFilter(), QtGui.QIcon(self.style + '/resources/FilterComplete.png'))
         self._completeTasksItem = FilterItem(self, 'Complete',
-                                                       CompleteTasksFilter(),
-                                                       QtGui.QIcon(self.style + '/resources/FilterComplete.png'))
+                                             CompleteTasksFilter(),
+                                             QtGui.QIcon(self.style + '/resources/FilterComplete.png'))
 
     def _initFilterTypeMappings(self):
         self._filterItemByFilterType[ContextFilter] = self._contextsItem
@@ -108,7 +105,7 @@ class FiltersModel(QtGui.QStandardItemModel):
         nbPrioCompl = counters['PrioCompl']
 
         self._completeTasksItem.setText("Complete (%d)" % nbComplete)
-        if (show_completed is True):
+        if show_completed is True:
             self._allTasksItem.setText("All ({0}; {1})".format(nbPending, nbComplete))
             self._dueItem.setText("Due ({0}; {1})".format(nbDue, nbDueCompl))
             self._contextsItem.setText("Contexts ({0}; {1})".format(nbContexts, nbContCompl))
@@ -122,7 +119,6 @@ class FiltersModel(QtGui.QStandardItemModel):
             self._dueItem.setText("Due (%d)" % nbDue)
             self._priorityItem.setText("Priority (%d)" % nbPriority)
             self._uncategorizedTasksItem.setText("Uncategorized (%d)" % nbUncategorized)
-
 
 
 class FiltersTreeController(QtCore.QObject):
@@ -157,46 +153,46 @@ class FiltersTreeController(QtCore.QObject):
     def _addAllContexts(self, mfile, show_completed):
         contexts = mfile.getAllContexts(show_completed)
         for context, number in contexts.items():
-            filter = ContextFilter(context)
-            self.model.addFilter(filter, number)
+            mfilter = ContextFilter(context)
+            self.model.addFilter(mfilter, number)
 
     def _addAllProjects(self, mfile, show_completed):
         projects = mfile.getAllProjects(show_completed)
         for project, number in projects.items():
-            filter = ProjectFilter(project)
-            self.model.addFilter(filter, number)
+            mfilter = ProjectFilter(project)
+            self.model.addFilter(mfilter, number)
 
     def _addAllPriorities(self, mfile, show_completed):
         priorities = mfile.getAllPriorities(show_completed)
         for priority, number in priorities.items():
-            filter = PriorityFilter(priority)
-            self.model.addFilter(filter, number)
+            mfilter = PriorityFilter(priority)
+            self.model.addFilter(mfilter, number)
 
     def _addAllDueRanges(self, mfile, show_completed):
 
         dueRanges, rangeSorting = mfile.getAllDueRanges(show_completed)
 
-        for range, number in dueRanges.items():
-            if range == 'Today':
-                filter = DueTodayFilter(range)
+        for mrange, number in dueRanges.items():
+            if mrange == 'Today':
+                mfilter = DueTodayFilter(mrange)
                 sortKey = rangeSorting['Today']
-            elif range == 'Tomorrow':
-                filter = DueTomorrowFilter(range)
+            elif mrange == 'Tomorrow':
+                mfilter = DueTomorrowFilter(mrange)
                 sortKey = rangeSorting['Tomorrow']
-            elif range == 'This week':
-                filter = DueThisWeekFilter(range)
+            elif mrange == 'This week':
+                mfilter = DueThisWeekFilter(mrange)
                 sortKey = rangeSorting['This week']
-            elif range == 'This month':
-                filter = DueThisMonthFilter(range)
+            elif mrange == 'This month':
+                mfilter = DueThisMonthFilter(mrange)
                 sortKey = rangeSorting['This month']
-            elif range == 'Overdue':
-                filter = DueOverdueFilter(range)
+            elif mrange == 'Overdue':
+                mfilter = DueOverdueFilter(mrange)
                 sortKey = rangeSorting['Overdue']
 
-            self.model.addDueRangeFilter(filter, number, sortKey)
+            self.model.addDueRangeFilter(mfilter, number, sortKey)
 
     def _reselect(self, previouslySelectedFilters):
-        for filter in previouslySelectedFilters:
-            self.view.selectFilter(filter)
+        for mfilter in previouslySelectedFilters:
+            self.view.selectFilter(mfilter)
         if not self.view.getSelectedFilters():
             self.view.selectAllTasksFilter()

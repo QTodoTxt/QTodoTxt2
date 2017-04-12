@@ -1,9 +1,7 @@
 import logging
 import os
-import sys
-import time
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
 from qtodotxt.lib import tasklib
@@ -12,12 +10,9 @@ from qtodotxt.lib.file import ErrorLoadingFile, File, FileObserver
 from qtodotxt.controllers.filters_tree_controller import FiltersTreeController
 from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter, CompleteTasksFilter
 
-
 logger = logging.getLogger(__name__)
 
-FILENAME_FILTERS = ';;'.join([
-    'Text Files (*.txt)',
-    'All Files (*.*)'])
+FILENAME_FILTERS = ';;'.join(['Text Files (*.txt)', 'All Files (*.*)'])
 
 
 class MainController(QtCore.QObject):
@@ -35,19 +30,19 @@ class MainController(QtCore.QObject):
         self._showFuture = True
         self._file = File()
         self._fileObserver = FileObserver(self, self._file)
-        self.modified = False
+        self._modified = False
         self._initFiltersTree()
         self._title = "QTodoTxt"
         self._searchText = ""
         self._fileObserver.fileChangetSig.connect(self.open)
-        filters = self._settings.value("current_filters", ["All"])
+        # filters = self._settings.value("current_filters", ["All"])  # move to QML
 
     def _taskModified(self, task):
         self.modified = True
 
     def showError(self, msg):
         self.error.emit(msg)
-    
+
     @QtCore.pyqtSlot('QVariant')
     def filterRequest(self, idx):
         item = self._filters_tree_controller.model.itemFromIndex(idx)
@@ -55,12 +50,12 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
-        task = tasklib.Task('')
+        task = tasklib.Task(text)
         task.modified.connect(self._taskModified)
         if after is None:
             after = len(self._tasksList) - 1
         self._file.tasks.append(task)
-        self._tasksList.insert(after + 1, task) # force the new task to be visible
+        self._tasksList.insert(after + 1, task)  # force the new task to be visible
         self.modified = True
         self.taskListChanged.emit()
         return after + 1
@@ -100,7 +95,7 @@ class MainController(QtCore.QObject):
     @searchText.setter
     def searchText(self, txt):
         self._searchText = txt
-        self._applyFilters(searchText=txt)
+        self._applyFilters()
         self.searchTextChanged.emit(txt)
 
     showCompletedChanged = QtCore.pyqtSignal()
@@ -112,7 +107,7 @@ class MainController(QtCore.QObject):
     @showCompleted.setter
     def showCompleted(self, val):
         self._showCompleted = val
-        self.showCompleted.emit(val)
+        self.showCompletedChanged.emit(val)
 
     def auto_save(self):
         if int(self._settings.value("auto_save", 1)):
@@ -162,19 +157,19 @@ class MainController(QtCore.QObject):
     def filtersModel(self):
         return self._filters_tree_controller.model
 
-    def _applyFilters(self, filters=None, searchText=None):
+    def _applyFilters(self, filters=None):
         # First we filter with filters tree
         #if filters is None:
-            #filters = self._filters_tree_controller.view.getSelectedFilters()
+        #filters = self._filters_tree_controller.view.getSelectedFilters()
         tasks = tasklib.filterTasks(filters, self._file.tasks)
         # Then with our search text
         if self._searchText:
-            tasks = tasklib.filterTasks([SimpleTextFilter(searchText)], tasks)
+            tasks = tasklib.filterTasks([SimpleTextFilter(self._searchText)], tasks)
         # with future filter if needed
         if not self._showFuture:
             tasks = tasklib.filterTasks([FutureFilter()], tasks)
         # with complete filter if needed
-        if not self._showCompleted and ( not filters or not CompleteTasksFilter() in filters): 
+        if not self._showCompleted and (not filters or not CompleteTasksFilter() in filters):
             tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
         self._tasksList = tasks
         self.taskListChanged.emit()
@@ -215,8 +210,8 @@ class MainController(QtCore.QObject):
             self._file.save(filename)
             self._settings.setValue("last_open_file", filename)
             self._settings.sync()
-            self._modfied = True
-            logger.debug('Adding {} to watchlist'.format(filename))
+            self.modified = True
+            logger.debug('Adding %s to watchlist', filename)
             self._fileObserver.addPath(self._file.filename)
 
     def _updateTitle(self):
@@ -248,7 +243,7 @@ class MainController(QtCore.QObject):
             self._loadFileToUI()
 
     def open(self, filename):
-        logger.debug('MainController.open called with filename="{}"'.format(filename))
+        logger.debug('MainController.open called with filename="%s"', filename)
         self._fileObserver.clear()
         try:
             self._file.load(filename)
@@ -261,7 +256,6 @@ class MainController(QtCore.QObject):
             return
         self._loadFileToUI()
         self._settings.setValue("last_open_file", filename)
-        logger.debug('Adding {} to watchlist'.format(filename))
         self._fileObserver.addPath(self._file.filename)
         for task in self._file.tasks:
             task.modified.connect(self._taskModified)
@@ -273,10 +267,9 @@ class MainController(QtCore.QObject):
             lastOpenedArray.remove(self._file.filename)
         lastOpenedArray = lastOpenedArray[:self._menu_controller.maxRecentFiles]
         lastOpenedArray.insert(0, self._file.filename)
-        self._settings.setValue("lastOpened", lastOpenedArray[: self._menu_controller.maxRecentFiles])
+        self._settings.setValue("lastOpened", lastOpenedArray[:self._menu_controller.maxRecentFiles])
         self._menu_controller.updateRecentFileActions()
 
     def _loadFileToUI(self):
         self.modified = False
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
-
