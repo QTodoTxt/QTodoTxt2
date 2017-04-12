@@ -48,7 +48,7 @@ Loader {
                 wrapMode: Text.Wrap
                 onLinkActivated:  Qt.openUrlExternally(link)
             }
-            }
+        }
     }
 
     Component {
@@ -78,10 +78,10 @@ Loader {
                 completionModel.cursorPosition = cursorPosition
             }
 
-//            Keys.onDownPressed: {
-//                console.log("down")
-//                if (completionRect.visible) completionList.focus = true
-//            }
+            //            Keys.onDownPressed: {
+            //                console.log("down")
+            //                if (completionRect.visible) completionList.focus = true
+            //            }
 
             Keys.forwardTo: [completionList]
 
@@ -89,12 +89,6 @@ Loader {
             ListModel {
                 id: completionModel
                 property var sourceModel: ["(A)", "(B)", "(C)", "+project", "@context"]
-//                onSourceModelChanged: {
-//                    sourceModel.forEach(function(curStr){
-//                        var curArr = curStr.split("")
-//                        curArr.forEach(function(curChar))
-//                    })
-//                }
 
                 property var sourceModelTree: []
                 property string completionPrefix: parent.text
@@ -104,12 +98,15 @@ Loader {
                     clear()
                     if (cursorPosition && completionPrefix) {
                         var strToCursor = completionPrefix.substring(0,cursorPosition)
-                        var curWord = strToCursor.match(/.*\s(.+)/)[1]
-                        var filteredList = sourceModel.filter(function(completionItem) {
-                                                    return completionItem.startsWith(curWord)
-                                                })
-                        console.log(curWord, filteredList)
-                        if (filteredList.length > 0) populateModel(filteredList)
+                        var match = strToCursor.match(/.*\s(.+)/)
+                        if (match) {
+                            var curWord = match[1]
+                            var filteredList = sourceModel.filter(function(completionItem) {
+                                return completionItem.startsWith(curWord)
+                            })
+                            console.log(curWord, filteredList)
+                            if (filteredList.length > 0) populateModel(filteredList)
+                        }
                     }
                 }
 
@@ -123,7 +120,7 @@ Loader {
 
             Rectangle {
                 id: completionRect
-//                visible: completionModel.count > 0
+                //                visible: completionModel.count > 0
                 x: parent.cursorRectangle.x + parent.cursorRectangle.width
                 y: parent.cursorRectangle.y + parent.cursorRectangle.height
                 height: completionList.contentHeight
