@@ -81,6 +81,14 @@ Loader {
             ListModel {
                 id: completionModel
                 property var sourceModel: ["(A)", "(B)", "(C)", "+project", "@context"]
+//                onSourceModelChanged: {
+//                    sourceModel.forEach(function(curStr){
+//                        var curArr = curStr.split("")
+//                        curArr.forEach(function(curChar))
+//                    })
+//                }
+
+                property var sourceModelTree: []
                 property string completionPrefix: parent.text
                 property int cursorPosition: parent.cursorPosition
 
@@ -89,22 +97,25 @@ Loader {
                     if (cursorPosition && completionPrefix) {
                         var strToCursor = completionPrefix.substring(0,cursorPosition)
                         var curWord = strToCursor.match(/.*\s(.+)/)[1]
-                        if (curWord === "(") populateModel()
+                        var filteredList = sourceModel.filter(function(completionItem) {
+                                                    return completionItem.startsWith(curWord)
+                                                })
+                        console.log(curWord, filteredList)
+                        if (filteredList.length > 0) populateModel(filteredList)
                     }
                 }
 
-                function populateModel() {
-                    sourceModel.forEach(function(i){
+                function populateModel(filteredList) {
+                    filteredList.forEach(function(i){
                         append({"text": i})
                     })
-
+                    if (count > 0) completionRect.visible = true
                 }
-
             }
 
             Rectangle {
                 id: completionRect
-                visible: completionModel.count > 0
+//                visible: completionModel.count > 0
                 x: parent.cursorRectangle.x + parent.cursorRectangle.width
                 y: parent.cursorRectangle.y + parent.cursorRectangle.height
                 height: completionList.contentHeight
