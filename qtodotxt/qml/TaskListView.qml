@@ -15,8 +15,7 @@ ListView {
         id: systemPalette
     }
 
-    highlight:
-        Rectangle {
+    highlight: Rectangle {
         color: systemPalette.highlight
         opacity: 0.5
     }

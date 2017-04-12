@@ -45,8 +45,8 @@ Loader {
         id: editorComp
         TextArea {
             id: editor
-//            width: taskLine.width
-//            anchors.verticalCenter: parent.verticalCenter
+            //            width: taskLine.width
+            //            anchors.verticalCenter: parent.verticalCenter
 
             text: taskLine.text
             focus: true
@@ -58,44 +58,74 @@ Loader {
             onTextChanged: {
                 completionModel.completionPrefix = text
                 completionList.visible = true
-//                completionList.focus = true
+                //                completionList.focus = true
             }
 
             onCursorPositionChanged: {
                 completionModel.cursorPosition = cursorPosition
             }
 
+//            Keys.onDownPressed: {
+//                console.log("down")
+//                if (completionRect.visible) completionList.focus = true
+//            }
+
+            Keys.forwardTo: [completionList]
+
+
             ListModel {
                 id: completionModel
-                property var sourceModel: ["(A)", "(B)", "(C)"]
+                property var sourceModel: ["(A)", "(B)", "(C)", "+project", "@context"]
                 property string completionPrefix: parent.text
                 property int cursorPosition: parent.cursorPosition
 
                 onCompletionPrefixChanged: {
                     clear()
                     if (cursorPosition && completionPrefix) {
-                    var strToCursor = completionPrefix.substring(0,cursorPosition)
-                    var curWord = strToCursor.match(/.*\s(.+)/)[1]
-                    if (curWord === "(") populateModel()
-                }
+                        var strToCursor = completionPrefix.substring(0,cursorPosition)
+                        var curWord = strToCursor.match(/.*\s(.+)/)[1]
+                        if (curWord === "(") populateModel()
+                    }
                 }
 
                 function populateModel() {
                     sourceModel.forEach(function(i){
-                    append({"text": i})
+                        append({"text": i})
                     })
+
                 }
 
             }
 
-            ListView {
-                id: completionList
+            Rectangle {
+                id: completionRect
+                visible: completionModel.count > 0
                 x: parent.cursorRectangle.x + parent.cursorRectangle.width
                 y: parent.cursorRectangle.y + parent.cursorRectangle.height
-                visible: completionModel.count > 0
-                model: completionModel
-                delegate: Label { text: modelData }
-                height: contentHeight
+                height: completionList.contentHeight
+                width: completionList.contentWidth
+                color: "white"
+                border {
+                    color: "black"
+                    width: 2
+                }
+
+                ListView {
+                    id: completionList
+                    anchors.fill:parent
+
+                    model: completionModel
+                    delegate: Label { text: model.text }
+                    highlight: Rectangle {
+                        color: systemPalette.highlight
+                        opacity: 0.5
+                    }
+
+                    keyNavigationWraps: true
+                    Keys.onEscapePressed: completionRect.visible = false
+                    Keys.onReturnPressed:
+                        editor.insert(editor.cursorPosition, completionModel.get(currentIndex).text)
+                }
             }
 
         }
