@@ -14,6 +14,15 @@ ApplicationWindow {
     width: 1024
     height: 768
     title: mainController.title
+    //mainController.error.connect(showError)
+    Connections {
+        target: mainController
+        onError: {
+            console.log("OKOKOKOO")
+            errorDialog.text = msg
+            errorDialog.open()
+        }
+    }
     Settings {
         category: "WindowState"
         property alias window_width: window.width
@@ -245,11 +254,22 @@ ApplicationWindow {
         onAccepted: {
             if (fileDialog.selectExisting) {
                 console.log("OPENING", fileUrl.toString())
-                mainController.open(fileUrl.toString()) //FIXME file wont open
+                mainController.open(fileUrl.toString()) 
             } else {
                 document.saveAs(fileUrl, selectedNameFilter) //FIXME
             }
         }
+    }
+
+    MessageDialog {
+        id: errorDialog
+        title: "QTodotTxt Error"
+        text: "It's so cool that you are using Qt Quick."
+        onAccepted: {
+            console.log("And of course you could only agree.")
+            Qt.quit()
+        }
+        //Component.onCompleted: visible = true
     }
 
     SplitView {
@@ -284,12 +304,12 @@ ApplicationWindow {
             Layout.minimumWidth: 50
             Layout.fillWidth: true
 
-            RowLayout {
-                Layout.fillWidth: true
-                Text { visible: false; text: "Sort by: " }
-                Button { visible: false; text: "(A)" }
-                Button { visible: false; text: "cDate" }
-                Button { visible: false; text: "dueDate" }
+            //RowLayout {
+                //Layout.fillWidth: true
+                //Text { visible: false; text: "Sort by: " }
+                //Button { visible: false; text: "(A)" }
+                //Button { visible: false; text: "cDate" }
+                //Button { visible: false; text: "dueDate" }
 
                 TextField {
                     Layout.fillWidth: true
@@ -301,7 +321,7 @@ ApplicationWindow {
                         searchField.focus = true
                     }
                 }
-            }
+            //}
 
             TaskListView {
                 id: taskListView

@@ -17,7 +17,7 @@ FILENAME_FILTERS = ';;'.join(['Text Files (*.txt)', 'All Files (*.*)'])
 
 class MainController(QtCore.QObject):
 
-    error = QtCore.pyqtSignal(str)
+    error = QtCore.pyqtSignal(str, arguments=["msg"])
 
     def __init__(self, args):
         super(MainController, self).__init__()
