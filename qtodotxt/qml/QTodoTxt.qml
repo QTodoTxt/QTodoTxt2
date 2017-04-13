@@ -25,9 +25,9 @@ ApplicationWindow {
         property alias search_field_visible: showSearchAction.checked
         property alias toolbar_visible: showToolBarAction.checked
     }
-//    MainController {
-//        id: mainController
-//    }
+    //    MainController {
+    //        id: mainController
+    //    }
 
     onClosing: {
         console.log("Closing, modified is:", mainController.modified)
@@ -258,7 +258,7 @@ ApplicationWindow {
             selection: ItemSelectionModel {
                 model: mainController.filtersModel
             }
-    
+
             selectionMode: SelectionMode.ExtendedSelection
             TableViewColumn {
                 title: "Filters"
@@ -277,14 +277,22 @@ ApplicationWindow {
             Layout.minimumWidth: 50
             Layout.fillWidth: true
 
-            TextField {
-                id: searchField
+            RowLayout {
                 Layout.fillWidth: true
-                visible: showSearchAction.checked
-                placeholderText: "Search"
-                onTextChanged: {
-                    mainController.searchText = text
-                    searchField.focus = true
+                Text { text: "Sort by: " }
+                Button { text: "(A)" }
+                Button { text: "cDate" }
+                Button { text: "dueDate" }
+
+                TextField {
+                    Layout.fillWidth: true
+                    id: searchField
+                    visible: showSearchAction.checked
+                    placeholderText: "Search"
+                    onTextChanged: {
+                        mainController.searchText = text
+                        searchField.focus = true
+                    }
                 }
             }
 
