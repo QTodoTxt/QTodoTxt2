@@ -238,10 +238,12 @@ ApplicationWindow {
         id: fileDialog
         nameFilters: ["Text files (*.txt)"]
         onAccepted: {
-            if (fileDialog.selectExisting)
+            if (fileDialog.selectExisting) {
+                console.log("OPENING", fileUrl.toString())
                 mainController.open(fileUrl.toString()) //FIXME file wont open
-            else
+            } else {
                 document.saveAs(fileUrl, selectedNameFilter) //FIXME
+            }
         }
     }
 

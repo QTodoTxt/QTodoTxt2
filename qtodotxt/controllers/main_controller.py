@@ -41,6 +41,7 @@ class MainController(QtCore.QObject):
         self.modified = True
 
     def showError(self, msg):
+        print("ERROR", msg)
         self.error.emit(msg)
 
     @QtCore.pyqtSlot('QVariant')
@@ -244,6 +245,8 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtSlot('QString') #TODO: should this return a (error) message to qml?
     def open(self, filename):
+        if filename.startswith("file:/"):
+            filename = filename[6:] 
         logger.debug('MainController.open called with filename="%s"', filename)
         self._fileObserver.clear()
         try:
@@ -260,6 +263,9 @@ class MainController(QtCore.QObject):
         self._fileObserver.addPath(self._file.filename)
         for task in self._file.tasks:
             task.modified.connect(self._taskModified)
+        self._applyFilters()
+        self.taskListChanged.emit()
+        print(self.taskList)
         #self.updateRecentFile()
 
     def updateRecentFile(self):
