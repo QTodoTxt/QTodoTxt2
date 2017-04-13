@@ -110,6 +110,11 @@ class Task(QtCore.QObject):
     def priority(self):
         return self._priority
 
+    @QtCore.pyqtProperty('QString', notify=modified)
+    def priorityHtml(self):
+        htmlizer = TaskHtmlizer()
+        return htmlizer._htmlizePriority(self.priority)
+
     def _parseWord(self, word):
         if len(word) > 1:
             if word.startswith('@'):
