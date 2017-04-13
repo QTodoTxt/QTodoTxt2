@@ -33,6 +33,7 @@ ApplicationWindow {
         category: "VisibleWidgets"
         property alias search_field_visible: showSearchAction.checked
         property alias toolbar_visible: showToolBarAction.checked
+        property alias filter_panel_visible: showFilterPanel.checked
     }
     //    MainController {
     //        id: mainController
@@ -95,6 +96,14 @@ ApplicationWindow {
         onTriggered: {        }
     }
 
+    Action {
+        id: quitApp
+        iconName: "application-exit"
+        text: qsTr("Exit")
+        shortcut: "Alt+F4"
+        onTriggered: {        }
+    }
+
 
     Action {
         id: editNewTask
@@ -110,7 +119,7 @@ ApplicationWindow {
 
     Action {
         id: deleteTask
-        iconName: "list-delete"
+        iconName: "edit-delete-symbolic"
         text: qsTr("Delete Task")
         shortcut: "Del"
         onTriggered: {
@@ -129,15 +138,15 @@ ApplicationWindow {
 
     Action {
         id: editCompleteTasks
-        iconName: "document-edit"
-        text: qsTr("Complete Selected Tasks")
+        iconName: "checkmark"
+        text: qsTr("Complete Task")
         shortcut: "X"
         onTriggered: {        }
     }
 
     Action {
         id: editIncreasePriority
-        iconName: "plus"
+        iconName: "arrow-up"
         text: qsTr("Increase Priority")
         shortcut: "+"
         onTriggered: {
@@ -147,7 +156,7 @@ ApplicationWindow {
 
     Action {
         id: editDecreasePriority
-        iconName: "minus"
+        iconName: "arrow-down"
         text: qsTr("Decrease Priority")
         shortcut: "-"
         onTriggered: {
@@ -164,8 +173,17 @@ ApplicationWindow {
     }
 
     Action {
+        id: showFilterPanel
+        iconName: "view-filter"
+        text: qsTr("Show Filter Panel")
+//        shortcut: "Ctrl+T"
+        checkable: true
+        checked: true
+    }
+
+    Action {
         id: showToolBarAction
-        //iconName: "toolbar"
+        iconName: "configure-toolbars"
         text: qsTr("Show ToolBar")
         shortcut: "Ctrl+T"
         checkable: true
@@ -188,6 +206,24 @@ ApplicationWindow {
         onTriggered: aboutBox.open()
     }
 
+    Action {
+        id: sortTodoTxt
+        iconName: "view-sort-ascending-symbolic"
+        text: "todo.txt" //FIXME better text for sorting like in todo.txt file
+    }
+
+    Action {
+        id: sortCreationDate
+        iconName: "view-sort-ascending-symbolic"
+        text: "Creation Date"
+    }
+
+    Action {
+        id: sortDueDate
+        iconName: "view-sort-ascending-symbolic"
+        text: "Due Date"
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -198,10 +234,11 @@ ApplicationWindow {
             MenuSeparator {}
             MenuItem {
                 text: qsTr("Preferences")
+                iconName: "configure"
                 onTriggered: preferencesWindow.show()
             }
             MenuSeparator {}
-            MenuItem { text: qsTr("Exit");  shortcut: "Alt+F4"}
+            MenuItem { action: quitApp}
         }
         Menu {
             title: qsTr("Edit")
@@ -217,7 +254,14 @@ ApplicationWindow {
         Menu {
             title: qsTr("View")
             MenuItem { action: showSearchAction}
+            MenuItem { action: showFilterPanel}
             MenuItem { action: showToolBarAction}
+        }
+        Menu {
+            title: qsTr("Sorting")
+            MenuItem { action: sortTodoTxt}
+            MenuItem { action: sortCreationDate}
+            MenuItem { action: sortDueDate}
         }
         Menu {
             title: qsTr("Help")
@@ -232,7 +276,7 @@ ApplicationWindow {
         RowLayout {
             anchors.fill: parent
             ToolButton { action: showSearchAction}
-            ToolButton { action: showToolBarAction}
+            ToolButton { action: showFilterPanel}
             ToolBarSeparator { }
             ToolButton { action: fileOpen }
             ToolButton { action: fileSave }
@@ -278,10 +322,12 @@ ApplicationWindow {
 
         TreeView {
             id: filtersTree
-            model: mainController.filtersModel
             width: 250
             Layout.minimumWidth: 150
             Layout.fillHeight: true
+            visible: showFilterPanel.checked
+
+            model: mainController.filtersModel
             selection: ItemSelectionModel {
                 model: mainController.filtersModel
             }
@@ -304,13 +350,6 @@ ApplicationWindow {
             Layout.minimumWidth: 50
             Layout.fillWidth: true
 
-            //RowLayout {
-                //Layout.fillWidth: true
-                //Text { visible: false; text: "Sort by: " }
-                //Button { visible: false; text: "(A)" }
-                //Button { visible: false; text: "cDate" }
-                //Button { visible: false; text: "dueDate" }
-
                 TextField {
                     Layout.fillWidth: true
                     id: searchField
@@ -321,7 +360,6 @@ ApplicationWindow {
                         searchField.focus = true
                     }
                 }
-            //}
 
             TaskListView {
                 id: taskListView
