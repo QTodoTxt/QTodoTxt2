@@ -11,9 +11,6 @@ ListView {
         }
     }
 
-    SystemPalette {
-        id: systemPalette
-    }
 
     highlight: Rectangle {
         color: systemPalette.highlight

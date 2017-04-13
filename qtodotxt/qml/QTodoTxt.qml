@@ -38,6 +38,11 @@ ApplicationWindow {
         }
     }
 
+    SystemPalette {
+        id: systemPalette
+    }
+
+
     AboutBox {
         id: aboutBox
         appName: "QTodoTxt"
@@ -305,8 +310,7 @@ ApplicationWindow {
 
                 taskList: mainController.taskList
             }
-
         }
-    }
 
+    }
 }

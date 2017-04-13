@@ -69,17 +69,18 @@ Loader {
             }
             Keys.onReturnPressed: taskLine.inputAccepted(editor.text)
             Keys.onEnterPressed: taskLine.inputAccepted(editor.text)
+            Keys.onEscapePressed: taskLine.state = "show"
 
             //            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
 
             onTextChanged: {
-                completionModel.completionPrefix = text
-                completionList.visible = true
+                completionPopup.completionPrefix = text
+                //completionList.visible = true
                 //                completionList.focus = true
             }
 
             onCursorPositionChanged: {
-                completionModel.cursorPosition = cursorPosition
+                completionPopup.cursorPosition = cursorPosition
             }
 
             //            Keys.onDownPressed: {
@@ -87,74 +88,11 @@ Loader {
             //                if (completionRect.visible) completionList.focus = true
             //            }
 
-            Keys.forwardTo: [completionList]
+            Keys.forwardTo: [completionPopup.completionList]
 
-
-            ListModel {
-                id: completionModel
-                property var sourceModel: ["(A)", "(B)", "(C)", "+project", "@context"]
-
-                property var sourceModelTree: []
-                property string completionPrefix: parent.text
-                property int cursorPosition: parent.cursorPosition
-
-                onCompletionPrefixChanged: {
-                    clear()
-                    if (cursorPosition && completionPrefix) {
-                        var strToCursor = completionPrefix.substring(0,cursorPosition)
-                        var match = strToCursor.match(/.*\s(.+)/)
-                        if (match) {
-                            var curWord = match[1]
-                            var filteredList = sourceModel.filter(function(completionItem) {
-                                completionItem.toString()
-                                return completionItem.startsWith(curWord)
-                            })
-                            console.log(curWord, filteredList)
-                            if (filteredList.length > 0) populateModel(filteredList)
-                        }
-                    }
-                }
-
-                function populateModel(filteredList) {
-                    filteredList.forEach(function(i){
-                        append({"text": i})
-                    })
-//                    if (count > 0) completionRect.enabled = true
-                }
+            CompletionPopup {
+                id: completionPopup
             }
-
-            Rectangle {
-                id: completionRect
-                x: parent.cursorRectangle.x + parent.cursorRectangle.width
-                y: parent.cursorRectangle.y + parent.cursorRectangle.height
-                height: completionList.contentHeight
-                width: completionList.contentWidth
-                color: "white"
-                border {
-                    color: "black"
-                    width: 2
-                }
-
-                ListView {
-                    id: completionList
-                    anchors.fill:parent
-
-                    model: completionModel
-                    delegate: Label { text: model.text }
-                    highlight: Rectangle {
-                        color: systemPalette.highlight
-                        opacity: 0.5
-                    }
-
-                    keyNavigationWraps: true
-
-                    Keys.enabled: completionModel.count > 0
-                    Keys.onEscapePressed: completionRect.enabled = false
-                    Keys.onReturnPressed:
-                        editor.insert(editor.cursorPosition, completionModel.get(currentIndex).text)
-                }
-            }
-
         }
     }
 
