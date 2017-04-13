@@ -239,7 +239,7 @@ ApplicationWindow {
         nameFilters: ["Text files (*.txt)"]
         onAccepted: {
             if (fileDialog.selectExisting)
-                document.fileUrl = fileUrl //FIXME
+                mainController.open(fileUrl.toString()) //FIXME file wont open
             else
                 document.saveAs(fileUrl, selectedNameFilter) //FIXME
         }

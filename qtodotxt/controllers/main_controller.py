@@ -242,6 +242,7 @@ class MainController(QtCore.QObject):
             self._file = File()
             self._loadFileToUI()
 
+    @QtCore.pyqtSlot('QString') #TODO: should this return a (error) message to qml?
     def open(self, filename):
         logger.debug('MainController.open called with filename="%s"', filename)
         self._fileObserver.clear()

@@ -44,7 +44,6 @@ ListView {
         onStateChanged: if (state === "show") listView.focus = true
         onInputAccepted: {
             console.log("new text: ", newText)
-            //FIXME: here we should set the new text
             taskList[model.index].text = newText
         }
     }
