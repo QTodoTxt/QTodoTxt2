@@ -279,10 +279,10 @@ ApplicationWindow {
 
             RowLayout {
                 Layout.fillWidth: true
-                Text { text: "Sort by: " }
-                Button { text: "(A)" }
-                Button { text: "cDate" }
-                Button { text: "dueDate" }
+                Text { visible: false; text: "Sort by: " }
+                Button { visible: false; text: "(A)" }
+                Button { visible: false; text: "cDate" }
+                Button { visible: false; text: "dueDate" }
 
                 TextField {
                     Layout.fillWidth: true

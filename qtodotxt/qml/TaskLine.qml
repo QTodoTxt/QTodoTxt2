@@ -106,6 +106,7 @@ Loader {
                         if (match) {
                             var curWord = match[1]
                             var filteredList = sourceModel.filter(function(completionItem) {
+                                completionItem.toString()
                                 return completionItem.startsWith(curWord)
                             })
                             console.log(curWord, filteredList)
