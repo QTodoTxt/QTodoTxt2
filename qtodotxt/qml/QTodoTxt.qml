@@ -343,6 +343,7 @@ ApplicationWindow {
     }
 
     SplitView {
+        id: splitView
         anchors.fill: parent
         orientation: Qt.Horizontal
 
@@ -399,8 +400,8 @@ ApplicationWindow {
         }
 
     }
-//    CompletionPopup {
-//        id: completionPopup
+    CompletionPopup {
+        id: completionPopup
 //        textItem: searchField
-//    }
+    }
 }

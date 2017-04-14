@@ -59,8 +59,6 @@ Loader {
         id: editorComp
         TextArea {
             id: editor
-            //            width: taskLine.width
-            //            anchors.verticalCenter: parent.verticalCenter
 
             text: taskLine.text
             focus: true
@@ -71,29 +69,14 @@ Loader {
             Keys.onEnterPressed: taskLine.inputAccepted(editor.text)
             Keys.onEscapePressed: taskLine.state = "show"
 
-            //            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
-
-//            onTextChanged: {
-//                completionPopup.completionPrefix = text
-//                //completionList.visible = true
-//                //                completionList.focus = true
-//            }
-
-//            onCursorPositionChanged: {
-//                completionPopup.cursorPosition = cursorPosition
-//            }
-
-            //            Keys.onDownPressed: {
-            //                console.log("down")
-            //                if (completionRect.visible) completionList.focus = true
-            //            }
 
             Keys.forwardTo: [completionPopup.completionList]
 
-            CompletionPopup {
-                id: completionPopup
-                textItem: parent
-            }
+//            CompletionPopup {
+//                id: completionPopup
+//                textItem: parent
+//            }
+            Component.onCompleted: completionPopup.textItem = editor
         }
     }
 

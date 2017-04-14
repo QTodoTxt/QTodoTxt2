@@ -25,14 +25,19 @@ Rectangle {
 
     function setPosition() {
         completionPrefixItem.text = completionModel.completionPrefix
-        x = textItem.x + textItem.cursorRectangle.x
+        var _x = textItem.cursorRectangle.x
                 + textItem.cursorRectangle.width - completionPrefixItem.contentWidth
-        y = textItem.y + textItem.cursorRectangle.y
-                + textItem.cursorRectangle.height
+        var _y = textItem.cursorRectangle.y
+                + textItem.cursorRectangle.height + 5
+        var globalCoords = textItem.mapToItem(splitView, _x, _y)
+        x = globalCoords.x
+        y = globalCoords.y
+//        console.log(x, y)
+//        x=0;y=0
     }
 
     function insertSelection(selectedText) {
-        console.log(popup.textItem.cursorPosition, selectedText)
+//        console.log(popup.textItem.cursorPosition, selectedText)
         popup.textItem.remove(popup.textItem.cursorPosition - completionModel.completionPrefix.length, popup.textItem.cursorPosition)
         popup.textItem.insert(popup.textItem.cursorPosition, selectedText)
         popup.state = "invisible"
@@ -42,7 +47,7 @@ Rectangle {
         id: completionPrefixItem
         visible: false
         //text: completionModel.completionPrefix
-        onTextChanged: console.log("txtlgth", contentWidth)
+//        onTextChanged: console.log("txtlgth", contentWidth)
     }
 
     states: [
@@ -87,7 +92,7 @@ Rectangle {
 
 
         onCompletionPrefixChanged: {
-            console.log(completionPrefix)
+//            console.log(completionPrefix)
             clear()
             if (completionPrefix.length > 0) {
                 var filteredList = sourceModel.filter(function(completionItem) {
@@ -99,8 +104,9 @@ Rectangle {
                     append({"text": i})
                 })
                 if (popup.state === "invisible") popup.setPosition()
-                if (count > 0 && !popup.visible) popup.state = "visible"
-            }
+                if (count > 0) popup.state = "visible"
+                else popup.state = "invisible"
+            } else popup.state = "invisible"
         }
     }
 
