@@ -33,6 +33,7 @@ class MainController(QtCore.QObject):
         self._modified = False
         self._initFiltersTree()
         self._title = "QTodoTxt"
+        self._recentFiles = self._settings.value("recent_files", [])
         self._searchText = ""
         self._fileObserver.fileChangetSig.connect(self.open)
         # filters = self._settings.value("current_filters", ["All"])  # move to QML
@@ -252,11 +253,7 @@ class MainController(QtCore.QObject):
         try:
             self._file.load(filename)
         except Exception as ex:
-            currentfile = self._settings.value("last_open_file", "")
-            if currentfile == filename:
-                self.showError(self.tr("Current file '{}' is not available.\nException: {}").format(filename, ex))
-            else:
-                self.showError(self.tr("Error opening file: {}.\n Exception:{}").format(filename, ex))
+            self.showError(self.tr("Error opening file: {}.\n Exception:{}").format(filename, ex))
             return
         self._loadFileToUI()
         self._settings.setValue("last_open_file", filename)
@@ -265,17 +262,21 @@ class MainController(QtCore.QObject):
             task.modified.connect(self._taskModified)
         self._applyFilters()
         self.taskListChanged.emit()
-        print(self.taskList)
-        #self.updateRecentFile()
+        self.updateRecentFile()
+
+    recentFilesChanged = QtCore.pyqtSignal()
+
+    @QtCore.pyqtProperty('QVariant', notify=recentFilesChanged)
+    def recentFiles(self):
+        return self._recentFiles
 
     def updateRecentFile(self):
-        lastOpenedArray = self._menu_controller.getRecentFileNames()
-        if self._file.filename in lastOpenedArray:
-            lastOpenedArray.remove(self._file.filename)
-        lastOpenedArray = lastOpenedArray[:self._menu_controller.maxRecentFiles]
-        lastOpenedArray.insert(0, self._file.filename)
-        self._settings.setValue("lastOpened", lastOpenedArray[:self._menu_controller.maxRecentFiles])
-        self._menu_controller.updateRecentFileActions()
+        if self._file.filename in self._recentFiles:
+            self._recentFiles.remove(self._file.filename)
+        self._recentFiles.insert(0, self._file.filename)
+        self._recentFiles  = self._recentFiles[:int(self._settings.value("max_recent_files", 6))]
+        self._settings.setValue("recent_files", self._recentFiles)
+        self.recentFilesChanged.emit()
 
     def _loadFileToUI(self):
         self.modified = False
