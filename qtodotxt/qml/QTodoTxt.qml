@@ -15,6 +15,7 @@ ApplicationWindow {
     height: 768
     title: mainController.title
     //mainController.error.connect(showError)
+    property var theme: "qrc:///dark_icons/resources/"
     Connections {
         target: mainController
         onError: {
@@ -108,6 +109,7 @@ ApplicationWindow {
     Action {
         id: editNewTask
         iconName: "list-add"
+        iconSource: window.theme + "TaskCreate.png"
         text: qsTr("Create New Task")
         shortcut: "Ins"
         onTriggered: {
@@ -130,6 +132,7 @@ ApplicationWindow {
     Action {
         id: editEditTask
         iconName: "document-edit"
+        iconSource: window.theme + "TaskEdit.png"
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
         enabled: taskListView.currentIndex > -1
@@ -139,6 +142,7 @@ ApplicationWindow {
     Action {
         id: editCompleteTasks
         iconName: "checkmark"
+        iconSource: window.theme + "TaskComplete.png"
         text: qsTr("Complete Task")
         shortcut: "X"
         onTriggered: {        }
@@ -147,6 +151,7 @@ ApplicationWindow {
     Action {
         id: editIncreasePriority
         iconName: "arrow-up"
+        iconSource: window.theme + "TaskPriorityIncrease.png"
         text: qsTr("Increase Priority")
         shortcut: "+"
         onTriggered: {
@@ -157,6 +162,7 @@ ApplicationWindow {
     Action {
         id: editDecreasePriority
         iconName: "arrow-down"
+        iconSource: window.theme + "TaskPriorityDecrease.png"
         text: qsTr("Decrease Priority")
         shortcut: "-"
         onTriggered: {
@@ -167,6 +173,7 @@ ApplicationWindow {
     Action {
         id: showSearchAction
         iconName: "search"
+        iconSource: window.theme + "ActionSearch.png"
         text: qsTr("Show Search Field")
         shortcut: "Ctrl+F"
         checkable: true
@@ -175,6 +182,7 @@ ApplicationWindow {
     Action {
         id: showFilterPanel
         iconName: "view-filter"
+        iconSource: window.theme + "sidepane.png"
         text: qsTr("Show Filter Panel")
 //        shortcut: "Ctrl+T"
         checkable: true
