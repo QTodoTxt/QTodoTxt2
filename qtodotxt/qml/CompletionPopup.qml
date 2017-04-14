@@ -96,9 +96,9 @@ Rectangle {
             clear()
             if (completionPrefix.length > 0) {
                 var filteredList = sourceModel.filter(function(completionItem) {
-                    console.log("->", typeof completionItem, typeof completionItem.toString())
+                    console.log("->", completionItem.substring(0, completionPrefix.length), completionPrefix)//typeof completionItem, typeof completionItem.toString())
 //                    var ci = completionItem.toString()
-                    return completionItem.toString().startsWith(completionPrefix)
+                    return (completionItem.substring(0, completionPrefix.length) === completionPrefix)//completionItem.toString().startsWith(completionPrefix)
                 })
                 filteredList.forEach(function(i){
                     append({"text": i})
