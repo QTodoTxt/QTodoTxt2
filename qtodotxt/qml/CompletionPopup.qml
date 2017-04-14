@@ -1,40 +1,64 @@
 import QtQuick 2.5
+import QtQuick.Controls 1.4
 
 Rectangle {
-    id: completionRect
-    property alias completionPrefix: completionModel.completionPrefix
-    property alias cursorPosition: completionModel.cursorPosition
+    id: popup
+    //property alias textItem: completionModel.textItem
+    property TextArea textItem: TextArea {}
+    //    property alias completionPrefix: completionModel.completionPrefix
+    //    property alias cursorPosition: completionModel.cursorPosition
     property alias completionList: completionList
 
-
-    x: parent.cursorRectangle.x + parent.cursorRectangle.width
-    y: parent.cursorRectangle.y + parent.cursorRectangle.height
-    height: completionList.contentHeight
+    //    x: parent.cursorRectangle.x + parent.cursorRectangle.width
+    //    y: parent.cursorRectangle.y + parent.cursorRectangle.height
+    height: completionList.height
     width: completionList.width
 
-    state: "invisble"
+    state: "invisible"
 
     color: "white"
     border {
         color: "black"
-        width: 2
+        width: 1
     }
-    opacity: 1
+    //    opacity: 1
+
+    function setPosition() {
+        completionPrefixItem.text = completionModel.completionPrefix
+        x = textItem.x + textItem.cursorRectangle.x
+                + textItem.cursorRectangle.width - completionPrefixItem.contentWidth
+        y = textItem.y + textItem.cursorRectangle.y
+                + textItem.cursorRectangle.height
+    }
+
+    function insertSelection(selectedText) {
+        console.log(popup.textItem.cursorPosition, selectedText)
+        popup.textItem.remove(popup.textItem.cursorPosition - completionModel.completionPrefix.length, popup.textItem.cursorPosition)
+        popup.textItem.insert(popup.textItem.cursorPosition, selectedText)
+        popup.state = "invisible"
+    }
+
+    Text {
+        id: completionPrefixItem
+        visible: false
+        //text: completionModel.completionPrefix
+        onTextChanged: console.log("txtlgth", contentWidth)
+    }
 
     states: [
         State {
             name: "visible"
             PropertyChanges {
-                target: completionRect
+                target: popup
                 visible: true
-                parent: taskListView
             }
         },
         State {
             name: "invisible"
             PropertyChanges {
-                target: completionRect
+                target: popup
                 visible: false
+                //                state: (completionModel.count > 0 ? "visible": "invisible")
             }
         }
 
@@ -44,46 +68,54 @@ Rectangle {
         id: completionModel
         property var sourceModel: ["(A)", "(B)", "(C)", "+project", "+projectasdasdsdasdasdasdasdasdasdasdasd", "@context"]
 
-        property var sourceModelTree: []
-        property string completionPrefix: ""
-        property int cursorPosition: 0
+        property string text: popup.textItem.text
+        property int cursorPosition: popup.textItem.cursorPosition
+        property string completionPrefix: ""//getCompletionPrefix(popup.textItem.text)
 
-        onCompletionPrefixChanged: {
-            clear()
-            if (cursorPosition && completionPrefix) {
-                var strToCursor = completionPrefix.substring(0,cursorPosition)
-                var match = strToCursor.match(/(^.*\s|^)(\S+)$/)
-                if (match) {
-                    var curWord = match[2]
-                    var filteredList = sourceModel.filter(function(completionItem) {
-                        console.log(typeof completionItem)
-                        completionItem.toString()
-                        return completionItem.startsWith(curWord)
-                    })
-                    console.log(curWord, filteredList)
-                    if (filteredList.length > 0) populateModel(filteredList)
-                }
-            }
+        onTextChanged: {
+            completionPrefix = getCompletionPrefix(text)
+//            console.log(cursorPosition, completionPrefix)
         }
 
-        function populateModel(filteredList) {
-            filteredList.forEach(function(i){
-                append({"text": i})
-            })
-            if (count > 0) completionRect.state = visible
+        function getCompletionPrefix(text) {
+            var match = text.substring(0, cursorPosition).match(/(^.*\s|^)(\S+)$/)
+            if (match) {
+                return match[2]
+            }
+            return ""
+        }
+
+
+        onCompletionPrefixChanged: {
+            console.log(completionPrefix)
+            clear()
+            if (completionPrefix.length > 0) {
+                var filteredList = sourceModel.filter(function(completionItem) {
+                    //                console.log(typeof completionItem)
+                    completionItem.toString()
+                    return completionItem.startsWith(completionPrefix)
+                })
+                filteredList.forEach(function(i){
+                    append({"text": i})
+                })
+                if (popup.state === "invisible") popup.setPosition()
+                if (count > 0 && !popup.visible) popup.state = "visible"
+            }
         }
     }
 
     ListView {
         id: completionList
-        anchors.fill:parent
+        //        anchors.fill:parent
+        height: contentHeight
+        width: 200
 
         model: completionModel
         delegate:
             Text {
             id: complItemTxt
             text: model.text
-            width: Math.max(contentWidth, 50)
+            width: completionList.width
         }
         highlight: Rectangle {
             color: systemPalette.highlight
@@ -92,9 +124,8 @@ Rectangle {
 
         keyNavigationWraps: true
 
-        Keys.enabled: completionModel.count > 0
-        Keys.onEscapePressed: completionRect.state = "invisible"
-        Keys.onReturnPressed:
-            editor.insert(editor.cursorPosition, completionModel.get(currentIndex).text)
+        Keys.enabled: popup.visible
+        Keys.onEscapePressed: popup.state = "invisible"
+        Keys.onReturnPressed: insertSelection(completionModel.get(currentIndex).text)
     }
 }

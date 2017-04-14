@@ -73,15 +73,15 @@ Loader {
 
             //            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
 
-            onTextChanged: {
-                completionPopup.completionPrefix = text
-                //completionList.visible = true
-                //                completionList.focus = true
-            }
+//            onTextChanged: {
+//                completionPopup.completionPrefix = text
+//                //completionList.visible = true
+//                //                completionList.focus = true
+//            }
 
-            onCursorPositionChanged: {
-                completionPopup.cursorPosition = cursorPosition
-            }
+//            onCursorPositionChanged: {
+//                completionPopup.cursorPosition = cursorPosition
+//            }
 
             //            Keys.onDownPressed: {
             //                console.log("down")
@@ -92,6 +92,7 @@ Loader {
 
             CompletionPopup {
                 id: completionPopup
+                textItem: parent
             }
         }
     }

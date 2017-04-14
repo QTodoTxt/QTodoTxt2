@@ -376,6 +376,7 @@ ApplicationWindow {
             Layout.minimumWidth: 50
             Layout.fillWidth: true
 
+
             TextField {
                 Layout.fillWidth: true
                 id: searchField
@@ -385,6 +386,7 @@ ApplicationWindow {
                     mainController.searchText = text
                     searchField.focus = true
                 }
+                Keys.forwardTo: [completionPopup.completionList]
             }
 
             TaskListView {
@@ -397,4 +399,8 @@ ApplicationWindow {
         }
 
     }
+//    CompletionPopup {
+//        id: completionPopup
+//        textItem: searchField
+//    }
 }
