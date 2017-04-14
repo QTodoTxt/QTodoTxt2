@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
 import QtQuick.Window 2.1
+import QtQml 2.2
 import QtQml.Models 2.2
 import Qt.labs.settings 1.0
 
@@ -185,7 +186,7 @@ ApplicationWindow {
         iconName: "view-filter"
         iconSource: window.theme + "sidepane.png"
         text: qsTr("Show Filter Panel")
-//        shortcut: "Ctrl+T"
+        //        shortcut: "Ctrl+T"
         checkable: true
         checked: true
     }
@@ -238,6 +239,20 @@ ApplicationWindow {
             title: qsTr("File")
             MenuItem { action: fileNew }
             MenuItem { action: fileOpen}
+            Menu {
+                id: recentMenu
+                title: qsTr("Recent Files")
+                Instantiator {
+                    model: mainController.recentFiles
+                    onObjectAdded: recentMenu.insertItem(index, object)
+                    onObjectRemoved: recentMenu.removeItem( object )
+                    delegate: MenuItem {
+                        text: mainController.recentFiles[model.index]
+                        onTriggered: mainController.open(mainController.recentFiles[model.index])
+                    }
+                }
+            }
+
             MenuItem { action: fileSave }
             MenuItem { action: fileRevert }
             MenuSeparator {}
@@ -309,7 +324,7 @@ ApplicationWindow {
         onAccepted: {
             if (fileDialog.selectExisting) {
                 console.log("OPENING", fileUrl.toString())
-                mainController.open(fileUrl.toString()) 
+                mainController.open(fileUrl.toString())
             } else {
                 document.saveAs(fileUrl, selectedNameFilter) //FIXME
             }
@@ -361,16 +376,16 @@ ApplicationWindow {
             Layout.minimumWidth: 50
             Layout.fillWidth: true
 
-                TextField {
-                    Layout.fillWidth: true
-                    id: searchField
-                    visible: showSearchAction.checked
-                    placeholderText: "Search"
-                    onTextChanged: {
-                        mainController.searchText = text
-                        searchField.focus = true
-                    }
+            TextField {
+                Layout.fillWidth: true
+                id: searchField
+                visible: showSearchAction.checked
+                placeholderText: "Search"
+                onTextChanged: {
+                    mainController.searchText = text
+                    searchField.focus = true
                 }
+            }
 
             TaskListView {
                 id: taskListView
