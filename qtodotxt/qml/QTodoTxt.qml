@@ -1,4 +1,4 @@
-import QtQuick 2.7
+import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
@@ -7,6 +7,7 @@ import QtQml.Models 2.2
 import Qt.labs.settings 1.0
 
 //import QTodoTxt 1.0
+import "./styles/dark_blue" as MyStyle
 
 ApplicationWindow {
     id: window
@@ -15,7 +16,7 @@ ApplicationWindow {
     height: 768
     title: mainController.title
     //mainController.error.connect(showError)
-    property var theme: "qrc:///dark_icons/resources/"
+    property string theme: "qrc:///dark_icons/resources/"
     Connections {
         target: mainController
         onError: {
@@ -247,6 +248,8 @@ ApplicationWindow {
             }
             MenuSeparator {}
             MenuItem { action: quitApp}
+            //FIXME: if you want you can play around with the style in ./style/dark_blue/MenuStyle.qml
+            //style: MyStyle.MenuStyle{}
         }
         Menu {
             title: qsTr("Edit")
