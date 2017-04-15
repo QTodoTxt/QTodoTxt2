@@ -71,7 +71,8 @@ Rectangle {
 
     ListModel {
         id: completionModel
-        property var sourceModel: ["(A)", "(B)", "(C)", "+project", "+projectasdasdsdasdasdasdasdasdasdasdasd", "@context"]
+        //property var sourceModel: ["(A)", "(B)", "(C)", "+project", "+projectasdasdsdasdasdasdasdasdasdasdasd", "@context"]
+        property var sourceModel: mainController.completionStrings
 
         property string text: popup.textItem.text
         property int cursorPosition: popup.textItem.cursorPosition

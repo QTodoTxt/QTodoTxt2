@@ -1,8 +1,8 @@
 import logging
 import os
+import string
 
 from PyQt5 import QtCore
-from PyQt5 import QtWidgets
 
 from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import ErrorLoadingFile, File, FileObserver
@@ -37,13 +37,28 @@ class MainController(QtCore.QObject):
         self._searchText = ""
         self._fileObserver.fileChangetSig.connect(self.open)
         # filters = self._settings.value("current_filters", ["All"])  # move to QML
+        self._updateCompletionStrings()
 
     def _taskModified(self, task):
-        self.modified = True
+        self.setModified(True)
 
     def showError(self, msg):
         print("ERROR", msg)
         self.error.emit(msg)
+
+    completionChanged = QtCore.pyqtSignal()
+    @QtCore.pyqtProperty('QStringList', notify=completionChanged)
+    def completionStrings(self):
+        return self._completionStrings
+    
+    def _updateCompletionStrings(self):
+        contexts = ['@' + name for name in self._file.getAllContexts(True)]
+        projects = ['+' + name for name in self._file.getAllProjects(True)]
+        lowest_priority = self._settings.value("lowest_priority", "D")
+        idx = string.ascii_uppercase.index(lowest_priority) + 1
+        priorities = ['(' + val +')' for val in string.ascii_uppercase[:idx]]
+        self._completionStrings = contexts + projects + priorities
+        self.completionChanged.emit()
 
     @QtCore.pyqtSlot('QVariant')
     def filterRequest(self, idx):
@@ -58,7 +73,7 @@ class MainController(QtCore.QObject):
             after = len(self._tasksList) - 1
         self._file.tasks.append(task)
         self._tasksList.insert(after + 1, task)  # force the new task to be visible
-        self.modified = True
+        self.setModified(True)
         self.taskListChanged.emit()
         return after + 1
 
@@ -68,7 +83,7 @@ class MainController(QtCore.QObject):
             # if task is not a task assume it is an int
             task = self._file.tasks[task]
         self._file.tasks.remove(task)
-        self.modified = True
+        self.setModified(True)
         self._applyFilters()  # update filtered list for UI
 
     taskListChanged = QtCore.pyqtSignal()
@@ -185,7 +200,7 @@ class MainController(QtCore.QObject):
 
     def _onFileUpdated(self):
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
-        self.modified = True
+        self.setModified(True)
         self.auto_save()
 
     modifiedChanged = QtCore.pyqtSignal(bool)
@@ -194,27 +209,22 @@ class MainController(QtCore.QObject):
     def modified(self):
         return self._modified
 
-    @modified.setter
-    def modified(self, val):
+    def setModified(self, val):
         self._modified = val
         self._updateTitle()
+        self._updateCompletionStrings()
         self.modifiedChanged.emit(val)
 
     def save(self):
         logger.debug('MainController.save called.')
         self._fileObserver.clear()
         filename = self._file.filename
-        ok = True
-        if not filename:
-            (filename, ok) = \
-                QtWidgets.QFileDialog.getSaveFileName(self.view, filter=FILENAME_FILTERS)
-        if ok and filename:
-            self._file.save(filename)
-            self._settings.setValue("last_open_file", filename)
-            self._settings.sync()
-            self.modified = True
-            logger.debug('Adding %s to watchlist', filename)
-            self._fileObserver.addPath(self._file.filename)
+        self._file.save(filename)
+        self._settings.setValue("last_open_file", filename)
+        self._settings.sync()
+        self.setModified(False)
+        logger.debug('Adding %s to watchlist', filename)
+        self._fileObserver.addPath(self._file.filename)
 
     def _updateTitle(self):
         title = 'QTodoTxt - '
@@ -237,14 +247,14 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot(result='bool')
     def canExit(self):
         self.auto_save()
-        return self.modified
+        return self._modified
 
     def new(self):
         if self.canExit():
             self._file = File()
             self._loadFileToUI()
 
-    @QtCore.pyqtSlot('QString') #TODO: should this return a (error) message to qml?
+    @QtCore.pyqtSlot('QString')
     def open(self, filename):
         if filename.startswith("file:/"):
             filename = filename[6:] 
@@ -274,10 +284,10 @@ class MainController(QtCore.QObject):
         if self._file.filename in self._recentFiles:
             self._recentFiles.remove(self._file.filename)
         self._recentFiles.insert(0, self._file.filename)
-        self._recentFiles  = self._recentFiles[:int(self._settings.value("max_recent_files", 6))]
+        self._recentFiles = self._recentFiles[:int(self._settings.value("max_recent_files", 6))]
         self._settings.setValue("recent_files", self._recentFiles)
         self.recentFilesChanged.emit()
 
     def _loadFileToUI(self):
-        self.modified = False
+        self.setModified(False)
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
