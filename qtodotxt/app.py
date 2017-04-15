@@ -21,9 +21,6 @@ from qtodotxt.controllers.main_controller import MainController
 from qtodotxt.lib.file import FileObserver
 from qtodotxt.lib.tendo_singleton import SingleInstance
 
-#(Just for testing how to communicate between python and qml, see also below)
-from qtodotxt.qml_class import MainControllerQml
-
 
 def _parseArgs():
     if len(sys.argv) > 1 and sys.argv[1].startswith('-psn'):
