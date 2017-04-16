@@ -21,9 +21,11 @@ ApplicationWindow {
     Connections {
         target: mainController
         onError: {
-            console.log("OKOKOKOO")
             errorDialog.text = msg
             errorDialog.open()
+        }
+        onFileExternallyModified: {
+            reloadDialog.open()
         }
     }
     Settings {
@@ -334,14 +336,21 @@ ApplicationWindow {
     MessageDialog {
         id: errorDialog
         title: "QTodotTxt Error"
-        text: "It's so cool that you are using Qt Quick."
+        text: "Error message should be here!"
         onAccepted: {
             console.log("And of course you could only agree.")
-            Qt.quit()
         }
-        //Component.onCompleted: visible = true
     }
 
+    MessageDialog {
+        id: reloadDialog
+        title: "File externally modified"
+        icon: StandardIcon.Question
+        text: "Your todo.txt file has been externally modified. Reload newer version?"
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: mainController.reload() 
+        //onNo: console.log("didn't copy")
+    }
     SplitView {
         id: splitView
         anchors.fill: parent

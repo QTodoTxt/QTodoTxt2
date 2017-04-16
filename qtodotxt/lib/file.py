@@ -1,65 +1,37 @@
 import logging
 import os
+
 from PyQt5 import QtCore
-from qtodotxt.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, \
-    DueOverdueFilter
+
+from qtodotxt.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, DueOverdueFilter
 from qtodotxt.lib.tasklib import Task
-from sys import version
-import time
 
 logger = logging.getLogger(__name__)
 
-PYTHON_VERSION = version[:3]
 
-if PYTHON_VERSION < '3.3':
-    FileNotFoundError = OSError
+class File(QtCore.QObject):
 
+    fileModified = QtCore.pyqtSignal()
 
-class Error(Exception):
-    pass
-
-
-class ErrorLoadingFile(Error):
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return self.message
-
-
-class ErrorSavingFile(Error):
-    def __init__(self, message, innerException=None):
-        self.message = message
-        self.innerException = innerException
-
-    def __str__(self):
-        lines = [repr(self.message)]
-        if self.innerException:
-            lines.append(repr(self.innerException))
-        return '\n'.join(lines)
-
-
-class File(object):
     def __init__(self):
-        self.NEWLINE = '\n'
+        QtCore.QObject.__init__(self)
+        self.newline = '\n'
         self.tasks = []
         self.filename = ''
+        self._fileObserver = FileObserver(self)
+        self._fileObserver.fileChangetSig.connect(self.fileModified)
 
     def __str__(self):
         return "File(filename:{}, tasks:{})".format(self.filename, self.tasks)
     __repr__ = __str__
 
     def load(self, filename):
-
-        try:
-            with open(filename, 'rt', encoding='utf-8') as fd:
-                lines = fd.readlines()
-        except FileNotFoundError:
-            raise ErrorLoadingFile("Trying to load a non-existing file: '{}".format(filename))
-        except IOError as ex:                # deprecated since Python 3.3, it would be OSError for =>3.3-support
-            raise ErrorLoadingFile(str(ex))
+        self._fileObserver.clear()
+        with open(filename, 'rt', encoding='utf-8') as fd:
+            lines = fd.readlines()
         self.filename = filename
         self._createTasksFromLines(lines)
+        self._fileObserver.addPath(self.filename)
 
     def _createTasksFromLines(self, lines):
         self.tasks = []
@@ -70,13 +42,15 @@ class File(object):
                 self.tasks.append(task)
 
     def save(self, filename=''):
-        logger.debug('File.save called with filename="{}"'.format(filename))
+        logger.debug('File.save called with filename="%s"', filename)
+        self._fileObserver.clear()
         if not filename and not self.filename:
             self.filename = self._createNewFilename()
         elif filename:
             self.filename = filename
         self.tasks.sort(reverse=True)
         self._saveTasks()
+        self._fileObserver.addPath(self.filename)
 
     @staticmethod
     def _createNewFilename():
@@ -90,21 +64,15 @@ class File(object):
         return os.path.expanduser('~/todo.0.txt')
 
     def _saveTasks(self):
-        try:
-            with open(self.filename, 'wt', encoding='utf-8') as fd:
-                fd.writelines([(task.text + self.NEWLINE) for task in self.tasks])
-            logger.debug('{} was saved to disk.'.format(self.filename))
-        except IOError as e:
-            raise ErrorSavingFile("Error saving to file '{}'".format(self.filename), e)
+        with open(self.filename, 'wt', encoding='utf-8') as fd:
+            fd.writelines([(task.text + self.newline) for task in self.tasks])
+        logger.debug('%s was saved to disk.', self.filename)
 
     def saveDoneTask(self, task):
         doneFilename = os.path.join(os.path.dirname(self.filename), 'done.txt')
-        try:
-            with open(doneFilename, 'at', encoding='utf-8') as fd:
-                fd.write(task.text + self.NEWLINE)
-            logger.debug('"{}" was appended to "{}"'.format(task.text, doneFilename))
-        except IOError as e:
-            raise ErrorSavingFile("Error saving to file '%s'" % doneFilename, e)
+        with open(doneFilename, 'at', encoding='utf-8') as fd:
+            fd.write(task.text + self.newline)
+        logger.debug('"%s" was appended to "%s"', task.text, doneFilename)
 
     def getAllContexts(self, return_completed=False):
         contexts = dict()
@@ -235,32 +203,20 @@ class FileObserver(QtCore.QFileSystemWatcher):
     fileChangetSig = QtCore.pyqtSignal(str)
     dirChangetSig = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent, file):
+    def __init__(self, mfile):
         logger.debug('Setting up FileObserver instance.')
-        super().__init__(parent)
-        self._file = file
+        super().__init__(mfile)
+        self._file = mfile
         self.fileChanged.connect(self.fileChangedHandler)
         self.directoryChanged.connect(self.dirChangedHandler)
 
-    @QtCore.pyqtSlot(str)
     def fileChangedHandler(self, path):
-        logger.debug('Detected change on {}\nremoving it from watchlist'.format(path))
+        logger.debug('Detected external file change for file %s', path)
         self.removePath(path)
-        debug_counter = 0
-        if path == self._file.filename:
-            max_time = time.time() + 1
-            while time.time() < max_time:
-                try:
-                    self.fileChangetSig.emit(path)
-                except ErrorLoadingFile:
-                    time.sleep(0.01)
-                    debug_counter += 1
-                else:
-                    logger.debug('It took {} additional attempts until the file could be read.'.format(debug_counter))
-                    break
+        self.fileChangetSig.emit(path)
 
-    @QtCore.pyqtSlot(str)
     def dirChangedHandler(self, path):
+        logger.debug('Detected directory change for file %s', path)
         self.dirChangetSig.emit(path)
 
     def clear(self):

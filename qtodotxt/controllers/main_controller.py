@@ -5,7 +5,7 @@ import string
 from PyQt5 import QtCore
 
 from qtodotxt.lib import tasklib
-from qtodotxt.lib.file import ErrorLoadingFile, File, FileObserver
+from qtodotxt.lib.file import File
 
 from qtodotxt.controllers.filters_tree_controller import FiltersTreeController
 from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter, CompleteTasksFilter
@@ -18,6 +18,7 @@ FILENAME_FILTERS = ';;'.join(['Text Files (*.txt)', 'All Files (*.*)'])
 class MainController(QtCore.QObject):
 
     error = QtCore.pyqtSignal(str, arguments=["msg"])
+    fileExternallyModified = QtCore.pyqtSignal()
 
     def __init__(self, args):
         super(MainController, self).__init__()
@@ -29,13 +30,12 @@ class MainController(QtCore.QObject):
         self._showCompleted = True
         self._showFuture = True
         self._file = File()
-        self._fileObserver = FileObserver(self, self._file)
+        self._file.fileModified.connect(self.fileExternallyModified)
         self._modified = False
         self._initFiltersTree()
         self._title = "QTodoTxt"
         self._recentFiles = self._settings.value("recent_files", [])
         self._searchText = ""
-        self._fileObserver.fileChangetSig.connect(self.open)
         # filters = self._settings.value("current_filters", ["All"])  # move to QML
         self._updateCompletionStrings()
 
@@ -148,7 +148,7 @@ class MainController(QtCore.QObject):
         if filename:
             try:
                 self.open(filename)
-            except ErrorLoadingFile as ex:
+            except OSError as ex:
                 self.showError(str(ex))
 
         if self._args.quickadd:
@@ -196,9 +196,6 @@ class MainController(QtCore.QObject):
         for task in done:
             self._file.saveDoneTask(task)
             self._file.tasks.remove(task)
-        self._onFileUpdated()
-
-    def _onFileUpdated(self):
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
         self.setModified(True)
         self.auto_save()
@@ -216,15 +213,17 @@ class MainController(QtCore.QObject):
         self.modifiedChanged.emit(val)
 
     def save(self):
-        logger.debug('MainController.save called.')
-        self._fileObserver.clear()
+        logger.debug('MainController, sving file: %s.', self._file.filename)
         filename = self._file.filename
-        self._file.save(filename)
+        try:
+            self._file.save(filename)
+        except OSError as ex:
+            logger.exception("Error saving file %s", filename)
+            self.showError(ex)
+            return
         self._settings.setValue("last_open_file", filename)
         self._settings.sync()
         self.setModified(False)
-        logger.debug('Adding %s to watchlist', filename)
-        self._fileObserver.addPath(self._file.filename)
 
     def _updateTitle(self):
         title = 'QTodoTxt - '
@@ -254,12 +253,15 @@ class MainController(QtCore.QObject):
             self._file = File()
             self._loadFileToUI()
 
+    @QtCore.pyqtSlot()
+    def reload(self):
+        self.open(self._file.filename)
+
     @QtCore.pyqtSlot('QString')
     def open(self, filename):
         if filename.startswith("file:/"):
             filename = filename[6:] 
         logger.debug('MainController.open called with filename="%s"', filename)
-        self._fileObserver.clear()
         try:
             self._file.load(filename)
         except Exception as ex:
@@ -267,7 +269,6 @@ class MainController(QtCore.QObject):
             return
         self._loadFileToUI()
         self._settings.setValue("last_open_file", filename)
-        self._fileObserver.addPath(self._file.filename)
         for task in self._file.tasks:
             task.modified.connect(self._taskModified)
         self._applyFilters()
