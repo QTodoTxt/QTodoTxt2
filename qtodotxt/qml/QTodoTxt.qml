@@ -387,7 +387,9 @@ ApplicationWindow {
                     mainController.searchText = text
                     searchField.focus = true
                 }
-                Keys.forwardTo: [completionPopup.completionList]
+
+//                Keys.forwardTo: [completionPopup.popupItem]
+                Component.onCompleted: completionPopup.textItem = this
             }
 
             TaskListView {

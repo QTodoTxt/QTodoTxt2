@@ -57,7 +57,7 @@ class MainController(QtCore.QObject):
         lowest_priority = self._settings.value("lowest_priority", "D")
         idx = string.ascii_uppercase.index(lowest_priority) + 1
         priorities = ['(' + val +')' for val in string.ascii_uppercase[:idx]]
-        self._completionStrings = contexts + projects + priorities
+        self._completionStrings = contexts + projects + priorities + ['due:']
         self.completionChanged.emit()
 
     @QtCore.pyqtSlot('QVariant')
