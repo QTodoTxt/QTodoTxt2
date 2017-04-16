@@ -101,7 +101,7 @@ def run():
 
     _setupLogging(args.loglevel)
 
-    engine = QQmlApplicationEngine()
+    engine = QQmlApplicationEngine(parent=app)
     controller = MainController(args)
     engine.rootContext().setContextProperty("mainController", controller)
     path = os.path.dirname(__file__)
