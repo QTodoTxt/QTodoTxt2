@@ -28,8 +28,6 @@ def _parseArgs():
     parser = argparse.ArgumentParser(description='QTodoTxt')
     parser.add_argument('file', type=str, nargs='?', metavar='TEXTFILE', help='open the specified file')
     parser.add_argument(
-        '-q', '--quickadd', action='store_true', help='opens the add task dialog and exit the application when done')
-    parser.add_argument(
         '-l',
         '--loglevel',
         type=str,

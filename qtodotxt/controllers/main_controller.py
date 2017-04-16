@@ -151,11 +151,6 @@ class MainController(QtCore.QObject):
             except OSError as ex:
                 self.showError(str(ex))
 
-        if self._args.quickadd:
-            self._tasks_list_controller.createTask()
-            self.save()
-            self.exit()
-
         self._tasksList = self._file.tasks[:]
         self.taskListChanged.emit()
         self._updateTitle()
