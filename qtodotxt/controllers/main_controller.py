@@ -241,7 +241,7 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot(result='bool')
     def canExit(self):
         self.auto_save()
-        return self._modified
+        return not self._modified
 
     def new(self):
         if self.canExit():

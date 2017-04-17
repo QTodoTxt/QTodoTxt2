@@ -16,8 +16,8 @@ ApplicationWindow {
     width: 1024
     height: 768
     title: mainController.title
-    //mainController.error.connect(showError)
     property string theme: "qrc:///dark_icons/resources/"
+
     Connections {
         target: mainController
         onError: {
@@ -28,35 +28,37 @@ ApplicationWindow {
             reloadDialog.open()
         }
     }
+
     Settings {
         category: "WindowState"
         property alias window_width: window.width
         property alias window_height: window.height
         property alias filters_tree_width: filtersTree.width
     }
+
     Settings {
         category: "VisibleWidgets"
         property alias search_field_visible: showSearchAction.checked
         property alias toolbar_visible: showToolBarAction.checked
         property alias filter_panel_visible: showFilterPanel.checked
     }
+
     //    MainController {
     //        id: mainController
     //    }
 
     onClosing: {
-        console.log("Closing, modified is:", mainController.modified)
         if ( mainController.canExit() ) {
             close.accepted = true
         } else {
-            console.log("FIXME: popup dialog and as for saving")
+            console.log("State of document is ", mainController.canExit())
+            console.log("FIXME: popup dialog and sav as for saving")
         }
     }
 
     SystemPalette {
         id: systemPalette
     }
-
 
     AboutBox {
         id: aboutBox
@@ -111,7 +113,7 @@ ApplicationWindow {
 
 
     Action {
-        id: editNewTask
+        id: newTask
         iconName: "list-add"
         iconSource: window.theme + "TaskCreate.png"
         text: qsTr("Create New Task")
@@ -134,7 +136,7 @@ ApplicationWindow {
     }
 
     Action {
-        id: editEditTask
+        id: editTask
         iconName: "document-edit"
         iconSource: window.theme + "TaskEdit.png"
         text: qsTr("Edit Task")
@@ -144,7 +146,7 @@ ApplicationWindow {
     }
 
     Action {
-        id: editCompleteTasks
+        id: completeTasks
         iconName: "checkmark"
         iconSource: window.theme + "TaskComplete.png"
         text: qsTr("Complete Task")
@@ -153,7 +155,7 @@ ApplicationWindow {
     }
 
     Action {
-        id: editIncreasePriority
+        id: increasePriority
         iconName: "arrow-up"
         iconSource: window.theme + "TaskPriorityIncrease.png"
         text: qsTr("Increase Priority")
@@ -164,7 +166,7 @@ ApplicationWindow {
     }
 
     Action {
-        id: editDecreasePriority
+        id: decreasePriority
         iconName: "arrow-down"
         iconSource: window.theme + "TaskPriorityDecrease.png"
         text: qsTr("Decrease Priority")
@@ -270,14 +272,14 @@ ApplicationWindow {
         }
         Menu {
             title: qsTr("Edit")
-            MenuItem { action: editNewTask }
-            MenuItem { action: editEditTask }
+            MenuItem { action: newTask }
+            MenuItem { action: editTask }
             MenuItem { action: deleteTask }
             MenuSeparator {}
-            MenuItem { action: editCompleteTasks}
+            MenuItem { action: completeTasks}
             MenuSeparator {}
-            MenuItem { action: editIncreasePriority}
-            MenuItem { action: editDecreasePriority}
+            MenuItem { action: increasePriority}
+            MenuItem { action: decreasePriority}
         }
         Menu {
             title: qsTr("View")
@@ -306,16 +308,13 @@ ApplicationWindow {
             ToolButton { action: showSearchAction}
             ToolButton { action: showFilterPanel}
             ToolBarSeparator { }
-            ToolButton { action: fileOpen }
-            ToolButton { action: fileSave }
-            ToolBarSeparator { }
-            ToolButton { action: editNewTask }
-            ToolButton { action: editEditTask }
+            ToolButton { action: newTask }
+            ToolButton { action: editTask }
             ToolButton { action: deleteTask }
-            ToolButton { action: editCompleteTasks}
+            ToolButton { action: completeTasks}
             ToolBarSeparator { }
-            ToolButton { action: editIncreasePriority}
-            ToolButton { action: editDecreasePriority}
+            ToolButton { action: increasePriority}
+            ToolButton { action: decreasePriority}
             Item { Layout.fillWidth: true }
         }
     }
@@ -351,6 +350,7 @@ ApplicationWindow {
         onYes: mainController.reload() 
         //onNo: console.log("didn't copy")
     }
+
     SplitView {
         id: splitView
         anchors.fill: parent
