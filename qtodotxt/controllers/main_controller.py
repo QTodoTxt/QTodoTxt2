@@ -12,8 +12,6 @@ from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasks
 
 logger = logging.getLogger(__name__)
 
-FILENAME_FILTERS = ';;'.join(['Text Files (*.txt)', 'All Files (*.*)'])
-
 
 class MainController(QtCore.QObject):
 
@@ -32,7 +30,7 @@ class MainController(QtCore.QObject):
         self._file = File()
         self._file.fileModified.connect(self.fileExternallyModified)
         self._modified = False
-        self._initFiltersTree()
+        self._filters_tree_controller = FiltersTreeController()
         self._title = "QTodoTxt"
         self._recentFiles = self._settings.value("recent_files", [])
         self._searchText = ""
@@ -42,12 +40,15 @@ class MainController(QtCore.QObject):
 
     def _taskModified(self, task):
         self.setModified(True)
+        self._applyFilters()
+        self.auto_save()
 
     def showError(self, msg):
-        print("ERROR", msg)
+        logger.debug("ERROR", msg)
         self.error.emit(msg)
 
     completionChanged = QtCore.pyqtSignal()
+
     @QtCore.pyqtProperty('QStringList', notify=completionChanged)
     def completionStrings(self):
         return self._completionStrings
@@ -76,6 +77,7 @@ class MainController(QtCore.QObject):
         self._file.tasks.append(task)
         self._filteredTasks.insert(after + 1, task)  # force the new task to be visible
         self.setModified(True)
+        self.auto_save()
         self.filteredTasksChanged.emit()
         return after + 1
 
@@ -83,7 +85,7 @@ class MainController(QtCore.QObject):
     def deleteTask(self, task):
         if not isinstance(task, tasklib.Task):
             # if task is not a task assume it is an int
-            task = self._file.tasks[task]
+            task = self.filteredTasks[task]
         self._file.tasks.remove(task)
         self.setModified(True)
         self._applyFilters()  # update filtered list for UI
@@ -134,15 +136,6 @@ class MainController(QtCore.QObject):
         if int(self._settings.value("auto_save", 1)):
             self.save()
 
-    def _initControllers(self):
-        self._initFiltersTree()
-        self._initTasksList()
-        self._initContextualMenu()
-        self._initActions()
-        self._initMenuBar()
-        self._initToolBar()
-        self._initSearchText()
-
     def start(self):
         if self._args.file:
             filename = self._args.file
@@ -157,14 +150,6 @@ class MainController(QtCore.QObject):
         
         self._applyFilters()
         self._updateTitle()
-
-    def _initFiltersTree(self):
-        self._filters_tree_controller = FiltersTreeController()
-        self.filtersChanged.emit()
-        self._filters_tree_controller.filterSelectionChanged.connect(self._onFilterSelectionChanged)
-
-    def _onFilterSelectionChanged(self, filters):
-        self._applyFilters(filters=filters)
 
     filtersChanged = QtCore.pyqtSignal()
 
@@ -210,7 +195,7 @@ class MainController(QtCore.QObject):
         self.modifiedChanged.emit(val)
 
     def save(self):
-        logger.debug('MainController, sving file: %s.', self._file.filename)
+        logger.debug('MainController, saving file: %s.', self._file.filename)
         filename = self._file.filename
         try:
             self._file.save(filename)

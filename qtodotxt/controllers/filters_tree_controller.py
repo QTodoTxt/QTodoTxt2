@@ -127,24 +127,15 @@ class FiltersTreeController(QtCore.QObject):
 
     def __init__(self):
         QtCore.QObject.__init__(self)
-        self._is_showing_filters = False
         self.model = FiltersModel(self)
 
-    def view_filterSelectionChanged(self, filters):
-        if not self._is_showing_filters:
-            self.filterSelectionChanged.emit(filters)
-
     def showFilters(self, mfile, show_completed=False):
-        self._is_showing_filters = True
-        #previouslySelectedFilters = self.view.getSelectedFilters()
         self.model.clear()
         self._addAllContexts(mfile, show_completed)
         self._addAllProjects(mfile, show_completed)
         self._addAllDueRanges(mfile, show_completed)
         self._addAllPriorities(mfile, show_completed)
         self._updateCounter(mfile, show_completed)
-        self._is_showing_filters = False
-        #self._reselect(previouslySelectedFilters)
 
     def _updateCounter(self, mfile, show_completed=False):
         rootCounters = mfile.getTasksCounters()
@@ -190,9 +181,3 @@ class FiltersTreeController(QtCore.QObject):
                 sortKey = rangeSorting['Overdue']
 
             self.model.addDueRangeFilter(mfilter, number, sortKey)
-
-    def _reselect(self, previouslySelectedFilters):
-        for mfilter in previouslySelectedFilters:
-            self.view.selectFilter(mfilter)
-        if not self.view.getSelectedFilters():
-            self.view.selectAllTasksFilter()

@@ -387,6 +387,7 @@ ApplicationWindow {
         //nameFilters: ["Text files (*.txt)"]
         selectExisting: false
         onAccepted: {
+            taskListView.model[taskListView.currentIndex].text += ' '
             taskListView.model[taskListView.currentIndex].text += fileUrl.toString()
         }
     }
