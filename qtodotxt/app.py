@@ -75,7 +75,7 @@ def setupSingleton(args, me):
 def run():
     # First set some application settings for QSettings
     QtCore.QCoreApplication.setOrganizationName("QTodoTxt")
-    QtCore.QCoreApplication.setApplicationName("QTodoTxT2")
+    QtCore.QCoreApplication.setApplicationName("QTodoTxt2")
     # Now set up our application and start
     app = QtWidgets.QApplication(sys.argv)
     #it is said, that this is lighter:

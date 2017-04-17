@@ -41,6 +41,8 @@ ApplicationWindow {
         property alias search_field_visible: showSearchAction.checked
         property alias toolbar_visible: showToolBarAction.checked
         property alias filter_panel_visible: showFilterPanel.checked
+        property alias show_completed: showCompleted.checked
+        property alias show_future: showFuture.checked
     }
 
     //    MainController {
@@ -119,9 +121,9 @@ ApplicationWindow {
         text: qsTr("Create New Task")
         shortcut: "Ins"
         onTriggered: {
-            var idx = mainController.newTask('', taskListView.currentIndex)
-            taskListView.currentIndex = idx
-            taskListView.editCurrentTask()
+            var idx = mainController.newTask('', filteredTasksView.currentIndex)
+            filteredTasksView.currentIndex = idx
+            filteredTasksView.editCurrentTask()
         }
     }
 
@@ -131,7 +133,7 @@ ApplicationWindow {
         text: qsTr("Delete Task")
         shortcut: "Del"
         onTriggered: {
-            mainController.deleteTask(taskListView.currentIndex)
+            mainController.deleteTask(filteredTasksView.currentIndex)
         }
     }
 
@@ -141,8 +143,8 @@ ApplicationWindow {
         iconSource: window.theme + "TaskEdit.png"
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
-        enabled: taskListView.currentIndex > -1
-        onTriggered: { taskListView.editCurrentTask() }
+        enabled: filteredTasksView.currentIndex > -1
+        onTriggered: { filteredTasksView.editCurrentTask() }
     }
 
     Action {
@@ -161,7 +163,7 @@ ApplicationWindow {
         text: qsTr("Increase Priority")
         shortcut: "+"
         onTriggered: {
-            taskListView.model[taskListView.currentIndex].increasePriority()
+            filteredTasksView.model[filteredTasksView.currentIndex].increasePriority()
         }
     }
 
@@ -172,7 +174,7 @@ ApplicationWindow {
         text: qsTr("Decrease Priority")
         shortcut: "-"
         onTriggered: {
-            taskListView.model[taskListView.currentIndex].decreasePriority()
+            filteredTasksView.model[filteredTasksView.currentIndex].decreasePriority()
         }
     }
 
@@ -203,6 +205,40 @@ ApplicationWindow {
         checkable: true
         checked: true
     }
+
+    Action {
+        id: showCompleted
+        //iconName: "search"
+        iconSource: window.theme + "show_completed.png"
+        text: qsTr("Show Completed Tasks")
+        shortcut: "Ctrl+C"
+        checkable: true
+        checked: false
+        onToggled: mainController.showCompleted = checked
+    }
+
+    Action {
+        id: showFuture
+        //iconName: "search"
+        iconSource: window.theme + "future.png"
+        text: qsTr("Show Future Tasks")
+        shortcut: "Ctrl+F"
+        checkable: true
+        checked: true
+        onToggled: mainController.showFuture = checked
+    }
+
+
+    Action {
+        id: archive
+        //iconName: "search"
+        iconSource: window.theme + "archive.png"
+        text: qsTr("Archive Completed Tasks")
+        shortcut: "Ctrl+A"
+        onTriggered: mainController.archiveCompletedTasks()
+    }
+
+
 
     Action {
         id: helpShowAbout
@@ -286,6 +322,8 @@ ApplicationWindow {
             MenuItem { action: showSearchAction}
             MenuItem { action: showFilterPanel}
             MenuItem { action: showToolBarAction}
+            MenuItem { action: showCompleted}
+            MenuItem { action: showFuture}
         }
         Menu {
             title: qsTr("Sorting")
@@ -307,6 +345,8 @@ ApplicationWindow {
             anchors.fill: parent
             ToolButton { action: showSearchAction}
             ToolButton { action: showFilterPanel}
+            ToolButton { action: showCompleted}
+            ToolButton { action: showFuture}
             ToolBarSeparator { }
             ToolButton { action: newTask }
             ToolButton { action: editTask }
@@ -315,6 +355,8 @@ ApplicationWindow {
             ToolBarSeparator { }
             ToolButton { action: increasePriority}
             ToolButton { action: decreasePriority}
+            ToolBarSeparator { }
+            ToolButton { action: archive}
             Item { Layout.fillWidth: true }
         }
     }
@@ -402,11 +444,11 @@ ApplicationWindow {
             }
 
             TaskListView {
-                id: taskListView
+                id: filteredTasksView
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
-                taskList: mainController.taskList
+                taskList: mainController.filteredTasks
             }
         }
 

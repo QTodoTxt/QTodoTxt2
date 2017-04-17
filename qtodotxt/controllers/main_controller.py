@@ -23,12 +23,12 @@ class MainController(QtCore.QObject):
     def __init__(self, args):
         super(MainController, self).__init__()
         self._args = args
-        self._tasksList = []
+        self._filteredTasks = []
         # use object variable for setting only used in this class
         # others are accessed through QSettings
         self._settings = QtCore.QSettings()
-        self._showCompleted = True
-        self._showFuture = True
+        self._showCompleted = self._settings.value("show_completed", False)
+        self._showFuture = self._settings.value("show_completed", True)
         self._file = File()
         self._file.fileModified.connect(self.fileExternallyModified)
         self._modified = False
@@ -36,7 +36,8 @@ class MainController(QtCore.QObject):
         self._title = "QTodoTxt"
         self._recentFiles = self._settings.value("recent_files", [])
         self._searchText = ""
-        # filters = self._settings.value("current_filters", ["All"])  # move to QML
+        self._currentFilters = []
+        # self._currentFilters = self._settings.value("current_filters", ["All"])  # move to QML
         self._updateCompletionStrings()
 
     def _taskModified(self, task):
@@ -63,18 +64,19 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot('QVariant')
     def filterRequest(self, idx):
         item = self._filters_tree_controller.model.itemFromIndex(idx)
-        self._applyFilters(filters=[item.filter])
+        self._currentFilters = [item.filter]
+        self._applyFilters()
 
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
         task = tasklib.Task(text)
         task.modified.connect(self._taskModified)
         if after is None:
-            after = len(self._tasksList) - 1
+            after = len(self._filteredTasks) - 1
         self._file.tasks.append(task)
-        self._tasksList.insert(after + 1, task)  # force the new task to be visible
+        self._filteredTasks.insert(after + 1, task)  # force the new task to be visible
         self.setModified(True)
-        self.taskListChanged.emit()
+        self.filteredTasksChanged.emit()
         return after + 1
 
     @QtCore.pyqtSlot('QVariant')
@@ -86,13 +88,13 @@ class MainController(QtCore.QObject):
         self.setModified(True)
         self._applyFilters()  # update filtered list for UI
 
-    taskListChanged = QtCore.pyqtSignal()
+    filteredTasksChanged = QtCore.pyqtSignal()
 
-    @QtCore.pyqtProperty('QVariant', notify=taskListChanged)
-    def taskList(self):
-        return self._tasksList
+    @QtCore.pyqtProperty('QVariant', notify=filteredTasksChanged)
+    def filteredTasks(self):
+        return self._filteredTasks
 
-    showFutureChanged = QtCore.pyqtSignal()
+    showFutureChanged = QtCore.pyqtSignal('bool')
 
     @QtCore.pyqtProperty('bool', notify=showFutureChanged)
     def showFuture(self):
@@ -101,7 +103,8 @@ class MainController(QtCore.QObject):
     @showFuture.setter
     def showFuture(self, val):
         self._showFuture = val
-        self._showFutureChanged.emit(val)
+        self.showFutureChanged.emit(val)
+        self._applyFilters()
 
     searchTextChanged = QtCore.pyqtSignal(str)
 
@@ -115,7 +118,7 @@ class MainController(QtCore.QObject):
         self._applyFilters()
         self.searchTextChanged.emit(txt)
 
-    showCompletedChanged = QtCore.pyqtSignal()
+    showCompletedChanged = QtCore.pyqtSignal('bool')
 
     @QtCore.pyqtProperty('bool', notify=showCompletedChanged)
     def showCompleted(self):
@@ -125,6 +128,7 @@ class MainController(QtCore.QObject):
     def showCompleted(self, val):
         self._showCompleted = val
         self.showCompletedChanged.emit(val)
+        self._applyFilters()
 
     def auto_save(self):
         if int(self._settings.value("auto_save", 1)):
@@ -150,9 +154,8 @@ class MainController(QtCore.QObject):
                 self.open(filename)
             except OSError as ex:
                 self.showError(str(ex))
-
-        self._tasksList = self._file.tasks[:]
-        self.taskListChanged.emit()
+        
+        self._applyFilters()
         self._updateTitle()
 
     def _initFiltersTree(self):
@@ -169,11 +172,9 @@ class MainController(QtCore.QObject):
     def filtersModel(self):
         return self._filters_tree_controller.model
 
-    def _applyFilters(self, filters=None):
+    def _applyFilters(self):
         # First we filter with filters tree
-        #if filters is None:
-        #filters = self._filters_tree_controller.view.getSelectedFilters()
-        tasks = tasklib.filterTasks(filters, self._file.tasks)
+        tasks = tasklib.filterTasks(self._currentFilters, self._file.tasks)
         # Then with our search text
         if self._searchText:
             tasks = tasklib.filterTasks([SimpleTextFilter(self._searchText)], tasks)
@@ -181,12 +182,13 @@ class MainController(QtCore.QObject):
         if not self._showFuture:
             tasks = tasklib.filterTasks([FutureFilter()], tasks)
         # with complete filter if needed
-        if not self._showCompleted and (not filters or not CompleteTasksFilter() in filters):
+        if not self._showCompleted and not CompleteTasksFilter() in self._currentFilters:
             tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
-        self._tasksList = tasks
-        self.taskListChanged.emit()
+        self._filteredTasks = tasks
+        self.filteredTasksChanged.emit()
 
-    def _archive_all_done_tasks(self):
+    @QtCore.pyqtSlot()
+    def archiveCompletedTasks(self):
         done = [task for task in self._file.tasks if task.is_complete]
         for task in done:
             self._file.saveDoneTask(task)
@@ -267,7 +269,6 @@ class MainController(QtCore.QObject):
         for task in self._file.tasks:
             task.modified.connect(self._taskModified)
         self._applyFilters()
-        self.taskListChanged.emit()
         self.updateRecentFile()
 
     recentFilesChanged = QtCore.pyqtSignal()
