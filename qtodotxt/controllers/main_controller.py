@@ -88,6 +88,7 @@ class MainController(QtCore.QObject):
             task = self.filteredTasks[task]
         self._file.tasks.remove(task)
         self.setModified(True)
+        self.auto_save()
         self._applyFilters()  # update filtered list for UI
 
     filteredTasksChanged = QtCore.pyqtSignal()
