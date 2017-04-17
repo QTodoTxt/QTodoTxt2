@@ -121,9 +121,9 @@ ApplicationWindow {
         text: qsTr("Create New Task")
         shortcut: "Ins"
         onTriggered: {
-            var idx = mainController.newTask('', filteredTasksView.currentIndex)
-            filteredTasksView.currentIndex = idx
-            filteredTasksView.editCurrentTask()
+            var idx = mainController.newTask('', taskListView.currentIndex)
+            taskListView.currentIndex = idx
+            taskListView.editCurrentTask()
         }
     }
 
@@ -133,7 +133,7 @@ ApplicationWindow {
         text: qsTr("Delete Task")
         shortcut: "Del"
         onTriggered: {
-            mainController.deleteTask(filteredTasksView.currentIndex)
+            mainController.deleteTask(taskListView.currentIndex)
         }
     }
 
@@ -143,8 +143,8 @@ ApplicationWindow {
         iconSource: window.theme + "TaskEdit.png"
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
-        enabled: filteredTasksView.currentIndex > -1
-        onTriggered: { filteredTasksView.editCurrentTask() }
+        enabled: taskListView.currentIndex > -1
+        onTriggered: { taskListView.editCurrentTask() }
     }
 
     Action {
@@ -163,7 +163,7 @@ ApplicationWindow {
         text: qsTr("Increase Priority")
         shortcut: "+"
         onTriggered: {
-            filteredTasksView.model[filteredTasksView.currentIndex].increasePriority()
+            taskListView.model[taskListView.currentIndex].increasePriority()
         }
     }
 
@@ -174,7 +174,7 @@ ApplicationWindow {
         text: qsTr("Decrease Priority")
         shortcut: "-"
         onTriggered: {
-            filteredTasksView.model[filteredTasksView.currentIndex].decreasePriority()
+            taskListView.model[taskListView.currentIndex].decreasePriority()
         }
     }
 
@@ -228,7 +228,6 @@ ApplicationWindow {
         onToggled: mainController.showFuture = checked
     }
 
-
     Action {
         id: archive
         //iconName: "search"
@@ -238,7 +237,14 @@ ApplicationWindow {
         onTriggered: mainController.archiveCompletedTasks()
     }
 
-
+    Action {
+        id: addLink
+        //iconName: "search"
+        iconSource: window.theme + "link.png"
+        text: qsTr("Add link to current task")
+        shortcut: "Ctrl+L"
+        onTriggered: linkDialog.open()
+    }
 
     Action {
         id: helpShowAbout
@@ -357,6 +363,8 @@ ApplicationWindow {
             ToolButton { action: decreasePriority}
             ToolBarSeparator { }
             ToolButton { action: archive}
+            ToolBarSeparator { }
+            ToolButton { action: addLink}
             Item { Layout.fillWidth: true }
         }
     }
@@ -369,8 +377,17 @@ ApplicationWindow {
                 console.log("OPENING", fileUrl.toString())
                 mainController.open(fileUrl.toString())
             } else {
-                document.saveAs(fileUrl, selectedNameFilter) //FIXME
+                mainController.save(fileUrl.toString())
             }
+        }
+    }
+
+    FileDialog {
+        id: linkDialog
+        //nameFilters: ["Text files (*.txt)"]
+        selectExisting: false
+        onAccepted: {
+            taskListView.model[taskListView.currentIndex].text += fileUrl.toString()
         }
     }
 
@@ -444,7 +461,7 @@ ApplicationWindow {
             }
 
             TaskListView {
-                id: filteredTasksView
+                id: taskListView
                 Layout.fillHeight: true
                 Layout.fillWidth: true
 
