@@ -26,8 +26,10 @@ Rectangle {
         var _y = textItem.cursorRectangle.y
                 + textItem.cursorRectangle.height + 5
         var globalCoords = textItem.mapToItem(splitView, _x, _y)
-        x = globalCoords.x
-        y = globalCoords.y
+        var xMax = splitView.width - popupItem.width
+        var yMax = splitView.height - popupItem.height
+        x = Math.min(globalCoords.x, xMax)
+        y = Math.min(globalCoords.y, yMax)
         //        console.log(x, y)
         //        x=0;y=0
     }
@@ -37,7 +39,9 @@ Rectangle {
         popup.textItem.remove(popup.textItem.cursorPosition - completionModel.completionPrefix.length, popup.textItem.cursorPosition)
         popup.textItem.insert(popup.textItem.cursorPosition, selectedText)
         if (selectedText === "due:") {
+            completionModel.completionPrefix = ""
             state = "calendar"
+            setPosition()
         }
         else  {
             popup.state = "invisible"
@@ -52,6 +56,9 @@ Rectangle {
     }
 
 
+    focus: true
+    Keys.onEscapePressed: popup.state = "invisible"
+
     states: [
         State {
             name: "list"
@@ -65,7 +72,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: textItem
-                Keys.forwardTo: [popupItem.item]
+                Keys.forwardTo: [popupItem, popupItem.item]
             }
         },
         State {
@@ -80,7 +87,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: textItem
-                Keys.forwardTo: [popupItem.item]
+                Keys.forwardTo: [popupItem, popupItem.item]
             }
         },
         State {
@@ -96,12 +103,11 @@ Rectangle {
 
     ListModel {
         id: completionModel
-        //property var sourceModel: ["(A)", "(B)", "(C)", "+project", "+projectasdasdsdasdasdasdasdasdasdasdasd", "@context"]
         property var sourceModel: mainController.completionStrings
 
         property string text: popup.textItem.text
         property int cursorPosition: popup.textItem.cursorPosition
-        property string completionPrefix: ""//getCompletionPrefix(popup.textItem.text)
+        property string completionPrefix: ""
 
         onTextChanged: {
             completionPrefix = getCompletionPrefix(text)
@@ -115,7 +121,6 @@ Rectangle {
             }
             return ""
         }
-
 
         onCompletionPrefixChanged: {
             //            console.log(completionPrefix)
@@ -143,15 +148,57 @@ Rectangle {
     Component {
         id: calendarComp
         Calendar {
+            signal selected()
+            onSelected: insertSelection(selectedDate.toLocaleString(Qt.locale("en_US"), 'yyyy-MM-dd'))
+            onClicked: selected()
 
+            focus: true
+            Keys.onRightPressed: {
+                if (event.modifiers === Qt.ControlModifier) {
+                    var d = new Date(selectedDate)
+                    d.setDate(d.getDate() - 1)
+                    selectedDate = new Date(d.setMonth(d.getMonth() + 1))
+                    event.accepted
+                }
+            }
+            Keys.onLeftPressed: {
+                if (event.modifiers === Qt.ControlModifier) {
+                    var d = new Date(selectedDate)
+                    d.setDate(d.getDate() + 1)
+                    selectedDate = new Date(d.setMonth(d.getMonth() - 1))
+                    event.accepted
+                }
+            }
+            Keys.onDownPressed: {
+                if (event.modifiers === Qt.ControlModifier) {
+                    var d = new Date(selectedDate)
+                    d.setDate(d.getDate() - 7)
+//                    console.log(d.getYear())
+                    selectedDate = new Date(d.setFullYear(d.getFullYear() + 1))
+                    event.accepted
+                }
+            }
+            Keys.onUpPressed: {
+                if (event.modifiers === Qt.ControlModifier) {
+                    var d = new Date(selectedDate)
+                    d.setDate(d.getDate() + 7)
+                    selectedDate = new Date(d.setFullYear(d.getFullYear() - 1))
+                    event.accepted
+                }
+            }
+            Keys.onReturnPressed: selected()
+            Keys.onEnterPressed: selected()
+            Keys.onEscapePressed: popup.state = "invisible"
         }
     }
 
     Component {
         id: listComp
         ListView {
+            signal selected()
+            onSelected: insertSelection(completionModel.get(currentIndex).text)
+
             id: list
-            //        anchors.fill:parent
             height: contentHeight
             width: 200
 
@@ -167,13 +214,12 @@ Rectangle {
                 opacity: 0.5
             }
 
+            focus: true
             keyNavigationWraps: true
-
             Keys.enabled: popup.visible
             Keys.onEscapePressed: popup.state = "invisible"
-            Keys.onReturnPressed: insertSelection(completionModel.get(currentIndex).text)
-
-            //            Component.onCompleted: {console.log("huhu")}
+            Keys.onReturnPressed: selected()
+            Keys.onEnterPressed: selected()
         }
     }
 }

@@ -1,4 +1,4 @@
-(A) Make peace between Cylons and humans +PeaceProject due:
+(A) Make peace between Cylons and humans +PeaceProject due:2017-04-17
 (B) Report to <i>Admiral Adama</i> about FTL @CIC +GalacticaRepairs due:2013-05-24
 (C) 2016-12-08 Feed Schrodinger's Cat rec:+1d due:2014-02-23
 (C) Upgrade jump drives with Cylon technology +GalacticaRepairs
