@@ -186,6 +186,13 @@ class Task(QtCore.QObject):
     def thresholdString(self):
         return dateString(self.threshold)
 
+    @QtCore.pyqtSlot()
+    def toggleCompletion(self):
+        if self.is_complete:
+            self.setPending()
+        else:
+            self.setCompleted()
+
     def setCompleted(self):
         """
         Set a task as completed by inserting a x and current date at the begynning of line

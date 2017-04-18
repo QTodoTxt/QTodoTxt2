@@ -132,9 +132,7 @@ ApplicationWindow {
         iconName: "edit-delete-symbolic"
         text: qsTr("Delete Task")
         shortcut: "Del"
-        onTriggered: {
-            mainController.deleteTask(taskListView.currentIndex)
-        }
+        onTriggered: confirmDialog.open()
     }
 
     Action {
@@ -153,7 +151,9 @@ ApplicationWindow {
         iconSource: window.theme + "TaskComplete.png"
         text: qsTr("Complete Task")
         shortcut: "X"
-        onTriggered: {        }
+        onTriggered: {
+            taskListView.model[taskListView.currentIndex].toggleCompletion()
+        }
     }
 
     Action {
@@ -393,12 +393,19 @@ ApplicationWindow {
     }
 
     MessageDialog {
+        id: confirmDialog
+        title: "QTodotTxt Confirm"
+        text: "Do you really want to delete current task" 
+        standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
+        onAccepted: {
+            mainController.deleteTask(taskListView.currentIndex)
+        }
+    }
+
+    MessageDialog {
         id: errorDialog
         title: "QTodotTxt Error"
         text: "Error message should be here!"
-        onAccepted: {
-            console.log("And of course you could only agree.")
-        }
     }
 
     MessageDialog {
