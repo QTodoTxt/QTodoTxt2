@@ -32,19 +32,19 @@ Loader {
                 taskLine.activated()
                 taskLine.state = "edit"
             }
-            Label {
-                id: prioLbl
-                anchors.verticalCenter: parent.verticalCenter
-                width: 20
-
-                text: taskLine.priority
-                textFormat: Qt.RichText
-            }
+            //Label {
+                //id: prioLbl
+                //anchors.verticalCenter: parent.verticalCenter
+                //width: 20
+//
+                //text: taskLine.priority
+                //textFormat: Qt.RichText
+            //}
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.left: prioLbl.right
+                //anchors.right: parent.right
+                //anchors.left: prioLbl.right
 
                 text: taskLine.html
                 textFormat: Qt.RichText
