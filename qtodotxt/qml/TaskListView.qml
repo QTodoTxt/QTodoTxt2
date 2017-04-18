@@ -11,21 +11,17 @@ ListView {
         }
     }
 
-
+    spacing: 10
     highlight: Rectangle {
         color: systemPalette.highlight
         opacity: 0.5
     }
+    //workaround for issue #10 dont know how to turn off animations:
+    highlightMoveDuration: 0
 
-    highlightFollowsCurrentItem: true
-    spacing: 10
     focus: true
+    Keys.onReturnPressed: listView.currentItem.state = "edit"
 
-    Keys.onReturnPressed: {
-        listView.currentItem.state = "edit"
-    }
-    Keys.onEscapePressed: {
-    }
     model: taskList
     delegate: TaskLine {
         width: listView.width
