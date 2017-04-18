@@ -476,8 +476,7 @@ ApplicationWindow {
                     searchField.focus = true
                 }
 
-//                Keys.forwardTo: [completionPopup.popupItem]
-                Component.onCompleted: completionPopup.textItem = this
+                onActiveFocusChanged: console.log("active")
             }
 
             TaskListView {

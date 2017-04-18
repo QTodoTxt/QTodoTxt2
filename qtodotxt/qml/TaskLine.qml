@@ -70,7 +70,7 @@ Loader {
             Keys.onEscapePressed: taskLine.state = "show"
 
 
-            Keys.forwardTo: [completionPopup.popupItem]
+//            Keys.forwardTo: [completionPopup.popupItem]
             Component.onCompleted: completionPopup.textItem = editor
         }
     }
