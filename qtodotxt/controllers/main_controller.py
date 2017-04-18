@@ -195,16 +195,22 @@ class MainController(QtCore.QObject):
         self._updateCompletionStrings()
         self.modifiedChanged.emit(val)
 
-    def save(self):
-        logger.debug('MainController, saving file: %s.', self._file.filename)
-        filename = self._file.filename
+    @QtCore.pyqtSlot("QUrl")
+    @QtCore.pyqtSlot()
+    def save(self, path=None):
+        if not path:
+            path = self._file.filename
+        elif isinstance(path, QtCore.QUrl):
+            path = path.toLocalFile()
+
+        logger.debug('MainController, saving file: %s.', path)
         try:
-            self._file.save(filename)
+            self._file.save(path)
         except OSError as ex:
-            logger.exception("Error saving file %s", filename)
+            logger.exception("Error saving file %s", path)
             self.showError(ex)
             return
-        self._settings.setValue("last_open_file", filename)
+        self._settings.setValue("last_open_file", path)
         self._settings.sync()
         self.setModified(False)
 
@@ -240,10 +246,11 @@ class MainController(QtCore.QObject):
     def reload(self):
         self.open(self._file.filename)
 
+    @QtCore.pyqtSlot('QUrl')
     @QtCore.pyqtSlot('QString')
     def open(self, filename):
-        if filename.startswith("file:/"):
-            filename = filename[6:] 
+        if isinstance(filename, QtCore.QUrl):
+            filename = filename.toLocalFile()
         logger.debug('MainController.open called with filename="%s"', filename)
         try:
             self._file.load(filename)

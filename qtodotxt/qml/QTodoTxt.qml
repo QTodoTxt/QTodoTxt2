@@ -95,8 +95,20 @@ ApplicationWindow {
         iconName: "document-save"
         text: qsTr("Save")
         shortcut: StandardKey.Save
-        onTriggered: {        }
+        onTriggered: mainController.save()
     }
+
+    Action {
+        id: fileSaveAs
+        iconName: "document-save-as"
+        text: qsTr("Save As")
+        shortcut: StandardKey.SaveAs
+        onTriggered: {
+            fileDialog.selectExisting = false
+            fileDialog.open()
+        }
+    }
+
 
     Action {
         id: fileRevert
@@ -109,8 +121,8 @@ ApplicationWindow {
         id: quitApp
         iconName: "application-exit"
         text: qsTr("Exit")
-        shortcut: "Alt+F4"
-        onTriggered: {        }
+        shortcut: StandardKey.Quit 
+        onTriggered: exit()
     }
 
 
@@ -119,7 +131,7 @@ ApplicationWindow {
         iconName: "list-add"
         iconSource: window.theme + "TaskCreate.png"
         text: qsTr("Create New Task")
-        shortcut: "Ins"
+        shortcut: "Ins"|StandardKey.New
         onTriggered: {
             var idx = mainController.newTask('', taskListView.currentIndex)
             taskListView.currentIndex = idx
@@ -300,7 +312,8 @@ ApplicationWindow {
             }
 
             MenuItem { action: fileSave }
-            MenuItem { action: fileRevert }
+            MenuItem { action: fileSaveAs }
+            //MenuItem { action: fileRevert }
             MenuSeparator {}
             MenuItem {
                 text: qsTr("Preferences")
@@ -374,10 +387,9 @@ ApplicationWindow {
         nameFilters: ["Text files (*.txt)"]
         onAccepted: {
             if (fileDialog.selectExisting) {
-                console.log("OPENING", fileUrl.toString())
-                mainController.open(fileUrl.toString())
+                mainController.open(fileUrl)
             } else {
-                mainController.save(fileUrl.toString())
+                mainController.save(fileUrl)
             }
         }
     }
