@@ -122,9 +122,8 @@ ApplicationWindow {
         iconName: "application-exit"
         text: qsTr("Exit")
         shortcut: StandardKey.Quit 
-        onTriggered: exit()
+        onTriggered: window.close()
     }
-
 
     Action {
         id: newTask
@@ -141,7 +140,8 @@ ApplicationWindow {
 
     Action {
         id: deleteTask
-        iconName: "edit-delete-symbolic"
+        iconName: "list-remove"
+        iconSource: window.theme + "TaskDelete.png"
         text: qsTr("Delete Task")
         shortcut: "Del"
         onTriggered: confirmDialog.open()

@@ -40,8 +40,10 @@ class MainController(QtCore.QObject):
 
     def _taskModified(self, task):
         self.setModified(True)
+        if not task.text:
+            self.deleteTask(task)
+            return
         self._applyFilters()
-        self.auto_save()
 
     def showError(self, msg):
         logger.debug("ERROR", msg)
@@ -77,7 +79,6 @@ class MainController(QtCore.QObject):
         self._file.tasks.append(task)
         self._filteredTasks.insert(after + 1, task)  # force the new task to be visible
         self.setModified(True)
-        self.auto_save()
         self.filteredTasksChanged.emit()
         return after + 1
 
@@ -88,7 +89,6 @@ class MainController(QtCore.QObject):
             task = self.filteredTasks[task]
         self._file.tasks.remove(task)
         self.setModified(True)
-        self.auto_save()
         self._applyFilters()  # update filtered list for UI
 
     filteredTasksChanged = QtCore.pyqtSignal()
@@ -181,7 +181,6 @@ class MainController(QtCore.QObject):
             self._file.tasks.remove(task)
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
         self.setModified(True)
-        self.auto_save()
 
     modifiedChanged = QtCore.pyqtSignal(bool)
 
@@ -190,9 +189,11 @@ class MainController(QtCore.QObject):
         return self._modified
 
     def setModified(self, val):
+        self._updateCompletionStrings()
+        if val and self.auto_save():
+            return
         self._modified = val
         self._updateTitle()
-        self._updateCompletionStrings()
         self.modifiedChanged.emit(val)
 
     @QtCore.pyqtSlot("QUrl")
@@ -202,6 +203,7 @@ class MainController(QtCore.QObject):
             path = self._file.filename
         elif isinstance(path, QtCore.QUrl):
             path = path.toLocalFile()
+        self._file.filename = path
 
         logger.debug('MainController, saving file: %s.', path)
         try:
