@@ -10,9 +10,9 @@ Loader {
     state: "unconnected"
 
     function setPosition() {
-        completionPrefixItem.text = completionModel.completionPrefix
+        prefixItem.text = completionModel.prefix
         var _x = textItem.cursorRectangle.x
-                + textItem.cursorRectangle.width - completionPrefixItem.contentWidth
+                + textItem.cursorRectangle.width - prefixItem.contentWidth
         var _y = textItem.cursorRectangle.y
                 + textItem.cursorRectangle.height + 5
         var globalCoords = textItem.mapToItem(splitView, _x, _y)
@@ -26,47 +26,48 @@ Loader {
 
     function insertSelection(selectedText) {
         console.log(popup.textItem.cursorPosition, selectedText)
-        popup.textItem.remove(popup.textItem.cursorPosition - completionModel.completionPrefix.length, popup.textItem.cursorPosition)
+        if (state === "list")
+            popup.textItem.remove(popup.textItem.cursorPosition
+                                  - completionModel.prefix.length,
+                                  popup.textItem.cursorPosition)
         popup.textItem.insert(popup.textItem.cursorPosition, selectedText)
-        if (selectedText === "due:") {
-            completionModel.completionPrefix = ""
-            state = "calendar"
-            setPosition()
+        completionModel.clear()
+        if (selectedText === "due:") state = "calendar"
+    }
+
+    Keys.onEscapePressed: if (popup.state !== "invisible") popup.state = "invisible"
+
+    Component {
+        id: keyHandler
+    Item {
+//        focus: true
+        Keys.onSpacePressed: {
+            console.log("huhu")
+            if (event.modifiers === Qt.ControlModifier) {
+                completionModel.manualTrigger()
+                event.accepted = true
+            }
+            else event.accepted = false
         }
-        else  {
-            popup.state = "invisible"
-        }
+    }
     }
 
     Text {
-        id: completionPrefixItem
+        id: prefixItem
         visible: false
     }
-
-
-    focus: true
-    Keys.onEscapePressed: popup.state = "invisible"
-
-    onTextItemChanged: if (textItem) state = "invisible"
 
     onStateChanged: console.log("state: ", textItem, state)
 
     states: [
         State {
             name: "list"
+            extend: "invisible"
+            when: (textItem !== null && completionModel.count > 0)
             PropertyChanges {
                 target: popup
                 visible: true
                 sourceComponent: listComp
-            }
-            PropertyChanges {
-                target: textItem
-                Keys.forwardTo: [popup, popup.item]
-            }
-            PropertyChanges {
-                target: completionModel
-                text: textItem.text
-                cursorPosition: textItem.cursorPosition
             }
             StateChangeScript {
                 script: setPosition()
@@ -74,14 +75,11 @@ Loader {
         },
         State {
             name: "calendar"
+            extend: "invisible"
             PropertyChanges {
                 target: popup
                 visible: true
                 sourceComponent: calendarComp
-            }
-            PropertyChanges {
-                target: textItem
-                Keys.forwardTo: [popup, popup.item]
             }
             StateChangeScript {
                 script: setPosition()
@@ -89,14 +87,20 @@ Loader {
         },
         State {
             name: "invisible"
+            when: (textItem !== null && completionModel.count === 0)
             PropertyChanges {
                 target: popup
-                visible: false
+                sourceComponent: keyHandler
+//                focus: true
             }
             PropertyChanges {
                 target: completionModel
                 text: textItem.text
                 cursorPosition: textItem.cursorPosition
+            }
+            PropertyChanges {
+                target: textItem
+                Keys.forwardTo: [popup, popup.item]
             }
         },
         State {
@@ -106,13 +110,7 @@ Loader {
                 target: popup
                 visible: false
             }
-            PropertyChanges {
-                target: completionModel
-                text: ""
-                cursorPosition: 0
-            }
         }
-
     ]
 
     ListModel {
@@ -122,44 +120,55 @@ Loader {
 
         property string text: ""
         property int cursorPosition: 0
-        property string completionPrefix: ""
+        property string prefix: ""
 
+        signal manualTrigger()
 
-        function getCompletionPrefix() {
+        function getPrefix() {
             var match = text.substring(0, cursorPosition).match(/(^.*\s|^)(\S+)$/)
             if (match) {
-                return match[2]
+                prefix =  match[2]
             }
-            return ""
+            else prefix = ""
         }
 
         function populateModel(){
             clear()
             if (popup.state === "unconnected") return;
             var filteredList = sourceModel.filter(function(completionItem) {
-                return (completionItem.substring(0, completionPrefix.length) === completionPrefix)
+                return (completionItem.substring(0, prefix.length) === prefix)
             })
             filteredList.forEach(function(i){
-                console.log(completionPrefix, i)
+                console.log(prefix, i)
                 append({"text": i})
             })
         }
-        signal manualTrigger()
 
-        onTextChanged: completionPrefix = getCompletionPrefix()
-        onManualTrigger: completionPrefix = getCompletionPrefix()
-        onCompletionPrefixChanged: populateModel()
-        onCountChanged: if (count > 0) popup.state = "list"
+        onTextChanged: {
+            getPrefix()
+            if (prefix === "due:") popup.state = "calendar"
+            if (prefix.length > 0) populateModel()
+            else clear()
+        }
+        onManualTrigger: {
+            getPrefix()
+            if (prefix === "due:") popup.state = "calendar"
+            populateModel()
+        }
     }
 
     Component {
         id: calendarComp
         Calendar {
             signal selected()
-            onSelected: insertSelection(selectedDate.toLocaleString(Qt.locale("en_US"), 'yyyy-MM-dd'))
+            onSelected: {
+                insertSelection(selectedDate.toLocaleString(Qt.locale("en_US"), 'yyyy-MM-dd'))
+                popup.state = "invisible"
+            }
+
             onClicked: selected()
 
-            focus: true
+//            focus: true
             Keys.onRightPressed: {
                 if (event.modifiers === Qt.ControlModifier) {
                     var d = new Date(selectedDate)
@@ -194,7 +203,6 @@ Loader {
             }
             Keys.onReturnPressed: selected()
             Keys.onEnterPressed: selected()
-//            Keys.onEscapePressed: popup.state = "invisible"
         }
     }
 
@@ -210,7 +218,7 @@ Loader {
                 width: 1
             }
 
-            focus: true
+//            focus: true
             Keys.forwardTo: list
 
             ListView {
@@ -236,8 +244,14 @@ Loader {
 
                 focus: true
                 keyNavigationWraps: true
-                //Keys.enabled: popup.visible
-//                Keys.onEscapePressed: popup.state = "invisible"
+                Keys.onLeftPressed: {
+                    completionModel.clear()
+                    event.accepted = false
+                }
+                Keys.onRightPressed:{
+                    completionModel.clear()
+                    event.accepted = false
+                }
                 Keys.onReturnPressed: selected()
                 Keys.onEnterPressed: selected()
             }

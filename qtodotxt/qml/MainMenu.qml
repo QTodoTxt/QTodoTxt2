@@ -15,7 +15,7 @@ MenuBar {
                 onObjectAdded: recentMenu.insertItem(index, object)
                 onObjectRemoved: recentMenu.removeItem( object )
                 delegate: MenuItem {
-                    text: mainController.recentFiles[model.index]
+                    text: (mainController.recentFiles[model.index] ? mainController.recentFiles[model.index] : "")
                     onTriggered: mainController.open(mainController.recentFiles[model.index])
                 }
             }

@@ -71,7 +71,7 @@ Loader {
 
 
 //            Keys.forwardTo: [completionPopup.popupItem]
-            Component.onCompleted: completionPopup.textItem = editor
+            onActiveFocusChanged: if (activeFocus) completionPopup.textItem = editor
         }
     }
 
