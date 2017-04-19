@@ -137,7 +137,7 @@ class MainController(QtCore.QObject):
         self._applyFilters()
 
     def auto_save(self):
-        if int(self._settings.value("auto_save", 1)):
+        if bool(self._settings.value("Preferences/auto_save", True)):
             self.save()
 
     def start(self):
