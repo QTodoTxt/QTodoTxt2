@@ -58,19 +58,6 @@ ApplicationWindow {
         }
     }
 
-    SystemPalette {
-        id: systemPalette
-    }
-
-    AboutBox {
-        id: aboutBox
-        appName: "QTodoTxt"
-    }
-
-    Preferences {
-        id: preferencesWindow
-    }
-
     Action {
         id: fileNew
         iconName: "document-new"
@@ -263,7 +250,11 @@ ApplicationWindow {
         iconName: "help-about"
         text: qsTr("About");
         shortcut: "F1"
-        onTriggered: aboutBox.open()
+        onTriggered: {
+            var component = Qt.createComponent("AboutBox.qml")
+            var dialog = component.createObject(window)
+            dialog.open()
+        }
     }
 
     Action {
@@ -292,106 +283,20 @@ ApplicationWindow {
         text: "Due Date"
     }
 
-    menuBar: MenuBar {
-        Menu {
-            title: qsTr("File")
-            MenuItem { action: fileNew }
-            MenuItem { action: fileOpen}
-            Menu {
-                id: recentMenu
-                title: qsTr("Recent Files")
-                Instantiator {
-                    model: mainController.recentFiles
-                    onObjectAdded: recentMenu.insertItem(index, object)
-                    onObjectRemoved: recentMenu.removeItem( object )
-                    delegate: MenuItem {
-                        text: mainController.recentFiles[model.index]
-                        onTriggered: mainController.open(mainController.recentFiles[model.index])
-                    }
-                }
-            }
+    menuBar: MainMenu { }
 
-            MenuItem { action: fileSave }
-            MenuItem { action: fileSaveAs }
-            //MenuItem { action: fileRevert }
-            MenuSeparator {}
-            MenuItem {
-                text: qsTr("Preferences")
-                iconName: "configure"
-                onTriggered: preferencesWindow.show()
-            }
-            MenuSeparator {}
-            MenuItem { action: quitApp}
-            //FIXME: if you want you can play around with the style in ./style/dark_blue/MenuStyle.qml
-            //style: MyStyle.MenuStyle{}
-        }
-        Menu {
-            title: qsTr("Edit")
-            MenuItem { action: newTask }
-            MenuItem { action: editTask }
-            MenuItem { action: deleteTask }
-            MenuSeparator {}
-            MenuItem { action: completeTasks}
-            MenuSeparator {}
-            MenuItem { action: increasePriority}
-            MenuItem { action: decreasePriority}
-        }
-        Menu {
-            title: qsTr("View")
-            MenuItem { action: showSearchAction}
-            MenuItem { action: showFilterPanel}
-            MenuItem { action: showToolBarAction}
-            MenuItem { action: showCompleted}
-            MenuItem { action: showFuture}
-        }
-        Menu {
-            title: qsTr("Sorting")
-            MenuItem { action: sortTodoTxt}
-            MenuItem { action: sortCreationDate}
-            MenuItem { action: sortDueDate}
-        }
-        Menu {
-            title: qsTr("Help")
-            MenuItem { action: helpShowAbout }
-            MenuItem { action: helpShowShortcuts }
-        }
-    }
-
-    toolBar: ToolBar {
-        id: toobar
-        visible: showToolBarAction.checked
-        RowLayout {
-            anchors.fill: parent
-            ToolButton { action: showSearchAction}
-            ToolButton { action: showFilterPanel}
-            ToolButton { action: showCompleted}
-            ToolButton { action: showFuture}
-            ToolBarSeparator { }
-            ToolButton { action: newTask }
-            ToolButton { action: editTask }
-            ToolButton { action: deleteTask }
-            ToolButton { action: completeTasks}
-            ToolBarSeparator { }
-            ToolButton { action: increasePriority}
-            ToolButton { action: decreasePriority}
-            ToolBarSeparator { }
-            ToolButton { action: archive}
-            ToolBarSeparator { }
-            ToolButton { action: addLink}
-            Item { Layout.fillWidth: true }
-        }
-    }
+    toolBar: MainToolBar { }
 
     FileDialog {
-        id: fileDialog
-        nameFilters: ["Text files (*.txt)"]
-        onAccepted: {
-            if (fileDialog.selectExisting) {
-                mainController.open(fileUrl)
-            } else {
-                mainController.save(fileUrl)
+            id: fileDialog
+            nameFilters: ["Text files (*.txt)"]
+            onAccepted: {
+                if (fileDialog.selectExisting) {
+                    mainController.open(fileUrl)
+                } else {
+                    mainController.save(fileUrl)
+                }
             }
-        }
     }
 
     FileDialog {
@@ -428,6 +333,10 @@ ApplicationWindow {
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: mainController.reload() 
         //onNo: console.log("didn't copy")
+    }
+
+    SystemPalette {
+        id: systemPalette
     }
 
     SplitView {
