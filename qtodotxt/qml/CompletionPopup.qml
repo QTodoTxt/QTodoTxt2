@@ -35,7 +35,10 @@ Loader {
         if (selectedText === "due:") state = "calendar"
     }
 
-    Keys.onEscapePressed: if (popup.state !== "invisible") popup.state = "invisible"
+    Keys.onEscapePressed: {
+        if (popup.state !== "invisible") popup.state = "invisible"
+        else event.accepted = false
+    }
 
     Component {
         id: keyHandler
@@ -76,6 +79,7 @@ Loader {
         State {
             name: "calendar"
             extend: "invisible"
+//            when: (completionModel.prefix === "due:")
             PropertyChanges {
                 target: popup
 //                visible: true
@@ -126,6 +130,7 @@ Loader {
 
         function getPrefix() {
             var match = text.substring(0, cursorPosition).match(/(^.*\s|^)(\S+)$/)
+            console.log(cursorPosition, text.substring(0, cursorPosition),match)
             if (match) {
                 prefix =  match[2]
             }
@@ -139,12 +144,13 @@ Loader {
                 return (completionItem.substring(0, prefix.length) === prefix)
             })
             filteredList.forEach(function(i){
-                console.log(prefix, i)
+//                console.log(prefix, i)
                 append({"text": i})
             })
         }
 
         onTextChanged: {
+            console.log(cursorPosition, text)
             getPrefix()
             if (prefix === "due:") popup.state = "calendar"
             if (prefix.length > 0) populateModel()

@@ -376,16 +376,21 @@ ApplicationWindow {
 
 
             TextField {
-                Layout.fillWidth: true
                 id: searchField
+
+                Layout.fillWidth: true
+
                 visible: showSearchAction.checked
+                focus: true
+
                 placeholderText: "Search"
                 onTextChanged: {
                     mainController.searchText = text
                     searchField.focus = true
                 }
 
-                onActiveFocusChanged: console.log("active")
+                onActiveFocusChanged: completionPopup.textItem = this
+                onCursorPositionChanged: console.log(cursorPosition)
             }
 
             TaskListView {

@@ -61,6 +61,7 @@ Loader {
             id: editor
 
             text: taskLine.text
+
             focus: true
             onEditingFinished: {
                 taskLine.state = "show"
@@ -72,6 +73,7 @@ Loader {
 
 //            Keys.forwardTo: [completionPopup.popupItem]
             onActiveFocusChanged: if (activeFocus) completionPopup.textItem = editor
+            onCursorPositionChanged: console.log(cursorPosition)
         }
     }
 
