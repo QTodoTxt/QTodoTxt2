@@ -66,7 +66,7 @@ Loader {
             when: (textItem !== null && completionModel.count > 0)
             PropertyChanges {
                 target: popup
-                visible: true
+//                visible: true
                 sourceComponent: listComp
             }
             StateChangeScript {
@@ -78,7 +78,7 @@ Loader {
             extend: "invisible"
             PropertyChanges {
                 target: popup
-                visible: true
+//                visible: true
                 sourceComponent: calendarComp
             }
             StateChangeScript {
@@ -91,7 +91,7 @@ Loader {
             PropertyChanges {
                 target: popup
                 sourceComponent: keyHandler
-//                focus: true
+                visible: true
             }
             PropertyChanges {
                 target: completionModel
