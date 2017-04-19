@@ -39,7 +39,8 @@ class MainController(QtCore.QObject):
         self._updateCompletionStrings()
 
     def _taskModified(self, task):
-        self.setModified(True)
+        self.setModified()
+        self.auto_save()
         if not task.text:
             self.deleteTask(task)
             return
@@ -78,7 +79,8 @@ class MainController(QtCore.QObject):
             after = len(self._filteredTasks) - 1
         self._file.tasks.append(task)
         self._filteredTasks.insert(after + 1, task)  # force the new task to be visible
-        self.setModified(True)
+        self.setModified()
+        self.auto_save()
         self.filteredTasksChanged.emit()
         return after + 1
 
@@ -88,7 +90,8 @@ class MainController(QtCore.QObject):
             # if task is not a task assume it is an int
             task = self.filteredTasks[task]
         self._file.tasks.remove(task)
-        self.setModified(True)
+        self.setModified()
+        self.auto_save()
         self._applyFilters()  # update filtered list for UI
 
     filteredTasksChanged = QtCore.pyqtSignal()
@@ -180,7 +183,8 @@ class MainController(QtCore.QObject):
             self._file.saveDoneTask(task)
             self._file.tasks.remove(task)
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
-        self.setModified(True)
+        self.setModified()
+        self.auto_save()
 
     modifiedChanged = QtCore.pyqtSignal(bool)
 
@@ -188,10 +192,8 @@ class MainController(QtCore.QObject):
     def modified(self):
         return self._modified
 
-    def setModified(self, val):
+    def setModified(self, val=True):
         self._updateCompletionStrings()
-        if val and self.auto_save():
-            return
         self._modified = val
         self._updateTitle()
         self.modifiedChanged.emit(val)

@@ -62,7 +62,7 @@ ApplicationWindow {
         id: fileNew
         iconName: "document-new"
         text: qsTr("New")
-        shortcut: StandardKey.New
+        //shortcut: StandardKey.New
         onTriggered: {        }
     }
 
@@ -313,8 +313,8 @@ ApplicationWindow {
         id: confirmDialog
         title: "QTodotTxt Confirm"
         text: "Do you really want to delete current task" 
-        standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
-        onAccepted: {
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: {
             mainController.deleteTask(taskListView.currentIndex)
         }
     }
