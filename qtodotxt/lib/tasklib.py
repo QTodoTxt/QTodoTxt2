@@ -32,21 +32,38 @@ class Task(QtCore.QObject):
 
     modified = QtCore.pyqtSignal(object)
 
-    def __init__(self, line):
+    def __init__(self, text):
         QtCore.QObject.__init__(self)
-        settings = QtCore.QSettings()
+        self._settings = QtCore.QSettings()
         self._highest_priority = 'A'
-        self._lowest_priority = settings.value("lowest_priority", "D")
-
         # all other class attributes are defined in _reset method
         # which is called in _parse
-        self._parse(line)
+        self._parse(text)
+
+    def addCreationCate(self):
+        text = self._removeCreationDate()
+        text = self._addCreationDate()
 
     def __str__(self):
         return self._text
 
     def __repr__(self):
         return "Task({})".format(self._text)
+
+    def _removeCreationDate(self):
+        match = re.match(r'^(\([A-Z]\)\s)?[0-9]{4}\-[0-9]{2}\-[0-9]{2}\s(.*)', self._text)
+        if match:
+            if match.group(1):
+                self._text = match.group(1) + match.group(2)
+            else:
+                self._text = match.group(2)
+
+    def addCreationDate(self):
+        date_string = date.today().strftime('%Y-%m-%d')
+        if re.match(r'^\([A-Z]\)', self._text):
+            self._text = '%s %s %s' % (self._text[:3], date_string, self._text[4:])
+        else:
+            self._text = '%s %s' % (date_string, self._text)
 
     def _reset(self):
         self.contexts = []
@@ -228,12 +245,16 @@ class Task(QtCore.QObject):
         htmlizer = TaskHtmlizer()
         return htmlizer.task2html(self)
     
+    def _getLowestPriority(self):
+        return self._settings.value("Preferences/lowest_priority", "D")
+    
     @QtCore.pyqtSlot()
     def increasePriority(self):
+        lowest_priority = self._getLowestPriority()
         if self.is_complete:
             return
         if not self._priority:
-            self._priority = self._lowest_priority
+            self._priority = lowest_priority
             self._text = "({}) {}".format(self._priority, self._text)
         elif self._priority != self._highest_priority:
             self._priority = chr(ord(self._priority) - 1)
@@ -242,9 +263,10 @@ class Task(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def decreasePriority(self):
+        lowest_priority = self._getLowestPriority()
         if self.is_complete:
             return
-        if self._priority >= self._lowest_priority:
+        if self._priority >= lowest_priority:
             self._priority = ""
             self._text = self._text[4:]
             self._text = self._text.replace("({})".format(self._priority), "", 1)

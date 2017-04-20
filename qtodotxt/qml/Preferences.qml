@@ -8,8 +8,8 @@ Dialog {
     Settings {
         category: "Preferences"
         property alias auto_save: autoSaveCB.checked
-        //property alias window_height: window.height
-        //property alias filters_tree_width: filtersTree.width
+        property alias lowest_priority: lowestPriorityField.text
+        property alias add_creation_date: creationDateCB.checked
     }
     GroupBox {
         Column {
@@ -19,13 +19,21 @@ Dialog {
                 text: qsTr("Autosave") 
                 checked: true
             }
-            CheckBox { text: qsTr("AutoArchive") }
-            CheckBox { text: qsTr("Add created date") }
-            CheckBox { text: qsTr("Show Delete action") }
-            Row { Label {text: "Lowest task priority:"}
-                TextField { text: "D"; inputMask: "A" }
+            //CheckBox { text: qsTr("AutoArchive") }
+            CheckBox {
+                id:creationDateCB
+                text: qsTr("Add creation date")
+                checked: false
             }
-            CheckBox { text: qsTr("Enable System Tray") }
+            Row { 
+                Label {text: "Lowest task priority:"}
+                TextField { 
+                    id: lowestPriorityField; 
+                    text: "D"; 
+                    inputMask: "A" 
+                }
+            }
+            //CheckBox { text: qsTr("Enable System Tray") }
         }
     }
     standardButtons:StandardButton.Ok

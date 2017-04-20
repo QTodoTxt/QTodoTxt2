@@ -47,7 +47,7 @@ class MainController(QtCore.QObject):
         self._applyFilters()
 
     def showError(self, msg):
-        logger.debug("ERROR", msg)
+        logger.debug("ERROR: %s", msg)
         self.error.emit(msg)
 
     completionChanged = QtCore.pyqtSignal()
@@ -74,6 +74,8 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
         task = tasklib.Task(text)
+        if bool(self._settings.value("Preferences/add_creation_date", False, type=bool)):
+            task.addCreationDate()
         task.modified.connect(self._taskModified)
         if after is None:
             after = len(self._filteredTasks) - 1
@@ -137,7 +139,7 @@ class MainController(QtCore.QObject):
         self._applyFilters()
 
     def auto_save(self):
-        if bool(self._settings.value("Preferences/auto_save", True)):
+        if bool(self._settings.value("Preferences/auto_save", True, type=bool)):
             self.save()
 
     def start(self):
