@@ -4,10 +4,9 @@ import QtQuick.Controls 1.4
 
 Loader {
     id: popup
+//    property alias textItem: textItemConnections.target
     property Item textItem
-//    property alias popupItem: item
 
-    state: "unconnected"
 
     function setPosition() {
         prefixItem.text = completionModel.prefix
@@ -24,8 +23,14 @@ Loader {
         //        x=0;y=0
     }
 
+    Text {
+        //this is just for the calculation of text width in setPosition
+        id: prefixItem
+        visible: false
+    }
+
     function insertSelection(selectedText) {
-        console.log(popup.textItem.cursorPosition, selectedText)
+//        console.log(popup.textItem.cursorPosition, selectedText)
         if (state === "list")
             popup.textItem.remove(popup.textItem.cursorPosition
                                   - completionModel.prefix.length,
@@ -35,55 +40,37 @@ Loader {
         if (selectedText === "due:") state = "calendar"
     }
 
+    Keys.forwardTo: [popup.item]
     Keys.onEscapePressed: {
         if (popup.state !== "invisible") popup.state = "invisible"
         else event.accepted = false
     }
 
-    Component {
-        id: keyHandler
-    Item {
-//        focus: true
-        Keys.onSpacePressed: {
-            console.log("huhu")
-            if (event.modifiers === Qt.ControlModifier) {
-                completionModel.manualTrigger()
-                event.accepted = true
-            }
-            else event.accepted = false
-        }
-    }
-    }
-
-    Text {
-        id: prefixItem
-        visible: false
-    }
-
+//    onTextItemChanged: console.log("state: ", textItem, state)
     onStateChanged: console.log("state: ", textItem, state)
+
+    state: "unconnected"
 
     states: [
         State {
-            name: "list"
+            name: "calendar"
             extend: "invisible"
-            when: (textItem !== null && completionModel.count > 0)
+            when: (textItem !== null && completionModel.prefix === "due:")
             PropertyChanges {
                 target: popup
-//                visible: true
-                sourceComponent: listComp
+                sourceComponent: calendarComp
             }
             StateChangeScript {
                 script: setPosition()
             }
         },
         State {
-            name: "calendar"
+            name: "list"
             extend: "invisible"
-//            when: (completionModel.prefix === "due:")
+            when: (textItem !== null && completionModel.count > 0)
             PropertyChanges {
                 target: popup
-//                visible: true
-                sourceComponent: calendarComp
+                sourceComponent: listComp
             }
             StateChangeScript {
                 script: setPosition()
@@ -98,14 +85,17 @@ Loader {
                 visible: true
             }
             PropertyChanges {
-                target: completionModel
-                text: textItem.text
-                cursorPosition: textItem.cursorPosition
+                target: textItemConnections
+//                enabled: true
+                connTarget: textItem
             }
             PropertyChanges {
-                target: textItem
-                Keys.forwardTo: [popup, popup.item]
+//                target: textItem
+//                Keys.forwardTo: [popup, popup.item]
             }
+//            StateChangeScript {
+//                script: textItem.Keys.fowardTo = [popup, popup.item]
+//            }
         },
         State {
             name: "unconnected"
@@ -117,20 +107,24 @@ Loader {
         }
     ]
 
+    Connections {
+        id: textItemConnections
+        property alias connTarget: textItemConnections.target
+        target: TextField {}
+        onTextChanged: completionModel.triggered(false)
+    }
+
+
     ListModel {
 
         id: completionModel
         property var sourceModel: mainController.completionStrings
 
-        property string text: ""
-        property int cursorPosition: 0
         property string prefix: ""
 
-        signal manualTrigger()
-
         function getPrefix() {
-            var match = text.substring(0, cursorPosition).match(/(^.*\s|^)(\S+)$/)
-            console.log(cursorPosition, text.substring(0, cursorPosition),match)
+            var match = textItem.text.substring(0, textItem.cursorPosition).match(/(^.*\s|^)(\S+)$/)
+//            console.log("cpos",textItem.cursorPosition, "ttc", textItem.text.substring(0, textItem.cursorPosition),match)
             if (match) {
                 prefix =  match[2]
             }
@@ -144,22 +138,33 @@ Loader {
                 return (completionItem.substring(0, prefix.length) === prefix)
             })
             filteredList.forEach(function(i){
-//                console.log(prefix, i)
+                //                console.log(prefix, i)
                 append({"text": i})
             })
         }
 
-        onTextChanged: {
-            console.log(cursorPosition, text)
-            getPrefix()
-            if (prefix === "due:") popup.state = "calendar"
-            if (prefix.length > 0) populateModel()
+        function triggered(manual) {
+//            console.log("text", textItem.text,"cursorpos", textItem.cursorPosition)
+            completionModel.getPrefix()
+//            if (prefix === "due:") popup.state = "calendar"
+            if (manual || (!manual && prefix.length > 0)) populateModel()
             else clear()
         }
-        onManualTrigger: {
-            getPrefix()
-            if (prefix === "due:") popup.state = "calendar"
-            populateModel()
+    }
+
+    Component {
+        id: keyHandler
+        Item {
+//                    focus: true
+            Keys.onSpacePressed: {
+//                console.log("Space pressed.")
+                if (event.modifiers === Qt.ControlModifier) {
+//                    console.log("Ctrl+Space pressed.")
+                    completionModel.triggered(true)
+                    event.accepted = true
+                }
+                else event.accepted = false
+            }
         }
     }
 
@@ -174,7 +179,7 @@ Loader {
 
             onClicked: selected()
 
-//            focus: true
+            //            focus: true
             Keys.onRightPressed: {
                 if (event.modifiers === Qt.ControlModifier) {
                     var d = new Date(selectedDate)
@@ -224,7 +229,7 @@ Loader {
                 width: 1
             }
 
-//            focus: true
+            //            focus: true
             Keys.forwardTo: list
 
             ListView {

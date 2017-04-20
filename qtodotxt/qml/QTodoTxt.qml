@@ -385,7 +385,7 @@ ApplicationWindow {
                 Layout.fillWidth: true
 
                 visible: showSearchAction.checked
-                focus: true
+//                focus: true
 
                 placeholderText: "Search"
                 onTextChanged: {
@@ -393,8 +393,13 @@ ApplicationWindow {
                     searchField.focus = true
                 }
 
-                onActiveFocusChanged: completionPopup.textItem = this
-                onCursorPositionChanged: console.log(cursorPosition)
+                onActiveFocusChanged: {
+                    if (activeFocus){
+                        Keys.forwardTo = [completionPopup]
+                        completionPopup.textItem = this
+                    }
+                    else Keys.forwardTo = []
+                }
             }
 
             TaskListView {

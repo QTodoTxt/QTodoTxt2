@@ -71,9 +71,13 @@ Loader {
             Keys.onEscapePressed: taskLine.state = "show"
 
 
-//            Keys.forwardTo: [completionPopup.popupItem]
-            onActiveFocusChanged: if (activeFocus) completionPopup.textItem = editor
-            onCursorPositionChanged: console.log(cursorPosition)
+            onActiveFocusChanged: {
+                if (activeFocus){
+                    Keys.forwardTo = [completionPopup]
+                    completionPopup.textItem = this
+                }
+                else Keys.forwardTo = []
+            }
         }
     }
 
