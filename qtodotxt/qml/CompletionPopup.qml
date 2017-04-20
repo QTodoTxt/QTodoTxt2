@@ -47,7 +47,7 @@ Loader {
     }
 
 //    onTextItemChanged: console.log("state: ", textItem, state)
-//    onStateChanged: console.log("state: ", textItem, state)
+    onStateChanged: console.log("state: ", textItem, state)
 
     state: "unconnected"
 

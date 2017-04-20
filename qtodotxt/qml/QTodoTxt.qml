@@ -58,10 +58,6 @@ ApplicationWindow {
         }
     }
 
-    Actions {
-        id: actions
-    }
-
     Action {
         id: fileNew
         iconName: "document-new"
@@ -70,16 +66,16 @@ ApplicationWindow {
         onTriggered: {        }
     }
 
-//    Action {
-//        id: fileOpen
-//        iconName: "document-open"
-//        text: qsTr("Open")
-//        shortcut: StandardKey.Open
-//        onTriggered: {
-//            fileDialog.selectExisting = true
-//            fileDialog.open()
-//        }
-//    }
+    Action {
+        id: fileOpen
+        iconName: "document-open"
+        text: qsTr("Open")
+        shortcut: StandardKey.Open
+        onTriggered: {
+            fileDialog.selectExisting = true
+            fileDialog.open()
+        }
+    }
 
     Action {
         id: fileSave
@@ -293,17 +289,17 @@ ApplicationWindow {
 
     toolBar: MainToolBar { }
 
-//    FileDialog {
-//            id: fileDialog
-//            nameFilters: ["Text files (*.txt)"]
-//            onAccepted: {
-//                if (fileDialog.selectExisting) {
-//                    mainController.open(fileUrl)
-//                } else {
-//                    mainController.save(fileUrl)
-//                }
-//            }
-//    }
+    FileDialog {
+            id: fileDialog
+            nameFilters: ["Text files (*.txt)"]
+            onAccepted: {
+                if (fileDialog.selectExisting) {
+                    mainController.open(fileUrl)
+                } else {
+                    mainController.save(fileUrl)
+                }
+            }
+    }
 
     FileDialog {
         id: linkDialog
