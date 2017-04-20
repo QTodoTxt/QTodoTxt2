@@ -96,7 +96,6 @@ ApplicationWindow {
         }
     }
 
-
     Action {
         id: fileRevert
         iconName: "document-revert"
@@ -151,7 +150,10 @@ ApplicationWindow {
         text: qsTr("Complete Task")
         shortcut: "X"
         onTriggered: {
+            var idx = taskListView.currentIndex
             taskListView.model[taskListView.currentIndex].toggleCompletion()
+            //if (  ( !showCompleted.checked )  && idx > 0) { taskListView.currentIndex = idx -1 }
+            if (idx > 0) { taskListView.currentIndex = idx -1 }
         }
     }
 
@@ -315,7 +317,9 @@ ApplicationWindow {
         text: "Do you really want to delete current task" 
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
+            var idx = taskListView.currentIndex
             mainController.deleteTask(taskListView.currentIndex)
+            if ( idx > 0 ) { taskListView.currentIndex = idx - 1 }
         }
     }
 
