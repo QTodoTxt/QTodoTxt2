@@ -162,6 +162,9 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtProperty('QVariant', notify=filtersChanged)
     def filtersModel(self):
         return self._filters_tree_controller.model
+    
+    def _updateFilterTree(self):
+        self._filters_tree_controller.showFilters(self._file, self._showCompleted)
 
     def _applyFilters(self):
         # First we filter with filters tree
@@ -178,13 +181,14 @@ class MainController(QtCore.QObject):
         self._filteredTasks = tasks
         self.filteredTasksChanged.emit()
 
+
     @QtCore.pyqtSlot()
     def archiveCompletedTasks(self):
         done = [task for task in self._file.tasks if task.is_complete]
         for task in done:
             self._file.saveDoneTask(task)
             self._file.tasks.remove(task)
-        self._filters_tree_controller.showFilters(self._file, self._showCompleted)
+        self._applyFilters()
         self.setModified()
         self.auto_save()
 
@@ -198,6 +202,7 @@ class MainController(QtCore.QObject):
         self._updateCompletionStrings()
         self._modified = val
         self._updateTitle()
+        self._updateFilterTree()
         self.modifiedChanged.emit(val)
 
     @QtCore.pyqtSlot("QUrl")
@@ -286,4 +291,4 @@ class MainController(QtCore.QObject):
 
     def _loadFileToUI(self):
         self.setModified(False)
-        self._filters_tree_controller.showFilters(self._file, self._showCompleted)
+        self._applyFilters()
