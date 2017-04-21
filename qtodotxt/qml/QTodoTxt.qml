@@ -369,7 +369,8 @@ ApplicationWindow {
             itemDelegate: Row {
                 spacing: 5
                 Image {
-                    source: window.theme + mainController.filtersModel.iconFromRow(styleData.row)//'FilterAll.png'//window.theme + "show_completed.png"
+                    source: ( mainController.filtersModel.iconFromIndex(styleData.index) !== "" ?
+                                 window.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
                     height: filterLbl.height
                     fillMode: Image.PreserveAspectFit
                 }
@@ -391,19 +392,21 @@ ApplicationWindow {
             }
             onClicked: {
                 mainController.filterRequest(index)
+                expandAll()
             }
             onActivated: {
                 //FIXME: check all current select items, is multi selction is allowed
                 mainController.filterRequest(index)
             }
+
             function expandAll() {
                 var rootChildren = model.getRootChildren()
-//                console.log("rootChildren", model.item(0))
                 for (var i=0; i < rootChildren.length ; i++) {
                     filtersTree.expand(rootChildren[i])
-                    console.log(isExpanded(rootChildren[i]), window.theme + mainController.filtersModel.iconFromRow(i))
+//                    console.log(window.theme + mainController.filtersModel.iconFromIndex(rootChildren[i]))
                 }
             }
+
             onExpanded: {
                 console.log(model.rowCount(0))
                 var rootChildren = model.getRootChildren()
@@ -413,7 +416,12 @@ ApplicationWindow {
                 }
             }
 
+
             Component.onCompleted: {
+//                console.log("children", typeof children)
+//                for (var c in children) {
+//                console.log("children", c)
+//                }
                 expandAll()
             }
         }
@@ -444,6 +452,7 @@ ApplicationWindow {
                     }
                     else Keys.forwardTo = []
                 }
+
             }
 
             TaskListView {

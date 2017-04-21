@@ -133,10 +133,15 @@ class FiltersModel(QtGui.QStandardItemModel):
 
     @QtCore.pyqtSlot('QModelIndex', result='QString')
     def iconFromIndex(self, index):
-        return super(FiltersModel, self).itemFromIndex(index).iconSource
+        source = ""
+        item = super(FiltersModel, self).itemFromIndex(index)
+        if item is not None:
+            source = item.iconSource
+        return source
 
     @QtCore.pyqtSlot('int', result='QString')
     def iconFromRow(self, row):
+        print(row)
         path = ""
         if row > 0 and row < self.rowCount():
             path = self.item(row,0).iconSource
