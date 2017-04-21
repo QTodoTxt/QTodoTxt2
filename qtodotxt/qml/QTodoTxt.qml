@@ -58,6 +58,10 @@ ApplicationWindow {
         }
     }
 
+    Actions {
+        id: actions
+    }
+
     Action {
         id: fileNew
         iconName: "document-new"
@@ -66,16 +70,16 @@ ApplicationWindow {
         onTriggered: {        }
     }
 
-    Action {
-        id: fileOpen
-        iconName: "document-open"
-        text: qsTr("Open")
-        shortcut: StandardKey.Open
-        onTriggered: {
-            fileDialog.selectExisting = true
-            fileDialog.open()
-        }
-    }
+//    Action {
+//        id: fileOpen
+//        iconName: "document-open"
+//        text: qsTr("Open")
+//        shortcut: StandardKey.Open
+//        onTriggered: {
+//            fileDialog.selectExisting = true
+//            fileDialog.open()
+//        }
+//    }
 
     Action {
         id: fileSave
@@ -85,16 +89,16 @@ ApplicationWindow {
         onTriggered: mainController.save()
     }
 
-    Action {
-        id: fileSaveAs
-        iconName: "document-save-as"
-        text: qsTr("Save As")
-        shortcut: StandardKey.SaveAs
-        onTriggered: {
-            fileDialog.selectExisting = false
-            fileDialog.open()
-        }
-    }
+//    Action {
+//        id: fileSaveAs
+//        iconName: "document-save-as"
+//        text: qsTr("Save As")
+//        shortcut: StandardKey.SaveAs
+//        onTriggered: {
+//            fileDialog.selectExisting = false
+//            fileDialog.open()
+//        }
+//    }
 
     Action {
         id: fileRevert
@@ -289,17 +293,17 @@ ApplicationWindow {
 
     toolBar: MainToolBar { }
 
-    FileDialog {
-            id: fileDialog
-            nameFilters: ["Text files (*.txt)"]
-            onAccepted: {
-                if (fileDialog.selectExisting) {
-                    mainController.open(fileUrl)
-                } else {
-                    mainController.save(fileUrl)
-                }
-            }
-    }
+//    FileDialog {
+//            id: fileDialog
+//            nameFilters: ["Text files (*.txt)"]
+//            onAccepted: {
+//                if (fileDialog.selectExisting) {
+//                    mainController.open(fileUrl)
+//                } else {
+//                    mainController.save(fileUrl)
+//                }
+//            }
+//    }
 
     FileDialog {
         id: linkDialog

@@ -6,7 +6,7 @@ MenuBar {
     Menu {
         title: qsTr("File")
         MenuItem { action: fileNew }
-        MenuItem { action: fileOpen}
+        MenuItem { action: actions.fileOpen}
         Menu {
             id: recentMenu
             title: qsTr("Recent Files")
