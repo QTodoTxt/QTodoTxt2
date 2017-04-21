@@ -357,7 +357,9 @@ ApplicationWindow {
             width: 250
             Layout.minimumWidth: 150
             Layout.fillHeight: true
+
             visible: showFilterPanel.checked
+            alternatingRowColors: false
 
             model: mainController.filtersModel
             selection: ItemSelectionModel {
@@ -375,6 +377,26 @@ ApplicationWindow {
             onActivated: {
                 //FIXME: check all current select items, is multi selction is allowed
                 mainController.filterRequest(index)
+            }
+            function expandAll() {
+                var rootChildren = mainController.filtersModel.getRootChildren()
+                console.log("rootChildren", rootChildren.length)
+                for (var i=0; i < rootChildren.length ; i++) {
+                    filtersTree.expand(rootChildren[i])
+                    console.log(isExpanded(rootChildren[i]))
+                }
+            }
+            onExpanded: {
+                var rootChildren = mainController.filtersModel.getRootChildren()
+                for (var i=0; i < rootChildren.length ; i++) {
+//                    expand(rootChildren[i])
+                    console.log(isExpanded(rootChildren[i]))
+                }
+                console.log(index, "rows:",mainController.filtersModel.rowCount())
+            }
+
+            Component.onCompleted: {
+                expandAll()
             }
         }
 

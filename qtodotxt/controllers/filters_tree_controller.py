@@ -120,6 +120,19 @@ class FiltersModel(QtGui.QStandardItemModel):
             self._priorityItem.setText("Priority (%d)" % nbPriority)
             self._uncategorizedTasksItem.setText("Uncategorized (%d)" % nbUncategorized)
 
+    @QtCore.pyqtSlot(result='QVariantList')
+    def getRootChildren(self):
+        indexes = []
+        parent = self.invisibleRootItem()
+        for i in range(0, parent.rowCount()):
+            child = parent.child(i)
+            indexes.append(child.index())
+        return indexes
+
+    @QtCore.pyqtSlot('int', result='QVariant')
+    def rowItem(self, row):
+#        print("getItem")
+        return self.item(row)
 
 class FiltersTreeController(QtCore.QObject):
 
