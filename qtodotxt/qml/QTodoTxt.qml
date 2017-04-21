@@ -27,6 +27,10 @@ ApplicationWindow {
         onFileExternallyModified: {
             reloadDialog.open()
         }
+        onFiltersUpdated: {
+            console.log("MODEL, changed", filtersTree.model.rowCount())
+            filtersTree.expandAll()
+        }
     }
 
     Settings {
@@ -390,13 +394,11 @@ ApplicationWindow {
                 title: "Filters"
                 role: "display"
             }
-            onClicked: {
-                mainController.filterRequest(index)
-                expandAll()
-            }
             onActivated: {
                 //FIXME: check all current select items, is multi selction is allowed
                 mainController.filterRequest(index)
+                console.log("ACTI", filtersTree.isExpanded(filtersTree.currentIndex))
+                filtersTree.expand(filtersTree.currentIndex)
             }
 
             function expandAll() {

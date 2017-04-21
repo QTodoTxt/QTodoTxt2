@@ -157,14 +157,15 @@ class MainController(QtCore.QObject):
         self._applyFilters()
         self._updateTitle()
 
-    filtersChanged = QtCore.pyqtSignal()
+    filtersUpdated = QtCore.pyqtSignal()  
 
-    @QtCore.pyqtProperty('QVariant', notify=filtersChanged)
+    @QtCore.pyqtProperty('QVariant', notify=filtersUpdated)
     def filtersModel(self):
         return self._filters_tree_controller.model
-    
+   
     def _updateFilterTree(self):
         self._filters_tree_controller.showFilters(self._file, self._showCompleted)
+        self.filtersUpdated.emit()
 
     def _applyFilters(self):
         # First we filter with filters tree
@@ -199,10 +200,11 @@ class MainController(QtCore.QObject):
         return self._modified
 
     def setModified(self, val=True):
-        self._updateCompletionStrings()
         self._modified = val
         self._updateTitle()
-        self._updateFilterTree()
+        if val:
+            self._updateCompletionStrings()
+            self._updateFilterTree()
         self.modifiedChanged.emit(val)
 
     @QtCore.pyqtSlot("QUrl")
@@ -292,3 +294,5 @@ class MainController(QtCore.QObject):
     def _loadFileToUI(self):
         self.setModified(False)
         self._applyFilters()
+        self._updateCompletionStrings()
+        self._updateFilterTree()
