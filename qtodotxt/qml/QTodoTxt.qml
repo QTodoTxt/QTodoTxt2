@@ -447,13 +447,15 @@ ApplicationWindow {
                     searchField.focus = true
                 }
 
-                onActiveFocusChanged: {
-                    if (activeFocus){
-                        Keys.forwardTo = [completionPopup]
-                        completionPopup.textItem = this
-                    }
-                    else Keys.forwardTo = []
-                }
+//                onActiveFocusChanged: {
+//                    if (activeFocus){
+//                        Keys.forwardTo = [completionPopup]
+//                        completionPopup.textItem = this
+//                    }
+//                    else Keys.forwardTo = []
+//                }
+
+                CompletionPopup { completerParent: splitView }
 
             }
 

@@ -70,14 +70,7 @@ Loader {
             Keys.onEnterPressed: taskLine.inputAccepted(editor.text)
             Keys.onEscapePressed: taskLine.state = "show"
 
-
-            onActiveFocusChanged: {
-                if (activeFocus){
-                    Keys.forwardTo = [completionPopup]
-                    completionPopup.textItem = this
-                }
-                else Keys.forwardTo = []
-            }
+            CompletionPopup { completerParent: splitView }
         }
     }
 
