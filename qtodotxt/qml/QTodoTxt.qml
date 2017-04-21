@@ -369,13 +369,13 @@ ApplicationWindow {
             itemDelegate: Row {
                 spacing: 5
                 Image {
-                    source: window.theme + "show_completed.png"
+                    source: window.theme + mainController.filtersModel.iconFromRow(styleData.row)//'FilterAll.png'//window.theme + "show_completed.png"
                     height: filterLbl.height
                     fillMode: Image.PreserveAspectFit
                 }
                 Label {
                     id: filterLbl
-                    text: styleData.value
+                    text: styleData.value + styleData.row
                 }
             }
 
@@ -398,13 +398,14 @@ ApplicationWindow {
             }
             function expandAll() {
                 var rootChildren = model.getRootChildren()
-                console.log("rootChildren", rootChildren.length)
+//                console.log("rootChildren", model.item(0))
                 for (var i=0; i < rootChildren.length ; i++) {
                     filtersTree.expand(rootChildren[i])
-                    console.log(isExpanded(rootChildren[i]))
+                    console.log(isExpanded(rootChildren[i]), window.theme + mainController.filtersModel.iconFromRow(i))
                 }
             }
             onExpanded: {
+                console.log(model.rowCount(0))
                 var rootChildren = model.getRootChildren()
                 for (var i=0; i < rootChildren.length ; i++) {
 //                    expand(rootChildren[i])

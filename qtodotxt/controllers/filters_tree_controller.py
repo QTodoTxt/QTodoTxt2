@@ -15,6 +15,7 @@ class FilterItem(QtGui.QStandardItem):
         parent.appendRow([self])
         #if order:
         #self.setText(1, str(order))
+        self.iconSource = 'FilterAll.png'
         if icon:
             self.setIcon(icon)
 
@@ -129,6 +130,18 @@ class FiltersModel(QtGui.QStandardItemModel):
             child = parent.child(i)
             indexes.append(child.index())
         return indexes
+
+    @QtCore.pyqtSlot('QModelIndex', result='QString')
+    def iconFromIndex(self, index):
+        return super(FiltersModel, self).itemFromIndex(index).iconSource
+
+    @QtCore.pyqtSlot('int', result='QString')
+    def iconFromRow(self, row):
+        path = ""
+        if row > 0 and row < self.rowCount():
+            path = self.item(row,0).iconSource
+        return path
+
 
 
 class FiltersTreeController(QtCore.QObject):
