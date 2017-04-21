@@ -361,6 +361,24 @@ ApplicationWindow {
             visible: showFilterPanel.checked
             alternatingRowColors: false
 
+            rowDelegate: Rectangle {
+                color: systemPalette.highlight
+                opacity: (styleData.selected ? 0.5 : 0)
+            }
+
+            itemDelegate: Row {
+                spacing: 5
+                Image {
+                    source: window.theme + "show_completed.png"
+                    height: filterLbl.height
+                    fillMode: Image.PreserveAspectFit
+                }
+                Label {
+                    id: filterLbl
+                    text: styleData.value
+                }
+            }
+
             model: mainController.filtersModel
             selection: ItemSelectionModel {
                 model: mainController.filtersModel
@@ -379,7 +397,7 @@ ApplicationWindow {
                 mainController.filterRequest(index)
             }
             function expandAll() {
-                var rootChildren = mainController.filtersModel.getRootChildren()
+                var rootChildren = model.getRootChildren()
                 console.log("rootChildren", rootChildren.length)
                 for (var i=0; i < rootChildren.length ; i++) {
                     filtersTree.expand(rootChildren[i])
@@ -387,12 +405,11 @@ ApplicationWindow {
                 }
             }
             onExpanded: {
-                var rootChildren = mainController.filtersModel.getRootChildren()
+                var rootChildren = model.getRootChildren()
                 for (var i=0; i < rootChildren.length ; i++) {
 //                    expand(rootChildren[i])
                     console.log(isExpanded(rootChildren[i]))
                 }
-                console.log(index, "rows:",mainController.filtersModel.rowCount())
             }
 
             Component.onCompleted: {

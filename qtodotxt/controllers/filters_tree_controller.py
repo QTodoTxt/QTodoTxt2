@@ -19,6 +19,7 @@ class FilterItem(QtGui.QStandardItem):
             self.setIcon(icon)
 
 
+
 class FiltersModel(QtGui.QStandardItemModel):
     def __init__(self, parent):
         QtGui.QStandardItemModel.__init__(self, parent)
@@ -129,10 +130,6 @@ class FiltersModel(QtGui.QStandardItemModel):
             indexes.append(child.index())
         return indexes
 
-    @QtCore.pyqtSlot('int', result='QVariant')
-    def rowItem(self, row):
-#        print("getItem")
-        return self.item(row)
 
 class FiltersTreeController(QtCore.QObject):
 
