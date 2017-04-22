@@ -11,11 +11,10 @@ Item {
             if (parent.activeFocus) connectCompleter()
             else disconnectCompleter()
         }
-
     }
 
     function createCompleter() {
-        console.log("creating")
+        console.log("creating for", parent)
         if (completer !== null) {
             console.log("Completer already there.")
             return false
@@ -222,7 +221,6 @@ Item {
 
                     onClicked: selected()
 
-                    //            focus: true
                     Keys.onRightPressed: {
                         if (event.modifiers === Qt.ControlModifier) {
                             var d = new Date(selectedDate)
@@ -263,8 +261,8 @@ Item {
             Component {
                 id: listComp
                 Rectangle {
-                    height: list.height
-                    width: list.width
+                    height: Math.min(200,list.contentHeight)
+                    width: Math.min(150)//,list.implicitWidth)
 
                     color: "white"
                     border {
@@ -272,31 +270,33 @@ Item {
                         width: 1
                     }
 
-                    //            focus: true
-                    Keys.forwardTo: list
+                    Keys.forwardTo: [list]
 
                     ListView {
                         id: list
 
                         signal selected()
                         onSelected: insertSelection(completionModel.get(currentIndex).text)
-
-                        height: contentHeight
-                        width: 200
+                        anchors.fill: parent
+                        leftMargin: 3
+                        rightMargin: 3
+                        topMargin: 3
+                        bottomMargin: 3
+                        clip: true
 
                         model: completionModel
                         delegate:
-                            Text {
+                            Label {
                             id: complItemTxt
                             text: model.text
-                            width: list.width
+                            width: parent.width - 6
                         }
+
                         highlight: Rectangle {
                             color: systemPalette.highlight
                             opacity: 0.5
                         }
 
-                        focus: true
                         keyNavigationWraps: true
                         Keys.onLeftPressed: {
                             completionModel.clear()

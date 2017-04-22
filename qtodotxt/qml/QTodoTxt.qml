@@ -7,9 +7,6 @@ import QtQml 2.2
 import QtQml.Models 2.2
 import Qt.labs.settings 1.0
 
-//import QTodoTxt 1.0
-import "./styles/dark_blue" as MyStyle
-
 ApplicationWindow {
     id: window
     visible: true
@@ -380,7 +377,7 @@ ApplicationWindow {
                 }
                 Label {
                     id: filterLbl
-                    text: styleData.value + styleData.row
+                    text: styleData.value
                 }
             }
 
@@ -405,26 +402,7 @@ ApplicationWindow {
                 var rootChildren = model.getRootChildren()
                 for (var i=0; i < rootChildren.length ; i++) {
                     filtersTree.expand(rootChildren[i])
-//                    console.log(window.theme + mainController.filtersModel.iconFromIndex(rootChildren[i]))
                 }
-            }
-
-            onExpanded: {
-                console.log(model.rowCount(0))
-                var rootChildren = model.getRootChildren()
-                for (var i=0; i < rootChildren.length ; i++) {
-//                    expand(rootChildren[i])
-                    console.log(isExpanded(rootChildren[i]))
-                }
-            }
-
-
-            Component.onCompleted: {
-//                console.log("children", typeof children)
-//                for (var c in children) {
-//                console.log("children", c)
-//                }
-                expandAll()
             }
         }
 
@@ -447,14 +425,6 @@ ApplicationWindow {
                     searchField.focus = true
                 }
 
-//                onActiveFocusChanged: {
-//                    if (activeFocus){
-//                        Keys.forwardTo = [completionPopup]
-//                        completionPopup.textItem = this
-//                    }
-//                    else Keys.forwardTo = []
-//                }
-
                 CompletionPopup { completerParent: splitView }
 
             }
@@ -468,9 +438,5 @@ ApplicationWindow {
             }
         }
 
-    }
-    CompletionPopup {
-        id: completionPopup
-//        textItem: searchField
     }
 }
