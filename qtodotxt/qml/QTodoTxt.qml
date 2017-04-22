@@ -366,6 +366,7 @@ ApplicationWindow {
                 color: systemPalette.highlight
                 opacity: (styleData.selected ? 0.5 : 0)
             }
+            /*
 
             itemDelegate: Row {
                 spacing: 5
@@ -380,6 +381,7 @@ ApplicationWindow {
                     text: styleData.value
                 }
             }
+            */
 
             model: mainController.filtersModel
             selection: ItemSelectionModel {
@@ -387,10 +389,22 @@ ApplicationWindow {
             }
 
             selectionMode: SelectionMode.ExtendedSelection
+
             TableViewColumn {
                 title: "Filters"
                 role: "display"
             }
+
+            TableViewColumn {
+                title: "Total"
+                role: "totalCount"
+            }
+
+            TableViewColumn {
+                title: "Completed"
+                role: "completedCount"
+            }
+
             onActivated: {
                 //FIXME: check all current select items, is multi selction is allowed
                 mainController.filterRequest(index)

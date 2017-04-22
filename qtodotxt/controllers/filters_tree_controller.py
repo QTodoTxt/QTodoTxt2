@@ -5,6 +5,10 @@ from qtodotxt.lib.filters import ContextFilter, CompleteTasksFilter, DueFilter, 
     ProjectFilter, UncategorizedTasksFilter, AllTasksFilter, PriorityFilter, HasPriorityFilter
 
 
+TotalCountRole = QtCore.Qt.UserRole + 1
+CompletedCountRole = QtCore.Qt.UserRole + 2
+
+
 class FilterItem(QtGui.QStandardItem):
     def __init__(self, parent, strings, flt=None, icon=None, order=None):
         QtGui.QStandardItem.__init__(self, strings)
@@ -19,6 +23,15 @@ class FilterItem(QtGui.QStandardItem):
         if icon:
             self.setIcon(icon)
 
+    def setCounts(self, total, completed):
+        self.setTotalCount(total)
+        self.setCompletedCount(completed)
+
+    def setTotalCount(self, total):
+        self.setData(total, TotalCountRole)
+
+    def setCompletedCount(self, val):
+        self.setData(val, CompletedCountRole)
 
 
 class FiltersModel(QtGui.QStandardItemModel):
@@ -33,9 +46,17 @@ class FiltersModel(QtGui.QStandardItemModel):
         self._addDefaultTreeItems()
         self._initFilterTypeMappings()
 
+    def roleNames(self):
+        roles = QtGui.QStandardItemModel.roleNames(self)
+        roles[TotalCountRole] =  b"totalCount"
+        roles[CompletedCountRole] =  b"completedCount"
+        print("ROLES", roles)
+        return roles
+
     def addFilter(self, flt, count):
         parent = self._filterItemByFilterType[type(flt)]
-        item = FilterItem(parent, "{} ({})".format(flt.text, count), flt)
+        item = FilterItem(parent, flt.text, flt)
+        item.setTotalCount(count)
 
     def clear(self):
         QtGui.QStandardItemModel.clear(self)
@@ -88,7 +109,9 @@ class FiltersModel(QtGui.QStandardItemModel):
     def addDueRangeFilter(self, flt, number=0, sortKey=0):
         parentItem = self._dueItem
         icon = self._filterIconByFilterType[type(flt)]
-        FilterItem(parentItem, "{} ({})".format(flt.text, number), flt=flt, icon=icon, order=sortKey)
+        item = FilterItem(parentItem, flt.text, flt=flt, icon=icon, order=sortKey)
+        item.setTotalCount(number)
+
         #parentItem.setExpanded(True)
         #parentItem.sortChildren(1, QtCore.Qt.AscendingOrder)
 
@@ -106,21 +129,13 @@ class FiltersModel(QtGui.QStandardItemModel):
         nbPriority = counters['Priority']
         nbPrioCompl = counters['PrioCompl']
 
-        self._completeTasksItem.setText("Complete (%d)" % nbComplete)
-        if show_completed is True:
-            self._allTasksItem.setText("All ({0}; {1})".format(nbPending, nbComplete))
-            self._dueItem.setText("Due ({0}; {1})".format(nbDue, nbDueCompl))
-            self._contextsItem.setText("Contexts ({0}; {1})".format(nbContexts, nbContCompl))
-            self._projectsItem.setText("Projects ({0}; {1})".format(nbProjects, nbProjCompl))
-            self._priorityItem.setText("Priority ({0}; {1})".format(nbPriority, nbPrioCompl))
-            self._uncategorizedTasksItem.setText("Uncategorized ({0}; {1})".format(nbUncategorized, nbUncatCompl))
-        else:
-            self._allTasksItem.setText("All (%d)" % nbPending)
-            self._contextsItem.setText("Contexts (%d)" % nbContexts)
-            self._projectsItem.setText("Projects (%d)" % nbProjects)
-            self._dueItem.setText("Due (%d)" % nbDue)
-            self._priorityItem.setText("Priority (%d)" % nbPriority)
-            self._uncategorizedTasksItem.setText("Uncategorized (%d)" % nbUncategorized)
+        self._completeTasksItem.setTotalCount(nbComplete)
+        self._allTasksItem.setCounts(nbPending, nbComplete)
+        self._dueItem.setCounts(nbDue, nbDueCompl)
+        self._contextsItem.setCounts(nbContexts, nbContCompl)
+        self._projectsItem.setCounts(nbProjects, nbProjCompl)
+        self._priorityItem.setCounts(nbPriority, nbPrioCompl)
+        self._uncategorizedTasksItem.setCounts(nbUncategorized, nbUncatCompl)
 
     @QtCore.pyqtSlot(result='QVariantList')
     def getRootChildren(self):
