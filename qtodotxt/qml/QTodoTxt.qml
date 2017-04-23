@@ -38,10 +38,6 @@ ApplicationWindow {
     }
 
 
-    //    MainController {
-    //        id: mainController
-    //    }
-
     onClosing: {
         if ( mainController.canExit() ) {
             close.accepted = true
@@ -101,7 +97,7 @@ ApplicationWindow {
 
         TreeView {
             id: filtersTree
-            width: 250
+            width: 400
             Layout.minimumWidth: 150
             Layout.fillHeight: true
 
@@ -137,17 +133,41 @@ ApplicationWindow {
             selectionMode: SelectionMode.ExtendedSelection
 
             TableViewColumn {
+                width: filtersTree.width - totalCol.width - completedCol.width
+                resizable: false
+
                 title: "Filters"
                 role: "display"
+                delegate: Row {
+                    spacing: 5
+                    Image {
+                        source: ( mainController.filtersModel.iconFromIndex(styleData.index) !== "" ?
+                                     window.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
+                        height: filterLbl.height
+                        fillMode: Image.PreserveAspectFit
+                    }
+                    Label {
+                        id: filterLbl
+                        text: styleData.value
+                    }
+                }
             }
 
             TableViewColumn {
-                title: "Total"
+                id: totalCol
+                width: 50
+                resizable: false
+
+                title: "Tot."
                 role: "totalCount"
             }
 
             TableViewColumn {
-                title: "Completed"
+                id: completedCol
+                width: 50
+                resizable: false
+
+                title: "Compl."
                 role: "completedCount"
             }
 
@@ -155,7 +175,6 @@ ApplicationWindow {
                 //FIXME: check all current select items, is multi selction is allowed
                 mainController.filterRequest(index)
                 console.log("ACTI", filtersTree.isExpanded(filtersTree.currentIndex))
-                filtersTree.expand(filtersTree.currentIndex)
             }
 
             function expandAll() {
