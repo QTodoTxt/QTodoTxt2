@@ -3,26 +3,24 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 
 ToolBar {
-        id: toobar
-        visible: showToolBarAction.checked
         RowLayout {
             anchors.fill: parent
-            ToolButton { action: showSearchAction}
-            ToolButton { action: showFilterPanel}
-            ToolButton { action: showCompleted}
-            ToolButton { action: showFuture}
+            ToolButton { action: actions.showSearchAction}
+            ToolButton { action: actions.showFilterPanel}
+            ToolButton { action: actions.showCompleted}
+            ToolButton { action: actions.showFuture}
             ToolBarSeparator { }
-            ToolButton { action: newTask }
-            ToolButton { action: editTask }
-            ToolButton { action: deleteTask }
-            ToolButton { action: completeTasks}
+            ToolButton { action: actions.newTask }
+            ToolButton { action: actions.editTask }
+            ToolButton { action: actions.deleteTask }
+            ToolButton { action: actions.completeTasks}
             ToolBarSeparator { }
-            ToolButton { action: increasePriority}
-            ToolButton { action: decreasePriority}
+            ToolButton { action: actions.increasePriority}
+            ToolButton { action: actions.decreasePriority}
             ToolBarSeparator { }
-            ToolButton { action: archive}
+            ToolButton { action: actions.archive}
             ToolBarSeparator { }
-            ToolButton { action: addLink}
+            ToolButton { action: actions.addLink}
             Item { Layout.fillWidth: true }
         }
     }

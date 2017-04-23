@@ -3,6 +3,8 @@
 (C) 2016-12-08 Feed Schrodinger's Cat rec:+1d due:2014-02-23
 (C) Make peace between Cylons and humans +PeaceProject due:2017-04-17
 (C) Upgrade jump drives with Cylon technology +GalacticaRepairs
+
++asd asdasd
 2016-12-12 +GalacticaRepairs Check hull integrity rec:+7b due:2016-12-12
 Check for <b>DRADIS</b> contact @CIC
 Check if http://google.com is available asdasd

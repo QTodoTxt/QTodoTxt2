@@ -5,7 +5,7 @@ import QtQml 2.2
 MenuBar {
     Menu {
         title: qsTr("File")
-        MenuItem { action: fileNew }
+        MenuItem { action: actions.fileNew }
         MenuItem { action: actions.fileOpen}
         Menu {
             id: recentMenu
@@ -21,8 +21,8 @@ MenuBar {
             }
         }
 
-        MenuItem { action: fileSave }
-        MenuItem { action: fileRevert }
+        MenuItem { action: actions.fileSave }
+        MenuItem { action: actions.fileRevert }
         MenuSeparator {}
         MenuItem {
             text: qsTr("Preferences")
@@ -34,38 +34,38 @@ MenuBar {
             }
         }
         MenuSeparator {}
-        MenuItem { action: quitApp}
+        MenuItem { action: actions.quitApp}
         //FIXME: if you want you can play around with the style in ./style/dark_blue/MenuStyle.qml
         //style: MyStyle.MenuStyle{}
     }
     Menu {
         title: qsTr("Edit")
-        MenuItem { action: newTask }
-        MenuItem { action: editTask }
-        MenuItem { action: deleteTask }
+        MenuItem { action: actions.newTask }
+        MenuItem { action: actions.editTask }
+        MenuItem { action: actions.deleteTask }
         MenuSeparator {}
-        MenuItem { action: completeTasks}
+        MenuItem { action: actions.completeTasks}
         MenuSeparator {}
-        MenuItem { action: increasePriority}
-        MenuItem { action: decreasePriority}
+        MenuItem { action: actions.increasePriority}
+        MenuItem { action: actions.decreasePriority}
     }
     Menu {
         title: qsTr("View")
-        MenuItem { action: showSearchAction}
-        MenuItem { action: showFilterPanel}
-        MenuItem { action: showToolBarAction}
-        MenuItem { action: showCompleted}
-        MenuItem { action: showFuture}
+        MenuItem { action: actions.showSearchAction}
+        MenuItem { action: actions.showFilterPanel}
+        MenuItem { action: actions.showToolBarAction}
+        MenuItem { action: actions.showCompleted}
+        MenuItem { action: actions.showFuture}
     }
     Menu {
         title: qsTr("Sorting")
-        MenuItem { action: sortTodoTxt}
-        MenuItem { action: sortCreationDate}
-        MenuItem { action: sortDueDate}
+        MenuItem { action: actions.sortTodoTxt}
+        MenuItem { action: actions.sortCreationDate}
+        MenuItem { action: actions.sortDueDate}
     }
     Menu {
         title: qsTr("Help")
-        MenuItem { action: helpShowAbout }
-        MenuItem { action: helpShowShortcuts }
+        MenuItem { action: actions.helpShowAbout }
+        MenuItem { action: actions.helpShowShortcuts }
     }
 }

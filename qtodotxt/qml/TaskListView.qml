@@ -43,8 +43,8 @@ ListView {
 
     Menu {
         id: contextMenu
-        MenuItem { action: newTask }
-        MenuItem { action: editTask }
+        MenuItem { action: actions.newTask }
+        MenuItem { action: actions.editTask }
     }
 }
 
