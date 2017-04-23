@@ -18,6 +18,9 @@ class BaseFilter(object):
         """
         self.text = text
 
+    def __hash__(self):
+        return hash(self.text)
+
     def __str__(self):
         return "Filter:{}".format(self.__class__.__name__)
 
@@ -147,8 +150,8 @@ class DueTodayFilter(BaseFilter):
 
     """
 
-    def __init__(self, dueRange):
-        BaseFilter.__init__(self, dueRange)
+    def __init__(self):
+        BaseFilter.__init__(self, "Today")
 
     def isMatch(self, task):
         if (not task.due):
@@ -168,8 +171,8 @@ class DueTomorrowFilter(BaseFilter):
 
     """
 
-    def __init__(self, dueRange):
-        BaseFilter.__init__(self, dueRange)
+    def __init__(self):
+        BaseFilter.__init__(self, "Tomorrow")
 
     def isMatch(self, task):
         if not task.due:
@@ -189,8 +192,8 @@ class DueThisWeekFilter(BaseFilter):
 
     """
 
-    def __init__(self, dueRange):
-        BaseFilter.__init__(self, dueRange)
+    def __init__(self):
+        BaseFilter.__init__(self, "This week")
 
     def isMatch(self, task):
         if not task.due:
@@ -210,8 +213,8 @@ class DueThisMonthFilter(BaseFilter):
 
     """
 
-    def __init__(self, dueRange):
-        BaseFilter.__init__(self, dueRange)
+    def __init__(self):
+        BaseFilter.__init__(self, "This month")
 
     def isMatch(self, task):
         if not task.due:
@@ -235,8 +238,8 @@ class DueOverdueFilter(BaseFilter):
 
     """
 
-    def __init__(self, dueRange):
-        BaseFilter.__init__(self, dueRange)
+    def __init__(self):
+        BaseFilter.__init__(self, "Overdue")
 
     def isMatch(self, task):
         if not task.due:

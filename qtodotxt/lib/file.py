@@ -74,127 +74,60 @@ class File(QtCore.QObject):
             fd.write(task.text + self.newline)
         logger.debug('"%s" was appended to "%s"', task.text, doneFilename)
 
-    def getAllContexts(self, return_completed=False):
-        contexts = dict()
+    def getAllContexts(self):
+        return self._getAllX("contexts")
+
+    def getAllProjects(self):
+        return self._getAllX("projects")
+    
+    def _getAllX(self, name):
+        res = {}
         for task in self.tasks:
-            if return_completed or not task.is_complete:
-                for context in task.contexts:
-                    count = 0 if task.is_complete else 1
-                    if context in contexts:
-                        contexts[context] += count
-                    else:
-                        contexts[context] = count
-        return contexts
+            for element in getattr(task, name):
+                if not element in res:
+                    res[element] = [0, 0]
+                idx = 1 if task.is_complete else 0
+                res[element][idx] += 1 
+        return res
 
-    def getAllProjects(self, return_completed=False):
-        projects = dict()
-        for task in self.tasks:
-            if return_completed or not task.is_complete:
-                for project in task.projects:
-                    count = 0 if task.is_complete else 1
-                    if project in projects:
-                        projects[project] += count
-                    else:
-                        projects[project] = count
-        return projects
+    def getAllPriorities(self):
+        return self._getAllX("priority")
 
-    def getAllPriorities(self, return_completed=False):
-        priorities = {}
-        for task in self.tasks:
-            if return_completed or not task.is_complete:
-                if task.priority in priorities:
-                    priorities[task.priority] += 1
-                elif task.priority != "":
-                    priorities[task.priority] = 1
-
-        return priorities
-
-    def getAllDueRanges(self, return_completed=False):
+    def getAllDueRanges(self):
         dueRanges = dict()
-        # This determines the sorting of the ranges in the tree view. Lowest value first.
-        rangeSorting = {'Today': 20,
-                        'Tomorrow': 30,
-                        'This week': 40,
-                        'This month': 50,
-                        'Overdue': 10}
-
+        filters = [ DueTodayFilter(), DueTomorrowFilter(), DueThisWeekFilter(), DueThisMonthFilter(), DueOverdueFilter()]
         for task in self.tasks:
-            if not return_completed and task.is_complete:
-                continue
-
-            count = 0 if task.is_complete else 1
-            if DueTodayFilter('Today').isMatch(task):
-                if not ('Today' in dueRanges):
-                    dueRanges['Today'] = count
-                else:
-                    dueRanges['Today'] += count
-
-            if DueTomorrowFilter('Tomorrow').isMatch(task):
-                if not ('Tomorrow' in dueRanges):
-                    dueRanges['Tomorrow'] = count
-                else:
-                    dueRanges['Tomorrow'] += count
-
-            if DueThisWeekFilter('This week').isMatch(task):
-                if not ('This week' in dueRanges):
-                    dueRanges['This week'] = count
-                else:
-                    dueRanges['This week'] += count
-
-            if DueThisMonthFilter('This month').isMatch(task):
-                if not ('This month' in dueRanges):
-                    dueRanges['This month'] = count
-                else:
-                    dueRanges['This month'] += count
-
-            if DueOverdueFilter('Overdue').isMatch(task):
-                if not ('Overdue' in dueRanges):
-                    dueRanges['Overdue'] = count
-                else:
-                    dueRanges['Overdue'] += count
-
-        return dueRanges, rangeSorting
+            idx = 1 if task.is_complete else 0
+            for flt in filters:
+                if flt.isMatch(task):
+                    if not (flt in dueRanges):
+                        dueRanges[flt] = [0, 0]
+                    dueRanges[flt][idx] += 1
+        return dueRanges
 
     def getTasksCounters(self):
-        counters = dict({'Pending': 0,
-                         'Uncategorized': 0,
-                         'Contexts': 0,
-                         'Projects': 0,
-                         'Complete': 0,
-                         'Priority': 0,
-                         'DueCompl': 0,
-                         'ProjCompl': 0,
-                         'ContCompl': 0,
-                         'UncatCompl': 0,
-                         'PrioCompl': 0,
-                         'Due': 0})
+        counters = dict({'All': [0, 0],
+                         'Uncategorized': [0, 0],
+                         'Contexts': [0, 0],
+                         'Projects': [0, 0],
+                         'Complete': [0, 0],
+                         'Priority': [0, 0],
+                         'Due': [0, 0]})
         for task in self.tasks:
             nbProjects = len(task.projects)
             nbContexts = len(task.contexts)
-            if not task.is_complete:
-                counters['Pending'] += 1
-                if nbProjects > 0:
-                    counters['Projects'] += 1
-                if nbContexts > 0:
-                    counters['Contexts'] += 1
-                if nbContexts == 0 and nbProjects == 0:
-                    counters['Uncategorized'] += 1
-                if task.due:
-                    counters['Due'] += 1
-                if task.priority != "":
-                    counters['Priority'] += 1
-            else:
-                counters['Complete'] += 1
-                if nbProjects > 0:
-                    counters['ProjCompl'] += 1
-                if nbContexts > 0:
-                    counters['ContCompl'] += 1
-                if nbContexts == 0 and nbProjects == 0:
-                    counters['UncatCompl'] += 1
-                if task.due:
-                    counters['DueCompl'] += 1
-                if task.priority != "":
-                    counters['PrioCompl'] += 1
+            idx = 1 if task.is_complete else 0
+            counters['All'][idx] += 1
+            if nbProjects > 0:
+                counters['Projects'][idx] += 1
+            if nbContexts > 0:
+                counters['Contexts'][idx] += 1
+            if nbContexts == 0 and nbProjects == 0:
+                counters['Uncategorized'][idx] += 1
+            if task.due:
+                counters['Due'][idx] += 1
+            if task.priority != "":
+                counters['Priority'][idx] += 1
         return counters
 
 

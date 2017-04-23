@@ -57,8 +57,8 @@ class MainController(QtCore.QObject):
         return self._completionStrings
     
     def _updateCompletionStrings(self):
-        contexts = ['@' + name for name in self._file.getAllContexts(True)]
-        projects = ['+' + name for name in self._file.getAllProjects(True)]
+        contexts = ['@' + name for name in self._file.getAllContexts()]
+        projects = ['+' + name for name in self._file.getAllProjects()]
         lowest_priority = self._settings.value("lowest_priority", "D")
         idx = string.ascii_uppercase.index(lowest_priority) + 1
         priorities = ['(' + val +')' for val in string.ascii_uppercase[:idx]]
@@ -164,7 +164,7 @@ class MainController(QtCore.QObject):
         return self._filters_tree_controller.model
    
     def _updateFilterTree(self):
-        self._filters_tree_controller.showFilters(self._file, self._showCompleted)
+        self._filters_tree_controller.showFilters(self._file)
         self.filtersUpdated.emit()
 
     def _applyFilters(self):

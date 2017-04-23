@@ -50,13 +50,12 @@ class FiltersModel(QtGui.QStandardItemModel):
         roles = QtGui.QStandardItemModel.roleNames(self)
         roles[TotalCountRole] =  b"totalCount"
         roles[CompletedCountRole] =  b"completedCount"
-        print("ROLES", roles)
         return roles
 
-    def addFilter(self, flt, count):
+    def addFilter(self, flt, counts):
         parent = self._filterItemByFilterType[type(flt)]
         item = FilterItem(parent, flt.text, flt)
-        item.setTotalCount(count)
+        item.setCounts(*counts)
 
     def clear(self):
         QtGui.QStandardItemModel.clear(self)
@@ -106,36 +105,14 @@ class FiltersModel(QtGui.QStandardItemModel):
         self._treeItemByFilterType[HasPriorityFilter] = self._priorityItem
 
     # Predefined sorting for due ranges
-    def addDueRangeFilter(self, flt, number=0, sortKey=0):
+    def addDueRangeFilter(self, flt, counts, sortKey=0):
         parentItem = self._dueItem
         icon = self._filterIconByFilterType[type(flt)]
         item = FilterItem(parentItem, flt.text, flt=flt, icon=icon, order=sortKey)
-        item.setTotalCount(number)
+        item.setCounts(*counts)
 
         #parentItem.setExpanded(True)
         #parentItem.sortChildren(1, QtCore.Qt.AscendingOrder)
-
-    def updateTopLevelTitles(self, counters, show_completed=False):
-        nbPending = counters['Pending']
-        nbDue = counters['Due']
-        nbUncategorized = counters['Uncategorized']
-        nbContexts = counters['Contexts']
-        nbProjects = counters['Projects']
-        nbComplete = counters['Complete']
-        nbContCompl = counters['ContCompl']
-        nbProjCompl = counters['ProjCompl']
-        nbDueCompl = counters['DueCompl']
-        nbUncatCompl = counters['UncatCompl']
-        nbPriority = counters['Priority']
-        nbPrioCompl = counters['PrioCompl']
-
-        self._completeTasksItem.setTotalCount(nbComplete)
-        self._allTasksItem.setCounts(nbPending, nbComplete)
-        self._dueItem.setCounts(nbDue, nbDueCompl)
-        self._contextsItem.setCounts(nbContexts, nbContCompl)
-        self._projectsItem.setCounts(nbProjects, nbProjCompl)
-        self._priorityItem.setCounts(nbPriority, nbPrioCompl)
-        self._uncategorizedTasksItem.setCounts(nbUncategorized, nbUncatCompl)
 
     @QtCore.pyqtSlot(result='QVariantList')
     def getRootChildren(self):
@@ -162,6 +139,16 @@ class FiltersModel(QtGui.QStandardItemModel):
             path = self.item(row,0).iconSource
         return path
 
+    def updateCounters(self, counters):
+        self._completeTasksItem.setTotalCount(counters['All'][1])
+        self._allTasksItem.setCounts(*counters['All'])
+        self._dueItem.setCounts(*counters['Due'])
+        self._contextsItem.setCounts(*counters['Contexts'])
+        self._projectsItem.setCounts(*counters['Projects'])
+        self._priorityItem.setCounts(*counters['Priority'])
+        self._uncategorizedTasksItem.setCounts(*counters['Uncategorized'])
+
+
 
 
 class FiltersTreeController(QtCore.QObject):
@@ -172,55 +159,45 @@ class FiltersTreeController(QtCore.QObject):
         QtCore.QObject.__init__(self)
         self.model = FiltersModel(self)
 
-    def showFilters(self, mfile, show_completed=False):
+    def showFilters(self, mfile):
         self.model.clear()
-        self._addAllContexts(mfile, show_completed)
-        self._addAllProjects(mfile, show_completed)
-        self._addAllDueRanges(mfile, show_completed)
-        self._addAllPriorities(mfile, show_completed)
-        self._updateCounter(mfile, show_completed)
+        self._addAllContexts(mfile)
+        self._addAllProjects(mfile)
+        self._addAllDueRanges(mfile)
+        self._addAllPriorities(mfile)
+        self._updateCounter(mfile)
 
-    def _updateCounter(self, mfile, show_completed=False):
-        rootCounters = mfile.getTasksCounters()
-        self.model.updateTopLevelTitles(rootCounters, show_completed)
+    def _updateCounter(self, mfile):
+        counters = mfile.getTasksCounters()
+        self.model.updateCounters(counters)
 
-    def _addAllContexts(self, mfile, show_completed):
-        contexts = mfile.getAllContexts(show_completed)
+    def _addAllContexts(self, mfile):
+        contexts = mfile.getAllContexts()
         for context, number in contexts.items():
             mfilter = ContextFilter(context)
             self.model.addFilter(mfilter, number)
 
-    def _addAllProjects(self, mfile, show_completed):
-        projects = mfile.getAllProjects(show_completed)
-        for project, number in projects.items():
+    def _addAllProjects(self, mfile):
+        projects = mfile.getAllProjects()
+        for project, counts in projects.items():
             mfilter = ProjectFilter(project)
-            self.model.addFilter(mfilter, number)
+            self.model.addFilter(mfilter, counts)
 
-    def _addAllPriorities(self, mfile, show_completed):
-        priorities = mfile.getAllPriorities(show_completed)
+    def _addAllPriorities(self, mfile):
+        priorities = mfile.getAllPriorities()
         for priority, number in priorities.items():
             mfilter = PriorityFilter(priority)
             self.model.addFilter(mfilter, number)
 
-    def _addAllDueRanges(self, mfile, show_completed):
+    def _addAllDueRanges(self, mfile):
+        dueRanges = mfile.getAllDueRanges()
 
-        dueRanges, rangeSorting = mfile.getAllDueRanges(show_completed)
+        # This determines the sorting of the ranges in the tree view. Lowest value first.
+        rangeSorting = {'Today': 20,
+                        'Tomorrow': 30,
+                        'This week': 40,
+                        'This month': 50,
+                        'Overdue': 10}
 
-        for mrange, number in dueRanges.items():
-            if mrange == 'Today':
-                mfilter = DueTodayFilter(mrange)
-                sortKey = rangeSorting['Today']
-            elif mrange == 'Tomorrow':
-                mfilter = DueTomorrowFilter(mrange)
-                sortKey = rangeSorting['Tomorrow']
-            elif mrange == 'This week':
-                mfilter = DueThisWeekFilter(mrange)
-                sortKey = rangeSorting['This week']
-            elif mrange == 'This month':
-                mfilter = DueThisMonthFilter(mrange)
-                sortKey = rangeSorting['This month']
-            elif mrange == 'Overdue':
-                mfilter = DueOverdueFilter(mrange)
-                sortKey = rangeSorting['Overdue']
-
-            self.model.addDueRangeFilter(mfilter, number, sortKey)
+        for flt, counts in dueRanges.items():
+            self.model.addDueRangeFilter(flt, counts)
