@@ -71,6 +71,7 @@ Loader {
             Keys.onEscapePressed: taskLine.state = "show"
 
             CompletionPopup { completerParent: splitView }
+            Component.onCompleted: forceActiveFocus()
         }
     }
 

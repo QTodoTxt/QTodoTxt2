@@ -8,6 +8,7 @@ Item {
     Connections {
         target: parent
         onActiveFocusChanged: {
+            console.log("activeFocus: ",parent.activeFocus)
             if (parent.activeFocus) connectCompleter()
             else disconnectCompleter()
         }
@@ -20,6 +21,7 @@ Item {
             return false
         }
         completer = completerComp.createObject(completerParent)
+        connectCompleter()
     }
 
     function connectCompleter() {
@@ -34,6 +36,7 @@ Item {
 
     function destroyCompleter() {
         console.log("destroying")
+        disconnectCompleter()
         completer.destroy()
     }
 
@@ -280,8 +283,9 @@ Item {
                         anchors.fill: parent
                         leftMargin: 3
                         rightMargin: 3
-                        topMargin: 3
-                        bottomMargin: 3
+//                        topMargin: 3
+//                        bottomMargin: 3
+                        spacing: 3
                         clip: true
 
                         model: completionModel
