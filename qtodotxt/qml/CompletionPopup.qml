@@ -8,8 +8,8 @@ Item {
     Connections {
         target: parent
         onActiveFocusChanged: {
-            console.log("activeFocus: ",parent.activeFocus)
-            if (parent.activeFocus) connectCompleter()
+            console.log("activeFocus: ",target.activeFocus)
+            if (target.activeFocus) connectCompleter()
             else disconnectCompleter()
         }
     }
