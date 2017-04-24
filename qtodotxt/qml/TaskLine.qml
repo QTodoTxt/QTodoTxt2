@@ -70,11 +70,10 @@ Loader {
             Keys.onEnterPressed: taskLine.inputAccepted(editor.text)
             Keys.onEscapePressed: taskLine.state = "show"
 
-            CompletionPopup { completerParent: splitView }
+            CompletionPopup { }
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
                 cursorPosition = text.length
-//                console.log(text.length,cursorPosition)
             }
         }
     }

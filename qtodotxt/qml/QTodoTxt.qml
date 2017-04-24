@@ -8,7 +8,7 @@ import QtQml.Models 2.2
 import Qt.labs.settings 1.0
 
 ApplicationWindow {
-    id: window
+    id: appWindow
     visible: true
     width: 1024
     height: 768
@@ -27,16 +27,16 @@ ApplicationWindow {
         onFiltersUpdated: {
             console.log("MODEL, changed", filtersTree.model.rowCount())
             filtersTree.expandAll()
+//            filtersTree.resizeCountCols()
         }
     }
 
     Settings {
         category: "WindowState"
-        property alias window_width: window.width
-        property alias window_height: window.height
+        property alias window_width: appWindow.width
+        property alias window_height: appWindow.height
         property alias filters_tree_width: filtersTree.width
     }
-
 
     onClosing: {
         if ( mainController.canExit() ) {
@@ -114,7 +114,7 @@ ApplicationWindow {
                 spacing: 5
                 Image {
                     source: ( mainController.filtersModel.iconFromIndex(styleData.index) !== "" ?
-                                 window.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
+                                 appWindow.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
                     height: filterLbl.height
                     fillMode: Image.PreserveAspectFit
                 }
@@ -142,7 +142,7 @@ ApplicationWindow {
                     spacing: 5
                     Image {
                         source: ( mainController.filtersModel.iconFromIndex(styleData.index) !== "" ?
-                                     window.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
+                                     appWindow.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
                         height: filterLbl.height
                         fillMode: Image.PreserveAspectFit
                     }
@@ -177,6 +177,16 @@ ApplicationWindow {
                 console.log("ACTI", filtersTree.isExpanded(filtersTree.currentIndex))
             }
 
+            onChildrenChanged: {
+                console.log("children")
+                Qt.callLater(expandAll())
+            }
+
+            function resizeCountCols() {
+                totalCol.resizeToContents()
+                completedCol.resizeToContents()
+            }
+
             function expandAll() {
                 var rootChildren = model.getRootChildren()
                 for (var i=0; i < rootChildren.length ; i++) {
@@ -204,8 +214,7 @@ ApplicationWindow {
                     searchField.focus = true
                 }
 
-                CompletionPopup { completerParent: splitView }
-
+                CompletionPopup { }
             }
 
             TaskListView {

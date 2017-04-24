@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 
 Item {
-    property QtObject completerParent
+    property QtObject completerParent: appWindow.contentItem
     property Item completer
 
     Connections {
@@ -11,6 +11,21 @@ Item {
             console.log("activeFocus: ",target.activeFocus)
             if (target.activeFocus) connectCompleter()
             else disconnectCompleter()
+        }
+    }
+
+    function findRootContentItem(c){
+        console.log(c, typeof c, "on", c.objectName)
+        if (c.toString().startsWith("Content")) {
+            console.log("contenItem found", c)
+            return c
+        }
+        else {
+            if (c.parent !== null) return findRootContentItem(c.parent)
+            else {
+                console.log("no parent")
+                return null
+            }
         }
     }
 
@@ -40,7 +55,10 @@ Item {
         completer.destroy()
     }
 
-    Component.onCompleted: createCompleter()
+    Component.onCompleted: {
+        createCompleter()
+//        findRootContentItem(this)
+    }
     Component.onDestruction: destroyCompleter()
 
 
@@ -59,9 +77,9 @@ Item {
                         + textItem.cursorRectangle.width - prefixItem.contentWidth
                 var _y = textItem.cursorRectangle.y
                         + textItem.cursorRectangle.height + 5
-                var globalCoords = textItem.mapToItem(splitView, _x, _y)
-                var xMax = splitView.width - popup.width
-                var yMax = splitView.height - popup.height
+                var globalCoords = textItem.mapToItem(parent, _x, _y)
+                var xMax = parent.width - popup.width
+                var yMax = parent.height - popup.height
                 x = Math.min(globalCoords.x, xMax)
                 y = Math.min(globalCoords.y, yMax)
                 //        console.log(x, y)

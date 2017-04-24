@@ -89,13 +89,13 @@ Item {
         iconName: "application-exit"
         text: qsTr("Exit")
         shortcut: StandardKey.Quit
-        onTriggered: window.close()
+        onTriggered: appWindow.close()
     }
 
     Action {
         id: newTask
         iconName: "list-add"
-        iconSource: window.theme + "TaskCreate.png"
+        iconSource: appWindow.theme + "TaskCreate.png"
         text: qsTr("Create New Task")
         shortcut: "Ins"|StandardKey.New
         onTriggered: {
@@ -108,7 +108,7 @@ Item {
     Action {
         id: deleteTask
         iconName: "list-remove"
-        iconSource: window.theme + "TaskDelete.png"
+        iconSource: appWindow.theme + "TaskDelete.png"
         text: qsTr("Delete Task")
         shortcut: "Del"
         onTriggered: confirmDialog.open()
@@ -117,7 +117,7 @@ Item {
     Action {
         id: editTask
         iconName: "document-edit"
-        iconSource: window.theme + "TaskEdit.png"
+        iconSource: appWindow.theme + "TaskEdit.png"
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
         enabled: taskListView.currentIndex > -1
@@ -127,7 +127,7 @@ Item {
     Action {
         id: completeTasks
         iconName: "checkmark"
-        iconSource: window.theme + "TaskComplete.png"
+        iconSource: appWindow.theme + "TaskComplete.png"
         text: qsTr("Complete Task")
         shortcut: "X"
         onTriggered: {
@@ -141,7 +141,7 @@ Item {
     Action {
         id: increasePriority
         iconName: "arrow-up"
-        iconSource: window.theme + "TaskPriorityIncrease.png"
+        iconSource: appWindow.theme + "TaskPriorityIncrease.png"
         text: qsTr("Increase Priority")
         shortcut: "+"
         onTriggered: {
@@ -152,7 +152,7 @@ Item {
     Action {
         id: decreasePriority
         iconName: "arrow-down"
-        iconSource: window.theme + "TaskPriorityDecrease.png"
+        iconSource: appWindow.theme + "TaskPriorityDecrease.png"
         text: qsTr("Decrease Priority")
         shortcut: "-"
         onTriggered: {
@@ -163,7 +163,7 @@ Item {
     Action {
         id: showSearchAction
         iconName: "search"
-        iconSource: window.theme + "ActionSearch.png"
+        iconSource: appWindow.theme + "ActionSearch.png"
         text: qsTr("Show Search Field")
         shortcut: "Ctrl+F"
         checkable: true
@@ -172,7 +172,7 @@ Item {
     Action {
         id: showFilterPanel
         iconName: "view-filter"
-        iconSource: window.theme + "sidepane.png"
+        iconSource: appWindow.theme + "sidepane.png"
         text: qsTr("Show Filter Panel")
         //        shortcut: "Ctrl+T"
         checkable: true
@@ -191,7 +191,7 @@ Item {
     Action {
         id: showCompleted
         //iconName: "search"
-        iconSource: window.theme + "show_completed.png"
+        iconSource: appWindow.theme + "show_completed.png"
         text: qsTr("Show Completed Tasks")
         shortcut: "Ctrl+C"
         checkable: true
@@ -202,7 +202,7 @@ Item {
     Action {
         id: showFuture
         //iconName: "search"
-        iconSource: window.theme + "future.png"
+        iconSource: appWindow.theme + "future.png"
         text: qsTr("Show Future Tasks")
         shortcut: "Ctrl+F"
         checkable: true
@@ -213,7 +213,7 @@ Item {
     Action {
         id: archive
         //iconName: "search"
-        iconSource: window.theme + "archive.png"
+        iconSource: appWindow.theme + "archive.png"
         text: qsTr("Archive Completed Tasks")
         shortcut: "Ctrl+A"
         onTriggered: mainController.archiveCompletedTasks()
@@ -222,7 +222,7 @@ Item {
     Action {
         id: addLink
         //iconName: "search"
-        iconSource: window.theme + "link.png"
+        iconSource: appWindow.theme + "link.png"
         text: qsTr("Add link to current task")
         shortcut: "Ctrl+L"
         onTriggered: linkDialog.open()
