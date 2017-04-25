@@ -1,0 +1,3 @@
+[submodule "qtodotxt/qml/Theme"]
+	path = qtodotxt/qml/Theme
+	url = git@github.com:QTodoTxt/Images.git
