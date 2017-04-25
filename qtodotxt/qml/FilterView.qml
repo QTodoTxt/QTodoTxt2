@@ -16,11 +16,16 @@ TreeView {
     selectionMode: SelectionMode.ExtendedSelection
     selection: ItemSelectionModel {
         model: mainController.filtersModel
+        onSelectedIndexesChanged: {
+            console.log(selectedIndexes)
+//            mainController.filtersRequest(selectedIndexes)
+        }
+
     }
 
 
     TableViewColumn {
-        width: filtersTree.width - totalCol.width - completedCol.width
+        width: treeView.width - totalCol.width - completedCol.width
         resizable: false
 
         title: "Filters"
@@ -56,6 +61,14 @@ TreeView {
 
         title: "Compl."
         role: "completedCount"
+    }
+
+//    onActivated: { //in Windows this means you need to doubleClick
+    onClicked: {
+        //FIXME: check all current select items, is multi selction is allowed
+        console.log("ACTI", treeView.isExpanded(treeView.currentIndex))
+        mainController.filterRequest(index) //This should be called from ItemSelectionModel
+        selection.select(index, ItemSelectionModel.Select | ItemSelectionModel.Current)
     }
 
 

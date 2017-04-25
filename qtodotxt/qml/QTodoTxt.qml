@@ -104,11 +104,6 @@ ApplicationWindow {
 
             visible: actions.showFilterPanel.checked
 
-            onActivated: {
-                //FIXME: check all current select items, is multi selction is allowed
-                console.log("ACTI", filtersTree.isExpanded(filtersTree.currentIndex))
-                mainController.filterRequest(index)
-            }
         }
 
         ColumnLayout {

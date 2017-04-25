@@ -67,9 +67,21 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtSlot('QVariant')
     def filterRequest(self, idx):
+        print(idx)
         item = self._filters_tree_controller.model.itemFromIndex(idx)
         self._currentFilters = [item.filter]
         self._applyFilters()
+
+    @QtCore.pyqtSlot('QModelIndexList')
+    def filtersRequest(self, idxs):
+        print(idxs)
+        items = []
+        for idx in idxs:
+            print(idx)
+            items.append(self._filters_tree_controller.model.itemFromIndex(idx))
+        self._currentFilters = items
+        self._applyFilters()
+
 
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
