@@ -65,23 +65,11 @@ class MainController(QtCore.QObject):
         self._completionStrings = contexts + projects + priorities + ['due:']
         self.completionChanged.emit()
 
-    @QtCore.pyqtSlot('QVariant')
-    def filterRequest(self, idx):
-        print(idx)
-        item = self._filters_tree_controller.model.itemFromIndex(idx)
-        self._currentFilters = [item.filter]
-        self._applyFilters()
-
     @QtCore.pyqtSlot('QModelIndexList')
-    def filtersRequest(self, idxs):
-        print(idxs)
-        items = []
-        for idx in idxs:
-            print(idx)
-            items.append(self._filters_tree_controller.model.itemFromIndex(idx))
-        self._currentFilters = items
+    def filterByIndexes(self, idxs):
+        filters = [self._filters_tree_controller.model.itemFromIndex(idx).filter for idx in idxs]
+        self._currentFilters = filters
         self._applyFilters()
-
 
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
