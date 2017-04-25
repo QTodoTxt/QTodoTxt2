@@ -95,103 +95,19 @@ ApplicationWindow {
         anchors.fill: parent
         orientation: Qt.Horizontal
 
-        TreeView {
+
+        FilterView {
             id: filtersTree
-            width: 400
+//            width: 400
             Layout.minimumWidth: 150
             Layout.fillHeight: true
 
             visible: actions.showFilterPanel.checked
-            alternatingRowColors: false
-
-            rowDelegate: Rectangle {
-                color: systemPalette.highlight
-                opacity: (styleData.selected ? 0.5 : 0)
-            }
-            /*
-
-            itemDelegate: Row {
-                spacing: 5
-                Image {
-                    source: ( mainController.filtersModel.iconFromIndex(styleData.index) !== "" ?
-                                 appWindow.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
-                    height: filterLbl.height
-                    fillMode: Image.PreserveAspectFit
-                }
-                Label {
-                    id: filterLbl
-                    text: styleData.value
-                }
-            }
-            */
-
-            model: mainController.filtersModel
-            selection: ItemSelectionModel {
-                model: mainController.filtersModel
-            }
-
-            selectionMode: SelectionMode.ExtendedSelection
-
-            TableViewColumn {
-                width: filtersTree.width - totalCol.width - completedCol.width
-                resizable: false
-
-                title: "Filters"
-                role: "display"
-                delegate: Row {
-                    spacing: 5
-                    Image {
-                        source: ( mainController.filtersModel.iconFromIndex(styleData.index) !== "" ?
-                                     appWindow.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
-                        height: filterLbl.height
-                        fillMode: Image.PreserveAspectFit
-                    }
-                    Label {
-                        id: filterLbl
-                        text: styleData.value
-                    }
-                }
-            }
-
-            TableViewColumn {
-                id: totalCol
-                width: 50
-                resizable: false
-
-                title: "Tot."
-                role: "totalCount"
-            }
-
-            TableViewColumn {
-                id: completedCol
-                width: 50
-                resizable: false
-
-                title: "Compl."
-                role: "completedCount"
-            }
 
             onActivated: {
                 //FIXME: check all current select items, is multi selction is allowed
-                mainController.filterRequest(index)
                 console.log("ACTI", filtersTree.isExpanded(filtersTree.currentIndex))
-            }
-
-            onChildrenChanged: {
-                console.log("children")
-                Qt.callLater(expandAll())
-            }
-
-            function resizeCountCols() {
-                totalCol.resizeToContents()
-                completedCol.resizeToContents()
-            }
-
-            function expandAll() {
-                var rootChildren = model.getRootChildren()
-                for (var i=0; i < rootChildren.length ; i++) {
-                    filtersTree.expand(rootChildren[i])
-                }
+                mainController.filterRequest(index)
             }
         }
 
