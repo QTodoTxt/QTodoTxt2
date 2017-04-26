@@ -95,9 +95,11 @@ Item {
 
     Action {
         id: newTask
+
         iconName: "list-add"
         iconSource: Theme.iconSource(iconName) //appWindow.theme + "TaskCreate.png"
         text: qsTr("Create New Task")
+
         shortcut: "Ins"|StandardKey.New
         onTriggered: {
             var idx = mainController.newTask('', taskListView.currentIndex)
@@ -108,8 +110,10 @@ Item {
 
     Action {
         id: deleteTask
+
         iconName: "list-remove"
-        iconSource: appWindow.theme + "TaskDelete.png"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Delete Task")
         shortcut: "Del"
         onTriggered: confirmDialog.open()
@@ -117,8 +121,10 @@ Item {
 
     Action {
         id: editTask
+
         iconName: "document-edit"
         iconSource: appWindow.theme + "TaskEdit.png"
+
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
         enabled: taskListView.currentIndex > -1
@@ -128,7 +134,8 @@ Item {
     Action {
         id: completeTasks
         iconName: "checkmark"
-        iconSource: appWindow.theme + "TaskComplete.png"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Complete Task")
         shortcut: "X"
         onTriggered: {
@@ -142,7 +149,8 @@ Item {
     Action {
         id: increasePriority
         iconName: "arrow-up"
-        iconSource: appWindow.theme + "TaskPriorityIncrease.png"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Increase Priority")
         shortcut: "+"
         onTriggered: {
@@ -153,7 +161,8 @@ Item {
     Action {
         id: decreasePriority
         iconName: "arrow-down"
-        iconSource: appWindow.theme + "TaskPriorityDecrease.png"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Decrease Priority")
         shortcut: "-"
         onTriggered: {
@@ -164,7 +173,8 @@ Item {
     Action {
         id: showSearchAction
         iconName: "search"
-        iconSource: appWindow.theme + "ActionSearch.png"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Show Search Field")
         shortcut: "Ctrl+F"
         checkable: true
@@ -173,7 +183,8 @@ Item {
     Action {
         id: showFilterPanel
         iconName: "view-filter"
-        iconSource: appWindow.theme + "sidepane.png"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Show Filter Panel")
         //        shortcut: "Ctrl+T"
         checkable: true
@@ -183,6 +194,8 @@ Item {
     Action {
         id: showToolBarAction
         iconName: "configure-toolbars"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Show ToolBar")
         shortcut: "Ctrl+T"
         checkable: true
@@ -191,8 +204,9 @@ Item {
 
     Action {
         id: showCompleted
-        //iconName: "search"
-        iconSource: appWindow.theme + "show_completed.png"
+        iconName: "show-completed"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Show Completed Tasks")
         shortcut: "Ctrl+C"
         checkable: true
@@ -202,8 +216,9 @@ Item {
 
     Action {
         id: showFuture
-        //iconName: "search"
-        iconSource: appWindow.theme + "future.png"
+        iconName: "future"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Show Future Tasks")
         shortcut: "Ctrl+F"
         checkable: true
@@ -213,8 +228,9 @@ Item {
 
     Action {
         id: archive
-        //iconName: "search"
-        iconSource: appWindow.theme + "archive.png"
+        iconName: "archive"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Archive Completed Tasks")
         shortcut: "Ctrl+A"
         onTriggered: mainController.archiveCompletedTasks()
@@ -222,8 +238,9 @@ Item {
 
     Action {
         id: addLink
-        //iconName: "search"
-        iconSource: appWindow.theme + "link.png"
+        iconName: "addLink"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("Add link to current task")
         shortcut: "Ctrl+L"
         onTriggered: linkDialog.open()
@@ -232,11 +249,13 @@ Item {
     Action {
         id: helpShowAbout
         iconName: "help-about"
+        iconSource: Theme.iconSource(iconName)
+
         text: qsTr("About");
         shortcut: "F1"
         onTriggered: {
             var component = Qt.createComponent("AboutBox.qml")
-            var dialog = component.createObject(window)
+            var dialog = component.createObject(appWindow)
             dialog.open()
         }
     }
