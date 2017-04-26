@@ -103,6 +103,7 @@ def run():
     controller = MainController(args)
     engine.rootContext().setContextProperty("mainController", controller)
     path = os.path.dirname(__file__)
+    engine.addImportPath(path + '/qml/')
     engine.load(path + '/qml/QTodoTxt.qml')
 
     # Connecting to a processor reading TMP file

@@ -7,6 +7,8 @@ import QtQml 2.2
 import QtQml.Models 2.2
 import Qt.labs.settings 1.0
 
+import Theme 1.0
+
 ApplicationWindow {
     id: appWindow
     visible: true
@@ -138,4 +140,5 @@ ApplicationWindow {
         }
 
     }
+    Component.onCompleted: { console.log("Theme", Theme.name, Theme.iconSource("list-add")) }
 }

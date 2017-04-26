@@ -3,6 +3,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.1
 import Qt.labs.settings 1.0
 
+import Theme 1.0
 
 Item {
     property alias fileNew: fileNew
@@ -95,7 +96,7 @@ Item {
     Action {
         id: newTask
         iconName: "list-add"
-        iconSource: appWindow.theme + "TaskCreate.png"
+        iconSource: Theme.iconSource(iconName) //appWindow.theme + "TaskCreate.png"
         text: qsTr("Create New Task")
         shortcut: "Ins"|StandardKey.New
         onTriggered: {
