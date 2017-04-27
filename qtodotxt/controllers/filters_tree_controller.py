@@ -19,9 +19,9 @@ class FilterItem(QtGui.QStandardItem):
         parent.appendRow([self])
         #if order:
         #self.setText(1, str(order))
-        self.iconSource = 'FilterAll.png'
-        if icon:
-            self.setIcon(icon)
+        self.iconSource = icon
+#        if icon:
+#            self.setIcon(icon)
 
     def setCounts(self, total, completed):
         self.setTotalCount(total)
@@ -64,21 +64,21 @@ class FiltersModel(QtGui.QStandardItemModel):
 
     def _addDefaultTreeItems(self):
         self._allTasksItem = FilterItem(self, 'All',
-                                        AllTasksFilter(), QtGui.QIcon(self.style + '/resources/FilterAll.png'))
+                                        AllTasksFilter(), 'qtodotxt-filter-all')
         self._uncategorizedTasksItem = FilterItem(self, 'Uncategorized',
                                                   UncategorizedTasksFilter(),
-                                                  QtGui.QIcon(self.style + '/resources/FilterUncategorized.png'))
+                                                  'qtodotxt-filter-uncategorized')
         self._dueItem = FilterItem(self, 'Due', HasDueDateFilter(),
-                                   QtGui.QIcon(self.style + '/resources/FilterDue.png'))
+                                   'qtodotxt-filter-due')
         self._contextsItem = FilterItem(self, 'Contexts',
-                                        HasContextsFilter(), QtGui.QIcon(self.style + '/resources/FilterContexts.png'))
+                                        HasContextsFilter(), 'qtodotxt-filter-contexts')
         self._projectsItem = FilterItem(self, 'Projects',
-                                        HasProjectsFilter(), QtGui.QIcon(self.style + '/resources/FilterProjects.png'))
+                                        HasProjectsFilter(), 'qtodotxt-filter-projects')
         self._priorityItem = FilterItem(self, 'Priorities',
-                                        HasPriorityFilter(), QtGui.QIcon(self.style + '/resources/FilterComplete.png'))
+                                        HasPriorityFilter(), 'qtodotxt-filter-complete')
         self._completeTasksItem = FilterItem(self, 'Complete',
                                              CompleteTasksFilter(),
-                                             QtGui.QIcon(self.style + '/resources/FilterComplete.png'))
+                                             'qtodotxt-filter-complete')
 
     def _initFilterTypeMappings(self):
         self._filterItemByFilterType[ContextFilter] = self._contextsItem
@@ -86,15 +86,15 @@ class FiltersModel(QtGui.QStandardItemModel):
         self._filterItemByFilterType[DueFilter] = self._dueItem
         self._filterItemByFilterType[PriorityFilter] = self._priorityItem
 
-        self._filterIconByFilterType[ContextFilter] = QtGui.QIcon(self.style + '/resources/FilterContexts.png')
-        self._filterIconByFilterType[ProjectFilter] = QtGui.QIcon(self.style + '/resources/FilterProjects.png')
+        self._filterIconByFilterType[ContextFilter] = 'qtodotxt-filter-contexts'
+        self._filterIconByFilterType[ProjectFilter] = 'qtodotxt-filter-projects'
 
-        self._filterIconByFilterType[DueTodayFilter] = QtGui.QIcon(self.style + '/resources/FilterDueToday.png')
-        self._filterIconByFilterType[DueTomorrowFilter] = QtGui.QIcon(self.style + '/resources/FilterDueTomorrow.png')
-        self._filterIconByFilterType[DueThisWeekFilter] = QtGui.QIcon(self.style + '/resources/FilterDueWeek.png')
-        self._filterIconByFilterType[DueThisMonthFilter] = QtGui.QIcon(self.style + '/resources/FilterDueMonth.png')
-        self._filterIconByFilterType[DueOverdueFilter] = QtGui.QIcon(self.style + '/resources/FilterDueOverdue.png')
-        self._filterIconByFilterType[PriorityFilter] = QtGui.QIcon(self.style + '/resources/FilterComplete.png')
+        self._filterIconByFilterType[DueTodayFilter] = 'qtodotxt-filter-due-today'
+        self._filterIconByFilterType[DueTomorrowFilter] = 'qtodotxt-filter-due-tomorrow'
+        self._filterIconByFilterType[DueThisWeekFilter] = 'qtodotxt-filter-due-week'
+        self._filterIconByFilterType[DueThisMonthFilter] = 'qtodotxt-filter-due-month'
+        self._filterIconByFilterType[DueOverdueFilter] = 'qtodotxt-filter-due-overdue'
+        self._filterIconByFilterType[PriorityFilter] = 'qtodotxt-filter-complete'
 
         self._treeItemByFilterType[AllTasksFilter] = self._allTasksItem
         self._treeItemByFilterType[UncategorizedTasksFilter] = self._uncategorizedTasksItem

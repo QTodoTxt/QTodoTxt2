@@ -2,6 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQml.Models 2.2
 
+import Theme 1.0
 
 TreeView {
     id: treeView
@@ -32,8 +33,7 @@ TreeView {
         delegate: Row {
             spacing: 5
             Image {
-                source: (mainController.filtersModel.iconFromIndex(styleData.index) !== "" ?
-                             appWindow.theme + mainController.filtersModel.iconFromIndex(styleData.index) : "")
+                source: Theme.iconSource(mainController.filtersModel.iconFromIndex(styleData.index))
                 height: filterLbl.height
                 fillMode: Image.PreserveAspectFit
             }
