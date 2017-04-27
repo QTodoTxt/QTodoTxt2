@@ -11,6 +11,7 @@ TreeView {
     rowDelegate: Rectangle {
         color: systemPalette.highlight
         opacity: (styleData.selected ? 0.5 : 0)
+        height: 3*Theme.mediumSpace
     }
 
     model: mainController.filtersModel
@@ -25,21 +26,29 @@ TreeView {
 
 
     TableViewColumn {
+        id: filterNameCol
         width: treeView.width - totalCol.width - completedCol.width
         resizable: false
 
         title: "Filters"
         role: "display"
         delegate: Row {
-            spacing: 5
+            spacing: Theme.smallSpace
+            height: lbl.implicitHeight + Theme.mediumSpace
+            width: filterNameCol.width
             Image {
+                id: img
                 source: Theme.iconSource(mainController.filtersModel.iconFromIndex(styleData.index))
-                height: filterLbl.height
+                height: lbl.height
                 fillMode: Image.PreserveAspectFit
             }
             Label {
-                id: filterLbl
-                text: styleData.value
+                id: lbl
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width - img.width
+
+                text: /*mainController.filtersModel.iconFromIndex(styleData.index)+ */styleData.value
+                elide: styleData.elideMode
             }
         }
     }
@@ -47,7 +56,7 @@ TreeView {
     TableViewColumn {
         id: totalCol
         width: 50
-        resizable: false
+//        resizable: false
 
         title: "Tot."
         role: "totalCount"
@@ -56,7 +65,7 @@ TreeView {
     TableViewColumn {
         id: completedCol
         width: 50
-        resizable: false
+//        resizable: false
 
         title: "Compl."
         role: "completedCount"
