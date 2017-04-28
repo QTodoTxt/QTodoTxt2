@@ -8,7 +8,7 @@ Item {
     Connections {
         target: parent
         onActiveFocusChanged: {
-            console.log("activeFocus: ",target.activeFocus)
+//            console.log("activeFocus: ",target.activeFocus)
             if (target.activeFocus) connectCompleter()
             else disconnectCompleter()
         }
@@ -30,7 +30,7 @@ Item {
     }
 
     function createCompleter() {
-        console.log("creating for", parent)
+//        console.log("creating for", parent)
         if (completer !== null) {
             console.log("Completer already there.")
             return false
@@ -50,7 +50,7 @@ Item {
     }
 
     function destroyCompleter() {
-        console.log("destroying")
+//        console.log("destroying")
         disconnectCompleter()
         completer.destroy()
     }
@@ -110,7 +110,7 @@ Item {
             }
 
             //    onTextItemChanged: console.log("state: ", textItem, state)
-            onStateChanged: console.log("state: ", textItem, state)
+//            onStateChanged: console.log("state: ", textItem, state)
 
             state: "unconnected"
 

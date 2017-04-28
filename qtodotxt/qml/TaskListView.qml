@@ -30,13 +30,13 @@ ListView {
         html: taskList[model.index].html
         priority: taskList[model.index].priorityHtml
 
-        current: (currentIndex === model.index)
+        current: ListView.isCurrentItem //(currentIndex === model.index)
 
         onActivated: listView.currentIndex = model.index
         onShowContextMenu: contextMenu.popup()
-        onStateChanged: if (state === "show") listView.focus = true
+//        onStateChanged: if (state === "show") listView.focus = true
         onInputAccepted: {
-            console.log("new text: ", newText)
+//            console.log("new text: ", newText)
             taskList[model.index].text = newText
         }
     }

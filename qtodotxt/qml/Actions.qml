@@ -6,30 +6,7 @@ import Qt.labs.settings 1.0
 import Theme 1.0
 
 Item {
-    property alias fileNew: fileNew
-    property alias fileOpen: fileOpen
-    property alias fileSave: fileSave
-    property alias fileSaveAs: fileSaveAs
-    property alias fileRevert: fileRevert
-    property alias quitApp: quitApp
-    property alias newTask: newTask
-    property alias deleteTask: deleteTask
-    property alias editTask: editTask
-    property alias completeTasks: completeTasks
-    property alias increasePriority: increasePriority
-    property alias decreasePriority: decreasePriority
-    property alias showSearchAction: showSearchAction
-    property alias showFilterPanel: showFilterPanel
-    property alias showToolBarAction: showToolBarAction
-    property alias showCompleted: showCompleted
-    property alias showFuture: showFuture
-    property alias archive: archive
-    property alias addLink: addLink
-    property alias helpShowAbout: helpShowAbout
-    property alias helpShowShortcuts: helpShowShortcuts
-    property alias sortTodoTxt: sortTodoTxt
-    property alias sortCreationDate: sortCreationDate
-    property alias sortDueDate: sortDueDate
+    id: actions
 
     Settings {
         category: "VisibleWidgets"
@@ -40,16 +17,16 @@ Item {
         property alias show_future: showFuture.checked
     }
 
-    Action {
-            id: fileNew
+    property Action fileNew: Action{
+            //id:fileNew
             iconName: "document-new"
             text: qsTr("New")
             //shortcut: StandardKey.New
             onTriggered: {        }
     }
 
-    Action {
-        id: fileOpen
+    property Action fileOpen: Action {
+//        id: fileOpen
         iconName: "document-open"
         text: qsTr("Open")
         shortcut: StandardKey.Open
@@ -59,16 +36,16 @@ Item {
         }
     }
 
-    Action {
-        id: fileSave
+    property Action fileSave: Action{
+        //id:fileSave
         iconName: "document-save"
         text: qsTr("Save")
         shortcut: StandardKey.Save
         onTriggered: mainController.save()
     }
 
-    Action {
-        id: fileSaveAs
+    property Action fileSaveAs: Action{
+        //id:fileSaveAs
         iconName: "document-save-as"
         text: qsTr("Save As")
         shortcut: StandardKey.SaveAs
@@ -78,23 +55,23 @@ Item {
         }
     }
 
-    Action {
-        id: fileRevert
+    property Action fileRevert: Action{
+        //id:fileRevert
         iconName: "document-revert"
         text: qsTr("Revert")
         onTriggered: {        }
     }
 
-    Action {
-        id: quitApp
+    property Action quitApp: Action{
+        //id:quitApp
         iconName: "application-exit"
         text: qsTr("Exit")
         shortcut: StandardKey.Quit
         onTriggered: appWindow.close()
     }
 
-    Action {
-        id: newTask
+    property Action newTask: Action{
+        //id:newTask
 
         iconName: "list-add"
         iconSource: Theme.iconSource(iconName) //appWindow.theme + "TaskCreate.png"
@@ -108,8 +85,8 @@ Item {
         }
     }
 
-    Action {
-        id: deleteTask
+    property Action deleteTask: Action{
+        //id:deleteTask
 
         iconName: "list-remove"
         iconSource: Theme.iconSource(iconName)
@@ -119,8 +96,8 @@ Item {
         onTriggered: confirmDialog.open()
     }
 
-    Action {
-        id: editTask
+    property Action editTask: Action{
+        //id:editTask
 
         iconName: "document-edit"
         iconSource: appWindow.theme + "TaskEdit.png"
@@ -131,8 +108,8 @@ Item {
         onTriggered: { taskListView.editCurrentTask() }
     }
 
-    Action {
-        id: completeTasks
+    property Action completeTasks: Action{
+        //id:completeTasks
         iconName: "checkmark"
         iconSource: Theme.iconSource(iconName)
 
@@ -146,8 +123,8 @@ Item {
         }
     }
 
-    Action {
-        id: increasePriority
+    property Action increasePriority: Action{
+        //id:increasePriority
         iconName: "arrow-up"
         iconSource: Theme.iconSource(iconName)
 
@@ -158,8 +135,8 @@ Item {
         }
     }
 
-    Action {
-        id: decreasePriority
+    property Action decreasePriority: Action{
+        //id:decreasePriority
         iconName: "arrow-down"
         iconSource: Theme.iconSource(iconName)
 
@@ -170,8 +147,8 @@ Item {
         }
     }
 
-    Action {
-        id: showSearchAction
+    property Action showSearchAction: Action{
+        id:showSearchAction
         iconName: "search"
         iconSource: Theme.iconSource(iconName)
 
@@ -180,8 +157,8 @@ Item {
         checkable: true
     }
 
-    Action {
-        id: showFilterPanel
+    property Action showFilterPanel: Action{
+        id:showFilterPanel
         iconName: "view-filter"
         iconSource: Theme.iconSource(iconName)
 
@@ -191,8 +168,8 @@ Item {
         checked: true
     }
 
-    Action {
-        id: showToolBarAction
+    property Action showToolBarAction: Action{
+        id:showToolBarAction
         iconName: "configure-toolbars"
         iconSource: Theme.iconSource(iconName)
 
@@ -202,8 +179,8 @@ Item {
         checked: true
     }
 
-    Action {
-        id: showCompleted
+    property Action showCompleted: Action{
+        id:showCompleted
         iconName: "show-completed"
         iconSource: Theme.iconSource(iconName)
 
@@ -214,8 +191,8 @@ Item {
         onToggled: mainController.showCompleted = checked
     }
 
-    Action {
-        id: showFuture
+    property Action showFuture: Action{
+        id:showFuture
         iconName: "future"
         iconSource: Theme.iconSource(iconName)
 
@@ -226,8 +203,8 @@ Item {
         onToggled: mainController.showFuture = checked
     }
 
-    Action {
-        id: archive
+    property Action archive: Action{
+        //id:archive
         iconName: "archive"
         iconSource: Theme.iconSource(iconName)
 
@@ -236,8 +213,8 @@ Item {
         onTriggered: mainController.archiveCompletedTasks()
     }
 
-    Action {
-        id: addLink
+    property Action addLink: Action{
+        //id:addLink
         iconName: "addLink"
         iconSource: Theme.iconSource(iconName)
 
@@ -246,8 +223,8 @@ Item {
         onTriggered: linkDialog.open()
     }
 
-    Action {
-        id: helpShowAbout
+    property Action helpShowAbout: Action{
+        //id:helpShowAbout
         iconName: "help-about"
         iconSource: Theme.iconSource(iconName)
 
@@ -260,28 +237,28 @@ Item {
         }
     }
 
-    Action {
-        id: helpShowShortcuts
+    property Action helpShowShortcuts: Action{
+        //id:helpShowShortcuts
         iconName: "help-about"
         text: qsTr("Shortcuts list");
         shortcut: "Ctrl+F1"
         onTriggered: aboutBox.open()
     }
 
-    Action {
-        id: sortTodoTxt
+    property Action sortTodoTxt: Action{
+        //id:sortTodoTxt
         iconName: "view-sort-ascending-symbolic"
         text: "todo.txt" //FIXME better text for sorting like in todo.txt file
     }
 
-    Action {
-        id: sortCreationDate
+    property Action sortCreationDate: Action{
+        //id:sortCreationDate
         iconName: "view-sort-ascending-symbolic"
         text: "Creation Date"
     }
 
-    Action {
-        id: sortDueDate
+    property Action sortDueDate: Action{
+        //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"
         text: "Due Date"
     }

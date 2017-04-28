@@ -49,6 +49,9 @@ ApplicationWindow {
         }
     }
 
+//    onActiveFocusItemChanged: console.log("activeFI: ", activeFocusItem)
+    onActiveChanged: console.log("active: ", active)
+
     Actions {
         id: actions
     }
@@ -138,7 +141,5 @@ ApplicationWindow {
                 taskList: mainController.filteredTasks
             }
         }
-
     }
-    Component.onCompleted: { console.log("Theme", Theme.name, Theme.iconSource("list-add")) }
 }

@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.7
 import QtQuick.Controls 1.4
 
 
@@ -9,7 +9,10 @@ Loader {
     property string priority: ""
 
     property bool current: false
-    onCurrentChanged: if (!current) state = "show"
+    onCurrentChanged: {
+//        console.log("currentCh")
+        if (!current) state = "show"
+    }
     signal activated()
     signal showContextMenu()
     signal inputAccepted(string newText)
@@ -23,6 +26,7 @@ Loader {
         MouseArea {
             anchors.fill: parent
             property alias lblHeight: label.height
+
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
                 taskLine.activated()
@@ -58,22 +62,26 @@ Loader {
     Component {
         id: editorComp
         TextArea {
-            id: editor
+//            id: editor
 
             text: taskLine.text
 
             focus: true
             onEditingFinished: {
-                taskLine.state = "show"
+//                taskLine.state = "show"
             }
-            Keys.onReturnPressed: taskLine.inputAccepted(editor.text)
-            Keys.onEnterPressed: taskLine.inputAccepted(editor.text)
+            Keys.onReturnPressed: taskLine.inputAccepted(text)
+            Keys.onEnterPressed: taskLine.inputAccepted(text)
             Keys.onEscapePressed: taskLine.state = "show"
 
             CompletionPopup { }
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
                 cursorPosition = text.length
+            }
+            Connections {
+                target: appWindow
+                onActiveFocusItemChanged: { if (activeFocusItem !== null) taskLine.state = "show"}
             }
         }
     }
@@ -97,4 +105,5 @@ Loader {
             }
         }
     ]
+    Component.onCompleted: console.log(text.substring(0,10))
 }
