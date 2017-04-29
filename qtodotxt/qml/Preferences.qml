@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 import Qt.labs.settings 1.0
 
 Dialog {
-    id: window
+    id: prefWindow
     Settings {
         category: "Preferences"
         property alias auto_save: autoSaveCB.checked

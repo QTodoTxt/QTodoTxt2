@@ -44,8 +44,8 @@ ApplicationWindow {
         if ( mainController.canExit() ) {
             close.accepted = true
         } else {
-            console.log("State of document is ", mainController.canExit())
-            console.log("FIXME: popup dialog and sav as for saving")
+            close.accepted = false
+            confirmExitDialog.open()
         }
     }
 
@@ -61,7 +61,6 @@ ApplicationWindow {
     toolBar: MainToolBar {
         visible: actions.showToolBarAction.checked
     }
-
 
     MessageDialog {
         id: confirmDialog
@@ -88,7 +87,17 @@ ApplicationWindow {
         text: "Your todo.txt file has been externally modified. Reload newer version?"
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: mainController.reload() 
-        //onNo: console.log("didn't copy")
+    }
+
+    MessageDialog {
+        id: confirmExitDialog
+        title: "File not saved"
+        icon: StandardIcon.Question
+        text: "Your todo.txt file is not saved. Do you want to force exit?"
+        standardButtons: StandardButton.Yes | StandardButton.No | StandardButton.Cancel
+        onYes: {
+            Qt.quit()
+        }
     }
 
     SystemPalette {

@@ -10,6 +10,8 @@ ToolBar {
             ToolButton { action: actions.showCompleted}
             ToolButton { action: actions.showFuture}
             ToolBarSeparator { }
+            ToolButton { action: actions.fileSave }
+            ToolBarSeparator { }
             ToolButton { action: actions.newTask }
             ToolButton { action: actions.editTask }
             ToolButton { action: actions.deleteTask }

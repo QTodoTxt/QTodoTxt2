@@ -29,7 +29,7 @@ MenuBar {
             iconName: "configure"
             onTriggered: {
                 var component = Qt.createComponent("Preferences.qml")
-                var dialog = component.createObject(window)
+                var dialog = component.createObject(component.prefWindow)
                 dialog.open()
             }
         }
