@@ -55,13 +55,6 @@ Item {
         }
     }
 
-    property Action fileRevert: Action{
-        //id:fileRevert
-        iconName: "document-revert"
-        text: qsTr("Revert")
-        onTriggered: {        }
-    }
-
     property Action quitApp: Action{
         //id:quitApp
         iconName: "application-exit"

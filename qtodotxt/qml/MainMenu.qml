@@ -22,7 +22,6 @@ MenuBar {
         }
 
         MenuItem { action: actions.fileSave }
-        MenuItem { action: actions.fileRevert }
         MenuSeparator {}
         MenuItem {
             text: qsTr("Preferences")
