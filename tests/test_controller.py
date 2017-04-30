@@ -14,8 +14,18 @@ class Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.ctrl = MainController([])
+        cls.ctrl.open("tests/todo1.txt")
 
-    def test_open(self):
-        self.ctrl.open("tests/todo1.txt")
-        self.ctrl._applyFilters()
-        print("TASK", self.ctrl.filteredTasks)
+    @classmethod
+    def tearDownClass(cls):
+        pass
+
+    def test_completed(self):
+        self.ctrl.showCompleted = True
+        self.ctrl.applyFilters()
+        self.assertEqual(self.ctrl.filteredTasks, self.ctrl.allTasks)
+        self.ctrl.showCompleted = False
+        self.ctrl.applyFilters()
+        self.assertEqual(len(self.ctrl.filteredTasks), len(self.ctrl.allTasks) - 1)
+
+

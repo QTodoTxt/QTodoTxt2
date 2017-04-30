@@ -44,7 +44,7 @@ class MainController(QtCore.QObject):
         if not task.text:
             self.deleteTask(task)
             return
-        self._applyFilters()
+        self.applyFilters()
 
     def showError(self, msg):
         logger.debug("ERROR: %s", msg)
@@ -69,7 +69,7 @@ class MainController(QtCore.QObject):
     def filterByIndexes(self, idxs):
         filters = [self._filters_tree_controller.model.itemFromIndex(idx).filter for idx in idxs]
         self._currentFilters = filters
-        self._applyFilters()
+        self.applyFilters()
 
     @QtCore.pyqtSlot('QString', 'int', result='int')
     def newTask(self, text='', after=None):
@@ -94,7 +94,11 @@ class MainController(QtCore.QObject):
         self._file.tasks.remove(task)
         self.setModified()
         self.auto_save()
-        self._applyFilters()  # update filtered list for UI
+        self.applyFilters()  # update filtered list for UI
+
+    @property
+    def allTasks(self):
+        return self._file.tasks
 
     filteredTasksChanged = QtCore.pyqtSignal()
 
@@ -112,7 +116,7 @@ class MainController(QtCore.QObject):
     def showFuture(self, val):
         self._showFuture = val
         self.showFutureChanged.emit(val)
-        self._applyFilters()
+        self.applyFilters()
 
     searchTextChanged = QtCore.pyqtSignal(str)
 
@@ -123,7 +127,7 @@ class MainController(QtCore.QObject):
     @searchText.setter
     def searchText(self, txt):
         self._searchText = txt
-        self._applyFilters()
+        self.applyFilters()
         self.searchTextChanged.emit(txt)
 
     showCompletedChanged = QtCore.pyqtSignal('bool')
@@ -136,7 +140,7 @@ class MainController(QtCore.QObject):
     def showCompleted(self, val):
         self._showCompleted = val
         self.showCompletedChanged.emit(val)
-        self._applyFilters()
+        self.applyFilters()
 
     def auto_save(self):
         if bool(self._settings.value("Preferences/auto_save", True, type=bool)):
@@ -154,7 +158,7 @@ class MainController(QtCore.QObject):
             except OSError as ex:
                 self.showError(str(ex))
         
-        self._applyFilters()
+        self.applyFilters()
         self._updateTitle()
 
     filtersUpdated = QtCore.pyqtSignal()  
@@ -167,7 +171,7 @@ class MainController(QtCore.QObject):
         self._filters_tree_controller.showFilters(self._file)
         self.filtersUpdated.emit()
 
-    def _applyFilters(self):
+    def applyFilters(self):
         # First we filter with filters tree
         tasks = tasklib.filterTasks(self._currentFilters, self._file.tasks)
         # Then with our search text
@@ -189,7 +193,7 @@ class MainController(QtCore.QObject):
         for task in done:
             self._file.saveDoneTask(task)
             self._file.tasks.remove(task)
-        self._applyFilters()
+        self.applyFilters()
         self.setModified()
         self.auto_save()
 
@@ -274,7 +278,7 @@ class MainController(QtCore.QObject):
         self._settings.setValue("last_open_file", filename)
         for task in self._file.tasks:
             task.modified.connect(self._taskModified)
-        self._applyFilters()
+        self.applyFilters()
         self.updateRecentFile()
 
     recentFilesChanged = QtCore.pyqtSignal()
@@ -293,6 +297,6 @@ class MainController(QtCore.QObject):
 
     def _loadFileToUI(self):
         self.setModified(False)
-        self._applyFilters()
+        self.applyFilters()
         self._updateCompletionStrings()
         self._updateFilterTree()
