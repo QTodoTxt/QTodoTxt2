@@ -68,6 +68,9 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot('QModelIndexList')
     def filterByIndexes(self, idxs):
         filters = [self._filters_tree_controller.model.itemFromIndex(idx).filter for idx in idxs]
+        self.setFilters(filters)
+
+    def setFilters(self, filters):
         self._currentFilters = filters
         self.applyFilters()
 
@@ -99,6 +102,10 @@ class MainController(QtCore.QObject):
     @property
     def allTasks(self):
         return self._file.tasks
+
+    @allTasks.setter
+    def allTasks(self, tasks):
+        self._file.tasks = tasks
 
     filteredTasksChanged = QtCore.pyqtSignal()
 
