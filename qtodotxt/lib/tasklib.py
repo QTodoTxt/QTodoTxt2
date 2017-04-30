@@ -139,23 +139,29 @@ class Task(QtCore.QObject):
             elif word.startswith('+'):
                 self.projects.append(word[1:])
             elif ":" in word:
-                key, val = word.split(":", 1)
-                self.keywords[key] = val
-                if word.startswith('due:'):
-                    self.due = self._parseDateTime(word[4:])
-                    if not self.due:
-                        print("Error parsing due date '{}'".format(word))
-                        self.due_error = word[4:]
-                elif word.startswith('t:'):
-                    self.threshold = self._parseDateTime(word[2:])
-                    if not self.threshold:
-                        print("Error parsing threshold '{}'".format(word))
-                        self.threshold_error = word[2:]
-                    else:
-                        if self.threshold > datetime.today():
-                            self.is_future = True
-                elif word.startswith('rec:'):
-                    self._parseRecurrence(word)
+                self._parseKeyword(word)
+
+    def _parseKeyword(self, word):
+        key, val = word.split(":", 1)
+        self.keywords[key] = val
+        if word.startswith('due:'):
+            self.due = self._parseDateTime(word[4:])
+            if not self.due:
+                print("Error parsing due date '{}'".format(word))
+                self.due_error = word[4:]
+        elif word.startswith('t:'):
+            self.parseFuture(word)
+        elif word.startswith('rec:'):
+            self._parseRecurrence(word)
+
+    def _parseFuture(self, word):
+        self.threshold = self._parseDateTime(word[2:])
+        if not self.threshold:
+            print("Error parsing threshold '{}'".format(word))
+            self.threshold_error = word[2:]
+        else:
+            if self.threshold > datetime.today():
+                self.is_future = True
 
     def _parseRecurrence(self, word):
         # Original due date mode
