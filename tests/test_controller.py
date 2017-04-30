@@ -5,7 +5,7 @@ from datetime import date, timedelta
 from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import File
 from qtodotxt.lib.filters import IncompleteTasksFilter, ContextFilter, ProjectFilter, DueThisMonthFilter, \
-    DueThisWeekFilter, DueTodayFilter
+    DueThisWeekFilter, DueTodayFilter, DueOverdueFilter
 from qtodotxt.controllers.main_controller import MainController
 
 
@@ -18,6 +18,7 @@ class Test(unittest.TestCase):
         QtCore.QSettings().setValue("Preferences/auto_save", False)
         cls.ctrl = MainController([])
         cls.ctrl.allTasks = cls.make_tasks()
+        cls.ctrl.showCompleted = True
     
     @staticmethod
     def make_tasks():
@@ -28,6 +29,10 @@ class Test(unittest.TestCase):
         t = tasklib.Task("(A) Task due:{} +project1 @context2".format(today))
         tasks.append(t)
         t = tasklib.Task("(B) Task due:{} +project2 @context1".format(tomorrow))
+        tasks.append(t)
+        t = tasklib.Task("Task due:2015-04-01 +project2 @context1")
+        tasks.append(t)
+        t = tasklib.Task("Task due:2015-04-02 +project3")
         tasks.append(t)
         t = tasklib.Task("Task due:{}".format(tomorrow))
         tasks.append(t)
@@ -49,6 +54,7 @@ class Test(unittest.TestCase):
         self.ctrl.showCompleted = False
         self.ctrl.applyFilters()
         self.assertEqual(len(self.ctrl.filteredTasks), len(self.ctrl.allTasks) - 2)
+        self.ctrl.showCompleted = True
 
     def test_new_delete(self):
         count = len(self.ctrl.allTasks)
@@ -61,4 +67,7 @@ class Test(unittest.TestCase):
     def test_filter(self):
         self.ctrl.setFilters([DueTodayFilter()])
         self.assertEqual(len(self.ctrl.filteredTasks), 1)
+        print("START")
+        self.ctrl.setFilters([DueOverdueFilter()])
+        self.assertEqual(len(self.ctrl.filteredTasks), 2)
         self.ctrl.setFilters([])
