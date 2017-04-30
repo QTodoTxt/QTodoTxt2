@@ -4,8 +4,9 @@ from os import remove
 from datetime import date, datetime, timedelta
 from sys import version
 
-from qtodotxt.lib.file import File, ErrorLoadingFile
+from qtodotxt.lib.file import File
 from qtodotxt.lib.tasklib import Task
+from qtodotxt.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, DueOverdueFilter
 
 
 PYTHON_VERSION = version[:3]
@@ -80,7 +81,7 @@ class TestFile(unittest.TestCase):
             Task('task with @context1 and @context2 and @context3')
         ])
         self.saveAndReload()
-        self.assertEqual(self.file.getAllContexts(), {'context1': 2, 'context2': 3, 'context3': 1})
+        self.assertEqual(self.file.getAllContexts(), {'context1': [2, 1], 'context2': [3, 0], 'context3': [1, 0]})
 
     def test_get_all_incl_completed_contexts(self):
         self.file.tasks.extend([
@@ -90,7 +91,7 @@ class TestFile(unittest.TestCase):
             Task('x task with @context1 and @context2 and @context3')
         ])
         self.saveAndReload()
-        self.assertEqual(self.file.getAllContexts(True), {'context1': 1, 'context2': 2, 'context3': 0})
+        self.assertEqual(self.file.getAllContexts(), {'context1': [1, 2], 'context2': [2, 1], 'context3': [0, 1]})
 
     def test_get_all_projects(self):
         self.file.tasks.extend([
@@ -100,7 +101,7 @@ class TestFile(unittest.TestCase):
             Task('task with +project1 and +project2 and +project3')
         ])
         self.saveAndReload()
-        self.assertEqual(self.file.getAllProjects(), {'project1': 2, 'project2': 3, 'project3': 1})
+        self.assertEqual(self.file.getAllProjects(), {'project1': [2, 1], 'project2': [3, 0], 'project3': [1, 0]})
 
     def test_get_all_due_ranges(self):
         today = date.today().strftime('%Y-%m-%d')
@@ -113,22 +114,14 @@ class TestFile(unittest.TestCase):
             Task('due:' + yesterday + ' task of yesterday'),
         ])
         self.saveAndReload()
-        self.assertEqual(self.file.getAllDueRanges()[0], {'Today': 2, 'This week': 2, 'This month': 2, 'Overdue': 1})
-        self.assertIsInstance(self.file.getAllDueRanges()[1], dict)
-
-    def test_get_all_projects_incl_completed(self):
-        self.file.tasks.extend([
-            Task('x task with +project1'),
-            Task('task with +project2'),
-            Task('task with +project1 and +project2'),
-            Task('x task with +project1 and +project2 and +project3')
-        ])
-        self.saveAndReload()
-        self.assertEqual(self.file.getAllProjects(True), {'project1': 1, 'project2': 2, 'project3': 0})
+        due = self.file.getAllDueRanges()
+        self.assertEqual(due[DueTodayFilter()], [2, 1])
+        self.assertEqual(due[DueOverdueFilter()], [1, 0])
+        self.assertEqual(due[DueThisWeekFilter()], [2, 1])
 
     def test_load_empty_filename(self):
-        self.assertRaises(ErrorLoadingFile, self.file.load, '')
+        self.assertRaises(OSError, self.file.load, '')
 
     def test_load_nonexisting_file(self):
         remove(self.tmpfile)
-        self.assertRaises(ErrorLoadingFile, self.file.load, self.tmpfile)
+        self.assertRaises(OSError, self.file.load, self.tmpfile)
