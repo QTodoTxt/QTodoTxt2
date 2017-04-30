@@ -8,14 +8,7 @@ import os
 
 from PyQt5 import QtCore, QtGui
 from PyQt5 import QtWidgets
-#imports for QML integration
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlApplicationEngine
-
-# import resource for darkstyle
-# taken from https://github.com/ColinDuquesnoy/QDarkStyleSheet
-import qtodotxt.ui.pyqt5_style_rc  # noqa: F401
-import qtodotxt.ui.qTodoTxt_style_rc  # noqa: F401
-import qtodotxt.ui.qTodoTxt_dark_style_rc  # noqa: F401
 
 from qtodotxt.controllers.main_controller import MainController
 from qtodotxt.lib.file import FileObserver
