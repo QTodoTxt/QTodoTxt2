@@ -26,19 +26,21 @@ class Test(unittest.TestCase):
         tomorrow = (date.today() + timedelta(days=1)).isoformat()
         nextweek = (date.today() + timedelta(days=8)).isoformat()
         tasks = []
-        t = tasklib.Task("(A) Task due:{} +project1 @context2".format(today))
+        t = tasklib.Task("(A) Task home due:{} +project1 @context2".format(today))
         tasks.append(t)
         t = tasklib.Task("(B) Task due:{} +project2 @context1".format(tomorrow))
         tasks.append(t)
         t = tasklib.Task("Task due:2015-04-01 +project2 @context1")
         tasks.append(t)
-        t = tasklib.Task("Task due:2015-04-02 +project3")
+        t = tasklib.Task("TOTO due:2015-04-02 +project3")
         tasks.append(t)
-        t = tasklib.Task("Task due:{}".format(tomorrow))
+        t = tasklib.Task("TOTO due:{}".format(tomorrow))
         tasks.append(t)
         t = tasklib.Task("x (B) Task due:{} +project1 @context1".format(tomorrow))
         tasks.append(t)
         t = tasklib.Task("x (B) Task due:{} +project2 @context3".format(tomorrow))
+        tasks.append(t)
+        t = tasklib.Task("(B) Task home +project2 @context3")
         tasks.append(t)
         return tasks
 
@@ -71,3 +73,16 @@ class Test(unittest.TestCase):
         self.ctrl.setFilters([DueOverdueFilter()])
         self.assertEqual(len(self.ctrl.filteredTasks), 2)
         self.ctrl.setFilters([])
+
+    def test_filter_string(self):
+        self.ctrl.searchText = "home"
+        self.assertEqual(len(self.ctrl.filteredTasks), 2)
+        self.ctrl.searchText = "+project2"
+        self.assertEqual(len(self.ctrl.filteredTasks), 4)
+        self.ctrl.searchText = "!due home"
+        self.assertEqual(len(self.ctrl.filteredTasks), 1)
+        self.ctrl.searchText = ""
+
+    def test_filter_or(self):
+        self.ctrl.searchText = "home | TOTO"
+        self.assertEqual(len(self.ctrl.filteredTasks), 4)

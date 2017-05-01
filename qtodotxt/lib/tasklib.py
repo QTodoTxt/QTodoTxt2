@@ -150,7 +150,7 @@ class Task(QtCore.QObject):
                 print("Error parsing due date '{}'".format(word))
                 self.due_error = word[4:]
         elif word.startswith('t:'):
-            self.parseFuture(word)
+            self._parseFuture(word)
         elif word.startswith('rec:'):
             self._parseRecurrence(word)
 
