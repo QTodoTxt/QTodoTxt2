@@ -41,8 +41,8 @@ class Task(QtCore.QObject):
         self._parse(text)
 
     def addCreationCate(self):
-        text = self._removeCreationDate()
-        text = self._addCreationDate()
+        self._removeCreationDate()
+        self._addCreationDate()
 
     def __str__(self):
         return self._text

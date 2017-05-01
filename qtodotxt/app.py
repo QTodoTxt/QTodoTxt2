@@ -6,9 +6,9 @@ import logging
 import sys
 import os
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 from PyQt5 import QtWidgets
-from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlApplicationEngine
+from PyQt5.QtQml import QQmlApplicationEngine
 
 from qtodotxt.main_controller import MainController
 from qtodotxt.lib.file import FileObserver
@@ -71,9 +71,9 @@ def run():
     QtCore.QCoreApplication.setApplicationName("QTodoTxt2")
     # Now set up our application and start
     app = QtWidgets.QApplication(sys.argv)
-    #it is said, that this is lighter:
-    #(without qwidgets, as we probably don't need them anymore, when transition to qml is done)
-    #app = QtGui.QGuiApplication(sys.argv)
+    # it is said, that this is lighter:
+    # (without qwidgets, as we probably don't need them anymore, when transition to qml is done)
+    # app = QtGui.QGuiApplication(sys.argv)
 
     name = QtCore.QLocale.system().name()
     translator = QtCore.QTranslator()

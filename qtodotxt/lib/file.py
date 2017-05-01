@@ -85,7 +85,7 @@ class File(QtCore.QObject):
         res = {}
         for task in self.tasks:
             for element in getattr(task, name):
-                if not element in res:
+                if element not in res:
                     res[element] = [0, 0]
                 idx = 1 if task.is_complete else 0
                 res[element][idx] += 1
