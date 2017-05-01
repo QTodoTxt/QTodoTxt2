@@ -23,6 +23,7 @@ class File(QtCore.QObject):
 
     def __str__(self):
         return "File(filename:{}, tasks:{})".format(self.filename, self.tasks)
+
     __repr__ = __str__
 
     def load(self, filename):
@@ -79,7 +80,7 @@ class File(QtCore.QObject):
 
     def getAllProjects(self):
         return self._getAllX("projects")
-    
+
     def _getAllX(self, name):
         res = {}
         for task in self.tasks:
@@ -87,7 +88,7 @@ class File(QtCore.QObject):
                 if not element in res:
                     res[element] = [0, 0]
                 idx = 1 if task.is_complete else 0
-                res[element][idx] += 1 
+                res[element][idx] += 1
         return res
 
     def getAllPriorities(self):
@@ -95,7 +96,7 @@ class File(QtCore.QObject):
 
     def getAllDueRanges(self):
         dueRanges = dict()
-        filters = [ DueTodayFilter(), DueTomorrowFilter(), DueThisWeekFilter(), DueThisMonthFilter(), DueOverdueFilter()]
+        filters = [DueTodayFilter(), DueTomorrowFilter(), DueThisWeekFilter(), DueThisMonthFilter(), DueOverdueFilter()]
         for task in self.tasks:
             idx = 1 if task.is_complete else 0
             for flt in filters:
@@ -106,13 +107,15 @@ class File(QtCore.QObject):
         return dueRanges
 
     def getTasksCounters(self):
-        counters = dict({'All': [0, 0],
-                         'Uncategorized': [0, 0],
-                         'Contexts': [0, 0],
-                         'Projects': [0, 0],
-                         'Complete': [0, 0],
-                         'Priority': [0, 0],
-                         'Due': [0, 0]})
+        counters = dict({
+            'All': [0, 0],
+            'Uncategorized': [0, 0],
+            'Contexts': [0, 0],
+            'Projects': [0, 0],
+            'Complete': [0, 0],
+            'Priority': [0, 0],
+            'Due': [0, 0]
+        })
         for task in self.tasks:
             nbProjects = len(task.projects)
             nbContexts = len(task.contexts)

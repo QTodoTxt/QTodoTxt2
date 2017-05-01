@@ -101,11 +101,9 @@ class TaskHtmlizer(object):
         if tdelta.days > 7:
             return '<b>due:{}</b>'.format(task.dueString)
         elif tdelta.days > 0:
-            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString,
-                                                                              self.priorityDuecolors[1])
+            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[1])
         else:
-            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString,
-                                                                              self.priorityDuecolors[0])
+            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[0])
 
     def _htmlizeThresholdDate(self, task, string):
         if not task.threshold:

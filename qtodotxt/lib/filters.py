@@ -334,7 +334,6 @@ class HasDueRangesFilter(BaseFilter):
 
 
 class SimpleTextFilter(BaseFilter):
-
     r"""
     Task list filter allowing only tasks whose string matches a filter string.
 

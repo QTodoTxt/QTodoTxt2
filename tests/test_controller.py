@@ -6,7 +6,7 @@ from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import File
 from qtodotxt.lib.filters import IncompleteTasksFilter, ContextFilter, ProjectFilter, DueThisMonthFilter, \
     DueThisWeekFilter, DueTodayFilter, DueOverdueFilter
-from qtodotxt.controllers.main_controller import MainController
+from qtodotxt.main_controller import MainController
 
 
 class Test(unittest.TestCase):

@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5 import QtWidgets
 from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlApplicationEngine
 
-from qtodotxt.controllers.main_controller import MainController
+from qtodotxt.main_controller import MainController
 from qtodotxt.lib.file import FileObserver
 from qtodotxt.lib.tendo_singleton import SingleInstance
 

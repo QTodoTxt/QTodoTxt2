@@ -250,10 +250,10 @@ class Task(QtCore.QObject):
         """
         htmlizer = TaskHtmlizer()
         return htmlizer.task2html(self)
-    
+
     def _getLowestPriority(self):
         return self._settings.value("Preferences/lowest_priority", "D")
-    
+
     @QtCore.pyqtSlot()
     def increasePriority(self):
         lowest_priority = self._getLowestPriority()
