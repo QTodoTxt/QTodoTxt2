@@ -13,6 +13,8 @@ python:
 # start (virtual) X server
 #- export DISPLAY=:99.0
 #- sh -e /etc/init.d/xvfb start
+git:
+    submodules: false
 
 install:
   - sudo apt-get update
