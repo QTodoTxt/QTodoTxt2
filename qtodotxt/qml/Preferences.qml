@@ -8,6 +8,7 @@ Dialog {
     Settings {
         category: "Preferences"
         property alias auto_save: autoSaveCB.checked
+        property alias singleton: singletonCB.checked
         property alias lowest_priority: lowestPriorityField.text
         property alias add_creation_date: creationDateCB.checked
     }
@@ -15,11 +16,15 @@ Dialog {
         Column {
             spacing: 10
             CheckBox { 
+                id: singletonCB
+                text: qsTr("Single instance") 
+                checked: false
+            }
+            CheckBox { 
                 id: autoSaveCB
                 text: qsTr("Autosave") 
                 checked: true
             }
-            //CheckBox { text: qsTr("AutoArchive") }
             CheckBox {
                 id:creationDateCB
                 text: qsTr("Add creation date")
@@ -33,10 +38,8 @@ Dialog {
                     inputMask: "A" 
                 }
             }
-            //CheckBox { text: qsTr("Enable System Tray") }
         }
     }
     standardButtons:StandardButton.Ok
     onVisibleChanged: if (visible === false) destroy()
-    Component.onDestruction: console.log("Tschüüüs.")
 }

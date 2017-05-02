@@ -42,27 +42,31 @@ def _setupLogging(loglevel):
             datefmt='%H:%M:%S')
 
 
-def setupAnotherInstanceEvent(controller, dir):
-    fileObserver = FileObserver(controller, dir)
-    fileObserver.addPath(dir)
-    fileObserver.dirChangetSig.connect(controller.anotherInstanceEvent)
+def setupAnotherInstanceEvent(controller):
+    # Connecting to a processor reading TMP file
+    needSingleton = QtCore.QSettings().value("Preferences/singleton", False, type=bool)
+    if needSingleton:
+        dirname = os.path.dirname(sys.argv[0])
+        fileObserver = FileObserver()
+        fileObserver.addPath(dirname)
+        #FIXME maybe do something in qml
+        #fileObserver.dirChangetSig.connect(controller.anotherInstanceEvent)
 
 
-def setupSingleton(args, me):
-    dir = os.path.dirname(sys.argv[0])
-    tempFileName = dir + "/qtodo.tmp"
-    if me.initialized is True:
-        if os.path.isfile(tempFileName):
-            os.remove(tempFileName)
-    else:
-        f = open(tempFileName, 'w')
-        if args.quickadd is False:
-            f.write("1")
-        if args.quickadd is True:
-            f.write("2")
-        f.flush()
-        f.close()
-        sys.exit(-1)
+def setupSingleton(args):
+    needSingleton = QtCore.QSettings().value("Preferences/singleton", False, type=bool)
+    if int(needSingleton):
+        me = SingleInstance()
+        dirname = os.path.dirname(sys.argv[0])
+        tempFileName = dirname + "/qtodo.tmp"
+        if me.initialized is True:
+            if os.path.isfile(tempFileName):
+                os.remove(tempFileName)
+        else:
+            f = open(tempFileName, 'w')
+            f.flush()
+            f.close()
+            sys.exit(-1)
 
 
 def run():
@@ -82,13 +86,7 @@ def run():
 
     args = _parseArgs()
 
-    dir = os.path.dirname(sys.argv[0])
-    needSingleton = QtCore.QSettings().value("singleton", 0)
-
-    # clear or write to TMP file, of main instance
-    if int(needSingleton):
-        me = SingleInstance()
-        setupSingleton(args, me)
+    setupSingleton(args)
 
     _setupLogging(args.loglevel)
 
@@ -99,9 +97,7 @@ def run():
     engine.addImportPath(path + '/qml/')
     engine.load(path + '/qml/QTodoTxt.qml')
 
-    # Connecting to a processor reading TMP file
-    if needSingleton:
-        setupAnotherInstanceEvent(controller, dir)
+    setupAnotherInstanceEvent(controller)
 
     controller.start()
     app.exec_()

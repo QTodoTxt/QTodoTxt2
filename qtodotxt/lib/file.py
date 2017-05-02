@@ -18,7 +18,7 @@ class File(QtCore.QObject):
         self.newline = '\n'
         self.tasks = []
         self.filename = ''
-        self._fileObserver = FileObserver(self)
+        self._fileObserver = FileObserver()
         self._fileObserver.fileChangetSig.connect(self.fileModified)
 
     def __str__(self):
@@ -139,10 +139,9 @@ class FileObserver(QtCore.QFileSystemWatcher):
     fileChangetSig = QtCore.pyqtSignal(str)
     dirChangetSig = QtCore.pyqtSignal(str)
 
-    def __init__(self, mfile):
+    def __init__(self):
         logger.debug('Setting up FileObserver instance.')
-        super().__init__(mfile)
-        self._file = mfile
+        super().__init__()
         self.fileChanged.connect(self.fileChangedHandler)
         self.directoryChanged.connect(self.dirChangedHandler)
 
