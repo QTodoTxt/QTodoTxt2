@@ -1,0 +1,39 @@
+<RCC>
+  <qresource prefix="/white_icons">
+    <file>resources/ActionClear.png</file>
+    <file>resources/ActionSearch.png</file>
+    <file>resources/ApplicationAbout.png</file>
+    <file>resources/ApplicationExit.png</file>
+    <file>resources/ApplicationPreferences.png</file>
+    <file>resources/archive.png</file>
+    <file>resources/FileNew.png</file>
+    <file>resources/FileOpen.png</file>
+    <file>resources/FileRevert.png</file>
+    <file>resources/FileSave.png</file>
+    <file>resources/FilterAll.png</file>
+    <file>resources/FilterComplete.png</file>
+    <file>resources/FilterContexts.png</file>
+    <file>resources/FilterDueMonth.png</file>
+    <file>resources/FilterDueOverdue.png</file>
+    <file>resources/FilterDue.png</file>
+    <file>resources/FilterDueToday.png</file>
+    <file>resources/FilterDueTomorrow.png</file>
+    <file>resources/FilterDueWeek.png</file>
+    <file>resources/FilterPending.png</file>
+    <file>resources/FilterProjects.png</file>
+    <file>resources/FilterUncategorized.png</file>
+    <file>resources/future.png</file>
+    <file>resources/qtodotxt.png</file>
+    <file>resources/show_completed.png</file>
+    <file>resources/link.png</file>
+    <file>resources/sidepane.png</file>
+    <file>resources/TaskComplete.png</file>
+    <file>resources/TaskCopy.png</file>
+    <file>resources/TaskCreate.png</file>
+	<file>resources/TaskAddOnTem.png</file>
+    <file>resources/TaskDelete.png</file>
+    <file>resources/TaskEdit.png</file>
+    <file>resources/TaskPriorityDecrease.png</file>
+    <file>resources/TaskPriorityIncrease.png</file>
+  </qresource>
+</RCC>
