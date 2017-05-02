@@ -50,7 +50,7 @@ ApplicationWindow {
     }
 
 //    onActiveFocusItemChanged: console.log("activeFI: ", activeFocusItem)
-    onActiveChanged: console.log("active: ", active)
+//    onActiveChanged: console.log("active: ", active)
 
     Actions {
         id: actions

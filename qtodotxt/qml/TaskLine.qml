@@ -81,7 +81,8 @@ Loader {
             }
             Connections {
                 target: appWindow
-                onActiveFocusItemChanged: { if (activeFocusItem !== null) taskLine.state = "show"}
+                onActiveFocusItemChanged: taskLine.inputAccepted(text)
+                onActiveChanged: taskLine.inputAccepted(text)
             }
         }
     }
@@ -105,5 +106,5 @@ Loader {
             }
         }
     ]
-    Component.onCompleted: console.log(text.substring(0,10))
+//    Component.onCompleted: console.log(text.substring(0,10))
 }

@@ -38,9 +38,11 @@ TreeView {
             width: filterNameCol.width
             Image {
                 id: img
-                source: Theme.iconSource(mainController.filtersModel.iconFromIndex(styleData.index))
-                height: lbl.height
+                height: 16
                 fillMode: Image.PreserveAspectFit
+                anchors.verticalCenter: parent.verticalCenter
+
+                source: Theme.iconSource(mainController.filtersModel.iconFromIndex(styleData.index))
             }
             Label {
                 id: lbl
@@ -75,10 +77,10 @@ TreeView {
         selection.select(index, ItemSelectionModel.Select | ItemSelectionModel.Current)
     }
     
-    onChildrenChanged: {
-        console.log("children")
-        Qt.callLater(expandAll())
-    }
+//    onChildrenChanged: {
+//        console.log("children")
+//        Qt.callLater(expandAll())
+//    }
 
     function resizeCountCols() {
         totalCol.resizeToContents()
