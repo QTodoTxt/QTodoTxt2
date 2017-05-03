@@ -4,6 +4,7 @@ import QtQuick.Controls 1.4
 ListView {
     id: listView
     property var taskList
+    property var _lastIndex: 0
 
     function editCurrentTask() {
         if (currentItem !== null) {
@@ -39,6 +40,15 @@ ListView {
 //            console.log("new text: ", newText)
             taskList[model.index].text = newText
         }
+    }
+    onCurrentIndexChanged: {
+        if ( _lastIndex != 0 ) {
+            listView.currentIndex = _lastIndex
+            _lastIndex = 0
+        }
+    }
+    onTaskListChanged: {
+        if ( currentIndex != -1 ) _lastIndex = currentIndex
     }
 
     Menu {

@@ -27,9 +27,7 @@ ApplicationWindow {
             reloadDialog.open()
         }
         onFiltersUpdated: {
-            console.log("MODEL, changed", filtersTree.model.rowCount())
             filtersTree.expandAll()
-//            filtersTree.resizeCountCols()
         }
     }
 
