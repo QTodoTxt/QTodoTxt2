@@ -15,6 +15,7 @@ QtObject {
     property var mapNameSource: {
         "document-new": "",
         "document-open": "",
+        "document-save": "FileSave.png",
         "list-add": "TaskCreate.png",
         "list-remove": "TaskDelete.png",
         "document-edit": "TaskEdit.png",

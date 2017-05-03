@@ -39,6 +39,7 @@ Item {
     property Action fileSave: Action{
         //id:fileSave
         iconName: "document-save"
+        iconSource: Theme.iconSource(iconName)
         text: qsTr("Save")
         shortcut: StandardKey.Save
         onTriggered: mainController.save()
@@ -93,7 +94,7 @@ Item {
         //id:editTask
 
         iconName: "document-edit"
-        iconSource: appWindow.theme + "TaskEdit.png"
+        iconSource: Theme.iconSource(iconName)
 
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
