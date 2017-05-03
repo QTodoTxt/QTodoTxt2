@@ -1,4 +1,4 @@
-from datetime import datetime, date, time
+from datetime import datetime, date, time, MAXYEAR
 import re
 
 from PyQt5 import QtCore
@@ -20,6 +20,34 @@ class recursion:
         self.mode = arg_mode
         self.increment = arg_increment
         self.interval = arg_interval
+
+
+class TaskSorter(object):
+    
+    @staticmethod
+    def projects(tasks):
+        def tmp(task):
+            return task.projects, task
+        return sorted(tasks, key=tmp)
+
+    @staticmethod
+    def contexts(tasks):
+        def tmp(task):
+            return task.contexts, task
+        return sorted(tasks, key=tmp)
+
+    @staticmethod
+    def due(tasks):
+        def tmp(task):
+            if task.due:
+                return task.due, task
+            else:
+                return datetime(MAXYEAR, 1, 1), task
+        return sorted(tasks, key=tmp)
+
+    @staticmethod
+    def default(tasks):
+        return tasks
 
 
 class Task(QtCore.QObject):
@@ -290,18 +318,18 @@ class Task(QtCore.QObject):
             return self._lowerCompleteness(other)
         if self._priority != other.priority:
             if not self._priority:
-                return True
-            if not other.priority:
                 return False
-            return self._priority > other.priority
+            if not other.priority:
+                return True
+            return self._priority < other.priority
         # order the other tasks alphabetically
-        return self._text > other.text
+        return self._text < other.text
 
     def _lowerCompleteness(self, other):
         if self.is_complete and not other.is_complete:
-            return True
-        if not self.is_complete and other.is_complete:
             return False
+        if not self.is_complete and other.is_complete:
+            return True
         raise RuntimeError("Could not compare completeness of 2 tasks, please report")
 
 

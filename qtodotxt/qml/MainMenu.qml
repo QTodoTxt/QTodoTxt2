@@ -58,9 +58,10 @@ MenuBar {
     }
     Menu {
         title: qsTr("Sorting")
-        MenuItem { action: actions.sortTodoTxt}
-        MenuItem { action: actions.sortCreationDate}
-        MenuItem { action: actions.sortDueDate}
+        MenuItem { action: actions.sortDefault}
+        MenuItem { action: actions.sortByProjects}
+        MenuItem { action: actions.sortByContexts}
+        MenuItem { action: actions.sortByDueDate}
     }
     Menu {
         title: qsTr("Help")

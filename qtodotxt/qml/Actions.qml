@@ -239,22 +239,28 @@ Item {
         onTriggered: aboutBox.open()
     }
 
-    property Action sortTodoTxt: Action{
-        //id:sortTodoTxt
+    property Action sortDefault: Action{
         iconName: "view-sort-ascending-symbolic"
-        text: "todo.txt" //FIXME better text for sorting like in todo.txt file
+        text: "Default"
+        onTriggered: mainController.sortingMode = "default"
     }
 
-    property Action sortCreationDate: Action{
-        //id:sortCreationDate
+    property Action sortByProjects: Action{
         iconName: "view-sort-ascending-symbolic"
-        text: "Creation Date"
+        text: "Projects"
+        onTriggered: mainController.sortingMode = "projects"
     }
 
-    property Action sortDueDate: Action{
+    property Action sortByContexts: Action{
+        iconName: "view-sort-ascending-symbolic"
+        text: "Contexts"
+        onTriggered: mainController.sortingMode = "contexts"
+    }
+    property Action sortByDueDate: Action{
         //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"
         text: "Due Date"
+        onTriggered: mainController.sortingMode = "due"
     }
 
 

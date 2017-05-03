@@ -22,6 +22,7 @@ class MainController(QtCore.QObject):
         super(MainController, self).__init__()
         self._args = args
         self._filteredTasks = []
+        self._sortingMode = "default"
         # use object variable for setting only used in this class
         # others are accessed through QSettings
         self._settings = QtCore.QSettings()
@@ -125,6 +126,19 @@ class MainController(QtCore.QObject):
         self.showFutureChanged.emit(val)
         self.applyFilters()
 
+    sortingModeChanged = QtCore.pyqtSignal(str)
+
+    @QtCore.pyqtProperty(str, notify=showFutureChanged)
+    def sortingMode(self):
+        return self._sortingMode
+
+    @sortingMode.setter
+    def sortingMode(self, val):
+        self._sortingMode = val
+        self.sortingModeChanged.emit(val)
+        self.applyFilters()
+
+
     searchTextChanged = QtCore.pyqtSignal(str)
 
     @QtCore.pyqtProperty('QString', notify=searchTextChanged)
@@ -190,6 +204,8 @@ class MainController(QtCore.QObject):
         # with complete filter if needed
         if not self._showCompleted and not CompleteTasksFilter() in self._currentFilters:
             tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
+        if self._sortingMode:
+            tasks = getattr(tasklib.TaskSorter, self._sortingMode)(tasks)
         self._filteredTasks = tasks
         self.filteredTasksChanged.emit()
 
