@@ -314,23 +314,9 @@ class Task(QtCore.QObject):
         return self._text == other.text
 
     def __lt__(self, other):
-        if self.is_complete != other.is_complete:
-            return self._lowerCompleteness(other)
-        if self._priority != other.priority:
-            if not self._priority:
-                return False
-            if not other.priority:
-                return True
-            return self._priority < other.priority
-        # order the other tasks alphabetically
-        return self._text < other.text
-
-    def _lowerCompleteness(self, other):
-        if self.is_complete and not other.is_complete:
-            return False
-        if not self.is_complete and other.is_complete:
-            return True
-        raise RuntimeError("Could not compare completeness of 2 tasks, please report")
+        prio1 = self.priority if self.priority else "Z"
+        prio2 = other.priority if other.priority else "Z"
+        return ( self.is_complete, prio1, self.text) > (other.is_complete, prio2, other.text)
 
 
 def dateString(date):

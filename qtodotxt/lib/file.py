@@ -49,7 +49,7 @@ class File(QtCore.QObject):
             self.filename = self._createNewFilename()
         elif filename:
             self.filename = filename
-        self.tasks.sort(reverse=False)
+        self.tasks.sort(reverse=True)
         self._saveTasks()
         self._fileObserver.addPath(self.filename)
 
