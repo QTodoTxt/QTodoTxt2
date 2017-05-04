@@ -256,6 +256,7 @@ Item {
         text: "Contexts"
         onTriggered: mainController.sortingMode = "contexts"
     }
+
     property Action sortByDueDate: Action{
         //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"

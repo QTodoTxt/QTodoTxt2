@@ -10,8 +10,8 @@ class TestTasks(unittest.TestCase):
         self.assertEqual(Task('x task1').is_complete, Task('x task2').is_complete)
         self.assertNotEqual(Task('task').is_complete, Task('x task').is_complete)
         self.assertNotEqual(Task('x task').is_complete, Task('task').is_complete)
-        self.assertGreater(Task('task'), Task('x task'))
-        self.assertLess(Task('x task'), Task('task'))
+        self.assertLess(Task('task'), Task('x task'))
+        self.assertGreater(Task('x task'), Task('task'))
 
     def test_priority_comparison(self):
         # this tests are a bit broken now that priority is only a character
@@ -27,17 +27,17 @@ class TestTasks(unittest.TestCase):
         self.assertEqual(Task('task'), Task('task'))
         self.assertEqual(Task('(A) task'), Task('(A) task'))
 
-        # self.assertLess(Task('task1'), Task('task2'))
-        self.assertLess(Task('x task'), Task('task'))
-        self.assertGreater(Task('(A) task'), Task('(B) task'))
-        self.assertGreater(Task('(A) task'), Task('task'))
-        self.assertGreater(Task('(A) task'), Task('x (A) task'))
+        # self.assertGreater(Task('task1'), Task('task2'))
+        self.assertGreater(Task('x task'), Task('task'))
+        self.assertLess(Task('(A) task'), Task('(B) task'))
+        self.assertLess(Task('(A) task'), Task('task'))
+        self.assertLess(Task('(A) task'), Task('x (A) task'))
 
-        # self.assertGreater(Task('task2'), Task('task1'))
-        self.assertLess(Task('x task'), Task('task'))
-        self.assertLess(Task('(B) task'), Task('(A) task'))
-        self.assertLess(Task('task'), Task('(A) task'))
-        self.assertLess(Task('x (A) task'), Task('(A) task'))
+        # self.assertLess(Task('task2'), Task('task1'))
+        self.assertGreater(Task('x task'), Task('task'))
+        self.assertGreater(Task('(B) task'), Task('(A) task'))
+        self.assertGreater(Task('task'), Task('(A) task'))
+        self.assertGreater(Task('x (A) task'), Task('(A) task'))
 
     def test_task_ordering(self):
         task1 = Task('x task1')
@@ -48,13 +48,8 @@ class TestTasks(unittest.TestCase):
         task6 = Task('(C) a task')
         task7 = Task('(B) task2')
         task8 = Task('(A) task2')
-        self.assertTrue(task2 < task3)
-        self.assertTrue(task1 < task2 < task3 < task4 < task5 < task6 < task7 < task8)
-        l = [task1, task2, task3, task4, task5, task6, task7, task8]
-        l2 = [task2, task3, task1, task4, task5, task6, task7, task8]
-        self.assertFalse(l == l2)
-        l2.sort()
-        self.assertTrue(l == l2)
+        self.assertTrue(task2 > task3)
+        self.assertTrue(task1 > task2 > task3 > task4 > task5 > task6 > task7 > task8)
 
     def test_priority(self):
         self.assertEqual(Task("task").priority, "")
