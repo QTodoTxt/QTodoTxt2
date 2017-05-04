@@ -27,13 +27,16 @@ class TaskSorter(object):
     @staticmethod
     def projects(tasks):
         def tmp(task):
-            return task.projects, task
+            prj = task.projects if task.projects else ["øø"]
+            print( prj, task)
+            return prj, task
         return sorted(tasks, key=tmp)
 
     @staticmethod
     def contexts(tasks):
         def tmp(task):
-            return task.contexts, task
+            ctx = task.contexts if task.contexts else ["øø"]
+            return ctx, task
         return sorted(tasks, key=tmp)
 
     @staticmethod
@@ -43,11 +46,11 @@ class TaskSorter(object):
                 return task.due, task
             else:
                 return datetime(MAXYEAR, 1, 1), task
-        return sorted(tasks, key=tmp)
+        return sorted(tasks, key=tmp, reverse=False)
 
     @staticmethod
     def default(tasks):
-        return tasks
+        return sorted(tasks, reverse=False)
 
 
 class Task(QtCore.QObject):
@@ -314,9 +317,9 @@ class Task(QtCore.QObject):
         return self._text == other.text
 
     def __lt__(self, other):
-        prio1 = self.priority if self.priority else "Z"
-        prio2 = other.priority if other.priority else "Z"
-        return ( self.is_complete, prio1, self.text) > (other.is_complete, prio2, other.text)
+        prio1 = self.priority if self.priority else "ø"
+        prio2 = other.priority if other.priority else "ø"
+        return (self.is_complete, prio1, self.text) < (other.is_complete, prio2, other.text)
 
 
 def dateString(date):
