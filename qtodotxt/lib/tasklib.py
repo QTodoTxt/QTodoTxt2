@@ -7,7 +7,7 @@ from PyQt5 import QtCore
 from qtodotxt.lib.task_htmlizer import TaskHtmlizer
 
 
-class recursiveMode(Enum):
+class RecursiveMode(Enum):
     completitionDate = 0  # Original due date mode: Task recurs from original due date
     originalDueDate = 1  # Completion date mode: Task recurs from completion date
 
@@ -124,14 +124,14 @@ class Task(QtCore.QObject):
             words = words[1:]
             # parse next word as a completion date
             # required by todotxt but often not here
-            self.completion_date = self._parseDate(words[0])
+            self.completion_date = _parseDate(words[0])
             if self.completion_date:
                 words = words[1:]
         elif re.search(r'^\([A-Z]\)$', words[0]):
             self._priority = words[0][1:-1]
             words = words[1:]
 
-        dato = self._parseDate(words[0])
+        dato = _parseDate(words[0])
         if dato:
             self.creation_date = dato
             words = words[1:]
@@ -176,7 +176,7 @@ class Task(QtCore.QObject):
         key, val = word.split(":", 1)
         self.keywords[key] = val
         if word.startswith('due:'):
-            self.due = self._parseDateTime(word[4:])
+            self.due = _parseDateTime(word[4:])
             if not self.due:
                 print("Error parsing due date '{}'".format(word))
                 self.due_error = word[4:]
@@ -186,7 +186,7 @@ class Task(QtCore.QObject):
             self._parseRecurrence(word)
 
     def _parseFuture(self, word):
-        self.threshold = self._parseDateTime(word[2:])
+        self.threshold = _parseDateTime(word[2:])
         if not self.threshold:
             print("Error parsing threshold '{}'".format(word))
             self.threshold_error = word[2:]
@@ -199,42 +199,20 @@ class Task(QtCore.QObject):
         if word[4] == '+':
             # Test if chracters have the right format
             if re.match('^[1-9][bdwmy]', word[5:7]):
-                self.recursion = Recursion(recursiveMode.originalDueDate, word[5], word[6])
+                self.recursion = Recursion(RecursiveMode.originalDueDate, word[5], word[6])
             else:
                 print("Error parsing recurrence '{}'".format(word))
         # Completion mode
         else:
             # Test if chracters have the right format
             if re.match('^[1-9][bdwmy]', word[4:6]):
-                self.recursion = Recursion(recursiveMode.completitionDate, word[4], word[5])
+                self.recursion = Recursion(RecursiveMode.completitionDate, word[4], word[5])
             else:
                 print("Error parsing recurrence '{}'".format(word))
-
-    def _parseDate(self, string):
-        try:
-            return datetime.strptime(string, '%Y-%m-%d').date()
-        except ValueError:
-            return None
-
-    def _parseDateTime(self, string):
-        try:
-            return datetime.strptime(string, '%Y-%m-%d')
-        except ValueError:
-            try:
-                return datetime.strptime(string, '%Y-%m-%dT%H:%M')
-            except ValueError:
-                return None
 
     @property
     def dueString(self):
         return dateString(self.due)
-
-    @staticmethod
-    def updateDateInTask(text, newDate):
-        # FIXME: This method has nothing to do in this class, move womewhere else
-        # (A) 2016-12-08 Feed Schrodinger's Cat rec:9w due:2016-11-23
-        text = re.sub(r'\sdue\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' due:' + str(newDate)[0:10], text)
-        return text
 
     @property
     def thresholdString(self):
@@ -266,7 +244,7 @@ class Task(QtCore.QObject):
         if not self.is_complete:
             return
         words = self._text.split(" ")
-        d = self._parseDate(words[1])
+        d = _parseDate(words[1])
         if d:
             self._text = " ".join(words[2:])
         else:
@@ -343,3 +321,28 @@ def filterTasks(filters, tasks):
                 filteredTasks.append(task)
                 break
     return filteredTasks
+
+
+def updateDateInTask(text, newDate):
+    # (A) 2016-12-08 Feed Schrodinger's Cat rec:9w due:2016-11-23
+    text = re.sub(r'\sdue\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' due:' + str(newDate)[0:10], text)
+    return text
+
+
+def _parseDate(string):
+    try:
+        return datetime.strptime(string, '%Y-%m-%d').date()
+    except ValueError:
+        return None
+
+
+def _parseDateTime(string):
+    try:
+        return datetime.strptime(string, '%Y-%m-%d')
+    except ValueError:
+        try:
+            return datetime.strptime(string, '%Y-%m-%dT%H:%M')
+        except ValueError:
+            return None
+
+
