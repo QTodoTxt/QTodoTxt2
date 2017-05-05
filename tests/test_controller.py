@@ -52,7 +52,7 @@ class Test(unittest.TestCase):
     def test_completed(self):
         self.ctrl.showCompleted = True
         self.ctrl.applyFilters()
-        self.assertEqual(self.ctrl.filteredTasks, self.ctrl.allTasks)
+        self.assertEqual(len(self.ctrl.filteredTasks), len(self.ctrl.allTasks))
         self.ctrl.showCompleted = False
         self.ctrl.applyFilters()
         self.assertEqual(len(self.ctrl.filteredTasks), len(self.ctrl.allTasks) - 2)
