@@ -7,7 +7,7 @@ from PyQt5 import QtCore
 from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import File
 
-from qtodotxt.filters_tree_controller import FiltersController
+from qtodotxt.filters_controller import FiltersController
 
 logger = logging.getLogger(__name__)
 
