@@ -94,7 +94,7 @@ class MainController(QtCore.QObject):
     def deleteTask(self, task):
         if not isinstance(task, tasklib.Task):
             # if task is not a task assume it is an int
-            task = self.filteredTasks[task]
+            task = self._filteredTasks[task]
         self._file.tasks.remove(task)
         self.setModified()
         self.auto_save()
@@ -202,7 +202,7 @@ class MainController(QtCore.QObject):
         if not self._showFuture:
             tasks = tasklib.filterTasks([FutureFilter()], tasks)
         # with complete filter if needed
-        if not self._showCompleted and not CompleteTasksFilter() in self._currentFilters:
+        if not self._showCompleted and CompleteTasksFilter() not in self._currentFilters:
             tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
         if self._sortingMode:
             tasks = getattr(tasklib.TaskSorter, self._sortingMode)(tasks)

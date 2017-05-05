@@ -1,8 +1,9 @@
 from datetime import datetime, date, time, MAXYEAR
 import re
+from enum import Enum
 
 from PyQt5 import QtCore
-from enum import Enum
+
 from qtodotxt.lib.task_htmlizer import TaskHtmlizer
 
 
@@ -11,7 +12,7 @@ class recursiveMode(Enum):
     originalDueDate = 1  # Completion date mode: Task recurs from completion date
 
 
-class recursion:
+class Recursion:
     mode = None
     increment = None
     interval = None
@@ -27,15 +28,14 @@ class TaskSorter(object):
     @staticmethod
     def projects(tasks):
         def tmp(task):
-            prj = task.projects if task.projects else ["øø"]
-            print( prj, task)
+            prj = task.projects if task.projects else ["zz"]
             return prj, task
         return sorted(tasks, key=tmp)
 
     @staticmethod
     def contexts(tasks):
         def tmp(task):
-            ctx = task.contexts if task.contexts else ["øø"]
+            ctx = task.contexts if task.contexts else ["zz"]
             return ctx, task
         return sorted(tasks, key=tmp)
 
@@ -199,14 +199,14 @@ class Task(QtCore.QObject):
         if word[4] == '+':
             # Test if chracters have the right format
             if re.match('^[1-9][bdwmy]', word[5:7]):
-                self.recursion = recursion(recursiveMode.originalDueDate, word[5], word[6])
+                self.recursion = Recursion(recursiveMode.originalDueDate, word[5], word[6])
             else:
                 print("Error parsing recurrence '{}'".format(word))
         # Completion mode
         else:
             # Test if chracters have the right format
             if re.match('^[1-9][bdwmy]', word[4:6]):
-                self.recursion = recursion(recursiveMode.completitionDate, word[4], word[5])
+                self.recursion = Recursion(recursiveMode.completitionDate, word[4], word[5])
             else:
                 print("Error parsing recurrence '{}'".format(word))
 
@@ -233,7 +233,7 @@ class Task(QtCore.QObject):
     def updateDateInTask(text, newDate):
         # FIXME: This method has nothing to do in this class, move womewhere else
         # (A) 2016-12-08 Feed Schrodinger's Cat rec:9w due:2016-11-23
-        text = re.sub('\sdue\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' due:' + str(newDate)[0:10], text)
+        text = re.sub(r'\sdue\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' due:' + str(newDate)[0:10], text)
         return text
 
     @property
@@ -317,8 +317,8 @@ class Task(QtCore.QObject):
         return self._text == other.text
 
     def __lt__(self, other):
-        prio1 = self.priority if self.priority else "ø"
-        prio2 = other.priority if other.priority else "ø"
+        prio1 = self.priority if self.priority else "z"
+        prio2 = other.priority if other.priority else "z"
         return (self.is_complete, prio1, self.text) < (other.is_complete, prio2, other.text)
 
 
