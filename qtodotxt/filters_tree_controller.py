@@ -3,6 +3,7 @@ from PyQt5 import QtGui
 from qtodotxt.lib.filters import ContextFilter, CompleteTasksFilter, DueFilter, DueOverdueFilter, DueThisMonthFilter, \
     DueThisWeekFilter, DueTodayFilter, DueTomorrowFilter, HasContextsFilter, HasDueDateFilter, HasProjectsFilter, \
     ProjectFilter, UncategorizedTasksFilter, AllTasksFilter, PriorityFilter, HasPriorityFilter
+from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter
 
 TotalCountRole = QtCore.Qt.UserRole + 1
 CompletedCountRole = QtCore.Qt.UserRole + 2
@@ -138,15 +139,42 @@ class FiltersModel(QtGui.QStandardItemModel):
         self._uncategorizedTasksItem.setCounts(*counters['Uncategorized'])
 
 
-class FiltersTreeController(QtCore.QObject):
+class FiltersController(QtCore.QObject):
 
     filterSelectionChanged = QtCore.pyqtSignal(list)
 
     def __init__(self):
         QtCore.QObject.__init__(self)
+        self._settings = QtCore.QSettings()
         self.model = FiltersModel(self)
+        self.showCompleted = self._settings.value("show_completed", False)
+        self.showFuture = self._settings.value("show_completed", True)
+        self.searchText = ""
+        # self.currentFilters = self._settings.value("current_filters", ["All"])  # move to QML
+        self.currentFilters = []
 
-    def showFilters(self, mfile):
+    def setFiltersByIndexes(self, idxs):
+        filters = [self.model.itemFromIndex(idx).filter for idx in idxs]
+        self.setFilters(filters)
+
+    def setFilters(self, filters):
+        self.currentFilters = filters
+
+    def filter(self, tasks):
+        # First we filter with filters tree
+        tasks = filterTasks(self.currentFilters, tasks)
+        # Then with our search text
+        if self.searchText:
+            tasks = filterTasks([SimpleTextFilter(self.searchText)], tasks)
+        # with future filter if needed
+        if not self.showFuture:
+            tasks = filterTasks([FutureFilter()], tasks)
+        # with complete filter if needed
+        if not self.showCompleted and CompleteTasksFilter() not in self.currentFilters:
+            tasks = filterTasks([IncompleteTasksFilter()], tasks)
+        return tasks
+
+    def updateFiltersModel(self, mfile):
         self.model.clear()
         self._addAllContexts(mfile)
         self._addAllProjects(mfile)
@@ -181,3 +209,18 @@ class FiltersTreeController(QtCore.QObject):
 
         for flt, counts in dueRanges.items():
             self.model.addDueRangeFilter(flt, counts)
+
+
+def filterTasks(filters, tasks):
+    if not filters:
+        return tasks[:]
+
+    filteredTasks = []
+    for task in tasks:
+        for myfilter in filters:
+            if myfilter.isMatch(task):
+                filteredTasks.append(task)
+                break
+    return filteredTasks
+
+

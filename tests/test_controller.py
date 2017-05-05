@@ -67,12 +67,12 @@ class Test(unittest.TestCase):
         self.assertEqual(count,  len(self.ctrl.allTasks))
 
     def test_filter(self):
-        self.ctrl.setFilters([DueTodayFilter()])
+        self.ctrl.applyFilters([DueTodayFilter()])
         self.assertEqual(len(self.ctrl.filteredTasks), 1)
         print("START")
-        self.ctrl.setFilters([DueOverdueFilter()])
+        self.ctrl.applyFilters([DueOverdueFilter()])
         self.assertEqual(len(self.ctrl.filteredTasks), 2)
-        self.ctrl.setFilters([])
+        self.ctrl.applyFilters([])
 
     def test_filter_string(self):
         self.ctrl.searchText = "home"

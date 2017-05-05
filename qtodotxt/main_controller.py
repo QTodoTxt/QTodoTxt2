@@ -7,8 +7,7 @@ from PyQt5 import QtCore
 from qtodotxt.lib import tasklib
 from qtodotxt.lib.file import File
 
-from qtodotxt.filters_tree_controller import FiltersTreeController
-from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter, CompleteTasksFilter
+from qtodotxt.filters_tree_controller import FiltersController
 
 logger = logging.getLogger(__name__)
 
@@ -26,17 +25,12 @@ class MainController(QtCore.QObject):
         # use object variable for setting only used in this class
         # others are accessed through QSettings
         self._settings = QtCore.QSettings()
-        self._showCompleted = self._settings.value("show_completed", False)
-        self._showFuture = self._settings.value("show_completed", True)
         self._file = File()
         self._file.fileModified.connect(self.fileExternallyModified)
         self._modified = False
-        self._filters_tree_controller = FiltersTreeController()
+        self.filtersController = FiltersController()
         self._title = "QTodoTxt"
         self._recentFiles = self._settings.value("recent_files", [])
-        self._searchText = ""
-        self._currentFilters = []
-        # self._currentFilters = self._settings.value("current_filters", ["All"])  # move to QML
         self._updateCompletionStrings()
 
     def _taskModified(self, task):
@@ -68,11 +62,7 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtSlot('QModelIndexList')
     def filterByIndexes(self, idxs):
-        filters = [self._filters_tree_controller.model.itemFromIndex(idx).filter for idx in idxs]
-        self.setFilters(filters)
-
-    def setFilters(self, filters):
-        self._currentFilters = filters
+        self.filtersController.setFiltersByIndexes(idxs)
         self.applyFilters()
 
     @QtCore.pyqtSlot('QString', 'int', result='int')
@@ -118,11 +108,11 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtProperty('bool', notify=showFutureChanged)
     def showFuture(self):
-        return self._showFuture
+        return self.filtersController.showFuture
 
     @showFuture.setter
     def showFuture(self, val):
-        self._showFuture = val
+        self.filtersController.showFuture = val
         self.showFutureChanged.emit(val)
         self.applyFilters()
 
@@ -143,11 +133,11 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtProperty('QString', notify=searchTextChanged)
     def searchText(self):
-        return self._searchText
+        return self.filtersController.searchText
 
     @searchText.setter
     def searchText(self, txt):
-        self._searchText = txt
+        self.filtersController.searchText = txt
         self.applyFilters()
         self.searchTextChanged.emit(txt)
 
@@ -155,11 +145,11 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtProperty('bool', notify=showCompletedChanged)
     def showCompleted(self):
-        return self._showCompleted
+        return self.filtersController.showCompleted
 
     @showCompleted.setter
     def showCompleted(self, val):
-        self._showCompleted = val
+        self.filtersController.showCompleted = val
         self.showCompletedChanged.emit(val)
         self.applyFilters()
 
@@ -186,26 +176,17 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtProperty('QVariant', notify=filtersUpdated)
     def filtersModel(self):
-        return self._filters_tree_controller.model
+        return self.filtersController.model
 
     def _updateFilterTree(self):
-        self._filters_tree_controller.showFilters(self._file)
+        self.filtersController.updateFiltersModel(self._file)
         self.filtersUpdated.emit()
 
-    def applyFilters(self):
-        # First we filter with filters tree
-        tasks = tasklib.filterTasks(self._currentFilters, self._file.tasks)
-        # Then with our search text
-        if self._searchText:
-            tasks = tasklib.filterTasks([SimpleTextFilter(self._searchText)], tasks)
-        # with future filter if needed
-        if not self._showFuture:
-            tasks = tasklib.filterTasks([FutureFilter()], tasks)
-        # with complete filter if needed
-        if not self._showCompleted and CompleteTasksFilter() not in self._currentFilters:
-            tasks = tasklib.filterTasks([IncompleteTasksFilter()], tasks)
-        if self._sortingMode:
-            tasks = getattr(tasklib.TaskSorter, self._sortingMode)(tasks)
+    def applyFilters(self, filters=None):
+        if filters is not None:
+            self.filtersController.setFilters(filters)
+        tasks = self.filtersController.filter(self._file.tasks)
+        tasks = getattr(tasklib.TaskSorter, self._sortingMode)(tasks)
         self._filteredTasks = tasks
         self.filteredTasksChanged.emit()
 

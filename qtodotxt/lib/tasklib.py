@@ -310,19 +310,6 @@ def dateString(date):
         return date.strftime('%Y-%m-%d %H:%M')
 
 
-def filterTasks(filters, tasks):
-    if not filters:
-        return tasks[:]
-
-    filteredTasks = []
-    for task in tasks:
-        for myfilter in filters:
-            if myfilter.isMatch(task):
-                filteredTasks.append(task)
-                break
-    return filteredTasks
-
-
 def updateDateInTask(text, newDate):
     # (A) 2016-12-08 Feed Schrodinger's Cat rec:9w due:2016-11-23
     text = re.sub(r'\sdue\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' due:' + str(newDate)[0:10], text)
