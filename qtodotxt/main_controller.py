@@ -26,20 +26,13 @@ class MainController(QtCore.QObject):
         # others are accessed through QSettings
         self._settings = QtCore.QSettings()
         self._file = File()
-        self._file.fileModified.connect(self.fileExternallyModified)
-        self._modified = False
+        self._file.fileExternallyModified.connect(self.fileExternallyModified)
+        self._file.fileModified.connect(self._fileModified)
         self.filtersController = FiltersController()
         self._title = "QTodoTxt"
         self._recentFiles = self._settings.value("recent_files", [])
         self._updateCompletionStrings()
-
-    def _taskModified(self, task):
-        self.setModified()
-        self.auto_save()
-        if not task.text:
-            self.deleteTask(task)
-            return
-        self.applyFilters()
+        self._forced = None
 
     def showError(self, msg):
         logger.debug("ERROR: %s", msg)
@@ -70,13 +63,13 @@ class MainController(QtCore.QObject):
         task = tasklib.Task(text)
         if bool(self._settings.value("Preferences/add_creation_date", False, type=bool)):
             task.addCreationDate()
-        task.modified.connect(self._taskModified)
         if after is None:
             after = len(self._filteredTasks) - 1
-        self._file.tasks.append(task)
+        #self._file.addTask(task)
         self._filteredTasks.insert(after + 1, task)  # force the new task to be visible
-        self.setModified()
-        self.auto_save()
+        self._file.tasks.append(task)
+
+        self._file.connectTask(task)  #Ensure task will be added
         self.filteredTasksChanged.emit()
         return after + 1
 
@@ -85,10 +78,7 @@ class MainController(QtCore.QObject):
         if not isinstance(task, tasklib.Task):
             # if task is not a task assume it is an int
             task = self._filteredTasks[task]
-        self._file.tasks.remove(task)
-        self.setModified()
-        self.auto_save()
-        self.applyFilters()  # update filtered list for UI
+        self._file.deleteTask(task)
 
     @property
     def allTasks(self):
@@ -127,7 +117,6 @@ class MainController(QtCore.QObject):
         self._sortingMode = val
         self.sortingModeChanged.emit(val)
         self.applyFilters()
-
 
     searchTextChanged = QtCore.pyqtSignal(str)
 
@@ -195,23 +184,23 @@ class MainController(QtCore.QObject):
         done = [task for task in self._file.tasks if task.is_complete]
         for task in done:
             self._file.saveDoneTask(task)
-            self._file.tasks.remove(task)
+            self._file.deleteTasl(task)
         self.applyFilters()
-        self.setModified()
         self.auto_save()
 
     modifiedChanged = QtCore.pyqtSignal(bool)
 
     @QtCore.pyqtProperty('bool', notify=modifiedChanged)
     def modified(self):
-        return self._modified
+        return self._file.modified
 
-    def setModified(self, val=True):
-        self._modified = val
-        self._updateTitle()
+    def _fileModified(self, val=True):
         if val:
+            self.auto_save()
+            self.applyFilters()
             self._updateCompletionStrings()
             self._updateFilterTree()
+        self._updateTitle()
         self.modifiedChanged.emit(val)
 
     @QtCore.pyqtSlot("QUrl")
@@ -232,7 +221,6 @@ class MainController(QtCore.QObject):
             return
         self._settings.setValue("last_open_file", path)
         self._settings.sync()
-        self.setModified(False)
 
     def _updateTitle(self):
         title = 'QTodoTxt - '
@@ -241,7 +229,7 @@ class MainController(QtCore.QObject):
             title += filename
         else:
             title += 'Untitled'
-        if self._modified:
+        if self._file.modified:
             title += ' (*)'
         self._title = title
         self.titleChanged.emit(self._title)
@@ -255,7 +243,7 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot(result='bool')
     def canExit(self):
         self.auto_save()
-        return not self._modified
+        return not self._file.modified
 
     def new(self):
         if self.canExit():
@@ -279,9 +267,6 @@ class MainController(QtCore.QObject):
             return
         self._loadFileToUI()
         self._settings.setValue("last_open_file", filename)
-        for task in self._file.tasks:
-            task.modified.connect(self._taskModified)
-        self.applyFilters()
         self.updateRecentFile()
 
     recentFilesChanged = QtCore.pyqtSignal()
@@ -299,7 +284,6 @@ class MainController(QtCore.QObject):
         self.recentFilesChanged.emit()
 
     def _loadFileToUI(self):
-        self.setModified(False)
         self.applyFilters()
         self._updateCompletionStrings()
         self._updateFilterTree()

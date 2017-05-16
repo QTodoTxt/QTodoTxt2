@@ -147,6 +147,7 @@ class Task(QtCore.QObject):
 
     @text.setter
     def text(self, txt):
+        print("SETTER TEXT", self, txt)
         self._parse(txt)
         self.modified.emit(self)
 
@@ -297,7 +298,7 @@ class Task(QtCore.QObject):
     def __lt__(self, other):
         prio1 = self.priority if self.priority else "z"
         prio2 = other.priority if other.priority else "z"
-        return (self.is_complete, prio1, self.text) < (other.is_complete, prio2, other.text)
+        return (self.is_complete, prio1, self._text) < (other.is_complete, prio2, other.text)
 
 
 def dateString(date):

@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 class File(QtCore.QObject):
 
-    fileModified = QtCore.pyqtSignal()
+    fileExternallyModified = QtCore.pyqtSignal()
+    fileModified = QtCore.pyqtSignal(bool)
 
     def __init__(self):
         QtCore.QObject.__init__(self)
@@ -19,7 +20,8 @@ class File(QtCore.QObject):
         self.tasks = []
         self.filename = ''
         self._fileObserver = FileObserver()
-        self._fileObserver.fileChangetSig.connect(self.fileModified)
+        self._fileObserver.fileChangetSig.connect(self.fileExternallyModified)
+        self.modified = False
 
     def __str__(self):
         return "File(filename:{}, tasks:{})".format(self.filename, self.tasks)
@@ -41,6 +43,32 @@ class File(QtCore.QObject):
             if task_text:
                 task = Task(task_text)
                 self.tasks.append(task)
+                task.modified.connect(self._taskModified)
+
+    def _taskModified(self, task):
+        print("FILE task modified", task)
+        self.setModified(True)
+        #if task not in self.tasks:
+            #self.tasks.append(task)
+        if not task.text:
+            self.deleteTask(task)
+
+    def setModified(self, val):
+        self.modified = val
+        self.fileModified.emit(val)
+
+    def deleteTask(self, task):
+        print("FILE delkete", task)
+        self.tasks.remove(task)
+        self.setModified(True)
+
+    def addTask(self, task):
+        self.tasks.append(task)
+        task.modified.connect(self._taskModified)
+        self.setModified(True)
+
+    def connectTask(self, task):
+        task.modified.connect(self._taskModified)
 
     def save(self, filename=''):
         logger.debug('File.save called with filename="%s"', filename)
@@ -50,6 +78,8 @@ class File(QtCore.QObject):
         elif filename:
             self.filename = filename
         self._saveTasks()
+        self.modified = False
+        self.fileModified.emit(False)
         self._fileObserver.addPath(self.filename)
 
     @staticmethod

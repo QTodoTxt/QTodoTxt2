@@ -37,7 +37,7 @@ ListView {
         onShowContextMenu: contextMenu.popup()
 //        onStateChanged: if (state === "show") listView.focus = true
         onInputAccepted: {
-//            console.log("new text: ", newText)
+            console.log("input acccepted text: ", newText)
             taskList[model.index].text = newText
         }
     }
