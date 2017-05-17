@@ -81,8 +81,8 @@ Loader {
             }
             Connections {
                 target: appWindow
-                onActiveFocusItemChanged: taskLine.inputAccepted(text)
-                onActiveChanged: taskLine.inputAccepted(text)
+//                onActiveFocusItemChanged: taskLine.inputAccepted(text)
+//                onActiveChanged: taskLine.inputAccepted(text)
             }
         }
     }
