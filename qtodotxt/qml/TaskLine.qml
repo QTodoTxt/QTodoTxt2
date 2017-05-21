@@ -72,18 +72,23 @@ Loader {
             }
             Keys.onReturnPressed: taskLine.inputAccepted(text)
             Keys.onEnterPressed: taskLine.inputAccepted(text)
-            Keys.onEscapePressed: taskLine.state = "show"
+            Keys.onEscapePressed: {
+                text = taskLine.text
+                taskLine.state = "show"
+            }
 
             CompletionPopup { }
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
                 cursorPosition = text.length
             }
-            Connections {
-                target: appWindow
-//                onActiveFocusItemChanged: taskLine.inputAccepted(text)
-//                onActiveChanged: taskLine.inputAccepted(text)
+
+            onActiveFocusChanged: {
+                if ( ! activeFocus ) {
+                    taskLine.inputAccepted(text)
+                }
             }
+
         }
     }
 

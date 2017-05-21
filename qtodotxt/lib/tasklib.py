@@ -147,7 +147,6 @@ class Task(QtCore.QObject):
 
     @text.setter
     def text(self, txt):
-        print("SETTER TEXT", self, txt)
         self._parse(txt)
         self.modified.emit(self)
 
