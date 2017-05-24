@@ -63,7 +63,7 @@ Loader {
         id: editorComp
         TextArea {
 //            id: editor
-
+            property bool discard: false
             text: taskLine.text
 
             focus: true
@@ -73,7 +73,8 @@ Loader {
             Keys.onReturnPressed: taskLine.inputAccepted(text)
             Keys.onEnterPressed: taskLine.inputAccepted(text)
             Keys.onEscapePressed: {
-                text = taskLine.text
+                //text = taskLine.text
+                discard = true
                 taskLine.state = "show"
             }
 
@@ -84,7 +85,7 @@ Loader {
             }
 
             onActiveFocusChanged: {
-                if ( ! activeFocus ) {
+                if ( ! discard && ! activeFocus ) {
                     taskLine.inputAccepted(text)
                 }
             }
