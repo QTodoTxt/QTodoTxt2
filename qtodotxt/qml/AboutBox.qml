@@ -3,19 +3,17 @@ import QtQuick.Controls 1.4
 import QtQuick.Dialogs 1.2
 
 Dialog {
-//    property string appName: "QTodoTxt"
-    width: 350
-    title: "About " + appName
+    width: 640
+    title: "About QTodoTxt"
+    id: aboutdialog
 
     Text {
         wrapMode: Text.WordWrap
-        width: 350
+        width: aboutdialog.width
         text: '<h1>About QTodoTxt </h1>
 <p>QTodoTxt is a cross-platform UI client for todo.txt files
  (see <a href="http://todotxt.com">http://todotxt.com</a>)</p>
-Copyright &copy; David Elentok 2011<br/>
-Copyright &copy; Matthieu Nantern 2013-2015<br/>
-Copyright &copy; QTT Development Team 2015-2016<br/>
+Copyright &copy; QTT Development Team 2015-2017<br/>
 <h2>Links</h2>
 <ul>
 <li>Project Page: <a href="https://github.com/QTodoTxt/QTodoTxt">https://github.com/QTodoTxt/QTodoTxt</a></li>

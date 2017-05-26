@@ -15,7 +15,6 @@ ApplicationWindow {
     width: 1024
     height: 768
     title: mainController.title
-    property string theme: "qrc:///dark_icons/resources/"
 
     Connections {
         target: mainController
