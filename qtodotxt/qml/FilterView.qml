@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQml.Models 2.2
+import Qt.labs.settings 1.0
 
 import Theme 1.0
 
@@ -8,14 +9,9 @@ TreeView {
     id: treeView
     alternatingRowColors: false
 
-    rowDelegate: Rectangle {
-        color: systemPalette.highlight
-        opacity: (styleData.selected ? 0.5 : 0)
-        height: 3*Theme.mediumSpace
-    }
-
     model: mainController.filtersModel
     selectionMode: SelectionMode.ExtendedSelection
+    horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
     selection: ItemSelectionModel {
         model: mainController.filtersModel
         onSelectedIndexesChanged: {
@@ -24,11 +20,16 @@ TreeView {
         }
     }
 
+    Settings {
+        category: "WindowState"
+        property alias filter_name_column_width: filterNameCol.width
+        property alias filter_total_column_width: totalCol.width
+        property alias filter_completed_column_width: completedCol.width
+    }
+
 
     TableViewColumn {
         id: filterNameCol
-        width: treeView.width - totalCol.width - completedCol.width
-        resizable: false
 
         title: "Filters"
         role: "display"
@@ -58,18 +59,14 @@ TreeView {
     TableViewColumn {
         id: totalCol
         width: 50
-//        resizable: false
-
-        title: "Tot."
+        title: "Tasks"
         role: "totalCount"
     }
 
     TableViewColumn {
         id: completedCol
         width: 50
-//        resizable: false
-
-        title: "Compl."
+        title: "Completed"
         role: "completedCount"
     }
 
@@ -77,16 +74,6 @@ TreeView {
         selection.select(index, ItemSelectionModel.Select | ItemSelectionModel.Current)
     }
     
-//    onChildrenChanged: {
-//        console.log("children")
-//        Qt.callLater(expandAll())
-//    }
-
-    function resizeCountCols() {
-        totalCol.resizeToContents()
-        completedCol.resizeToContents()
-    }
-
     function expandAll() {
         var rootChildren = model.getRootChildren()
         for (var i=0; i < rootChildren.length ; i++) {
