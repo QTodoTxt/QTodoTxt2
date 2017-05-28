@@ -38,8 +38,8 @@ import os
 
 
 def compile_all():
-	print("Compiling for PyQt5: style.qrc -> pyqt5_style_rc.py")
-	os.system("pyrcc5 res.qrc -o qTodoTxt_style_rc.py")
+	print("Compiling for PyQt5: res.qrc -> qTodoTxt_style_rc.py")
+	os.system("pyrcc5 ./qml/Theme/res.qrc -o qTodoTxt_style_rc.py")
 
 if __name__ == "__main__":
     compile_all()

@@ -1,0 +1,41 @@
+<RCC>
+    <qresource prefix="/white_icons">
+        <file>resources/white/ActionClear.png</file>
+        <file>resources/white/ActionSearch.png</file>
+        <file>resources/white/ApplicationAbout.png</file>
+        <file>resources/white/ApplicationExit_dark.png</file>
+        <file>resources/white/ApplicationExit.png</file>
+        <file>resources/white/ApplicationPreferences.png</file>
+        <file>resources/white/archive.png</file>
+        <file>resources/white/FileNew.png</file>
+        <file>resources/white/FileOpen.png</file>
+        <file>resources/white/FileRevert.png</file>
+        <file>resources/white/FileSave.png</file>
+        <file>resources/white/FilterAll.png</file>
+        <file>resources/white/FilterComplete.png</file>
+        <file>resources/white/FilterContexts.png</file>
+        <file>resources/white/FilterDue_dark.png</file>
+        <file>resources/white/FilterDue.png</file>
+        <file>resources/white/FilterDueMonth.png</file>
+        <file>resources/white/FilterDueOverdue.png</file>
+        <file>resources/white/FilterDueToday.png</file>
+        <file>resources/white/FilterDueTomorrow.png</file>
+        <file>resources/white/FilterDueWeek.png</file>
+        <file>resources/white/FilterPending.png</file>
+        <file>resources/white/FilterProjects.png</file>
+        <file>resources/white/FilterUncategorized.png</file>
+        <file>resources/white/future.png</file>
+        <file>resources/white/link.png</file>
+        <file>resources/white/qtodotxt.png</file>
+        <file>resources/white/show_completed.png</file>
+        <file>resources/white/sidepane.png</file>
+        <file>resources/white/TaskAddOnTem.png</file>
+        <file>resources/white/TaskComplete.png</file>
+        <file>resources/white/TaskCopy.png</file>
+        <file>resources/white/TaskCreate.png</file>
+        <file>resources/white/TaskDelete.png</file>
+        <file>resources/white/TaskEdit.png</file>
+        <file>resources/white/TaskPriorityDecrease.png</file>
+        <file>resources/white/TaskPriorityIncrease.png</file>
+    </qresource>
+</RCC>

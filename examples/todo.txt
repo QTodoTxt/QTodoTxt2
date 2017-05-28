@@ -1,12 +1,10 @@
-(A) so new due:2017-04-19 asdsadsaasdasdsa (C) 
-(B) Report to <i>Admiral Adama</i> about FTL @CIC +GalacticaRepairs due:2017-04-21
+(A) Make peace between Cylons and humans +PeaceProject
+(B) Report to <i>Admiral Adama</i> about FTL @CIC +GalacticaRepairs due:2013-05-24
 (C) 2016-12-08 Feed Schrodinger's Cat rec:+1d due:2014-02-23
-(C) Make peace between Cylons and humans +PeaceProject due:2017-04-17
 (C) Upgrade jump drives with Cylon technology +GalacticaRepairs
-+asd asdasd
 2016-12-12 +GalacticaRepairs Check hull integrity rec:+7b due:2016-12-12
 Check for <b>DRADIS</b> contact @CIC
-Check if http://google.com is available asdasd
+Check if http://google.com is available
 Download code from <br/> https://github.com/QTodoTxt/QTodoTxt/archive/master.zip <br/>and give it a try!
 Think about <u>future</u> t:2099-12-31
 x 2016-02-21 (B) Seal ship's cracks with biomatter +GalacticaRepairs

@@ -10,7 +10,7 @@ QtObject {
     property int tinySpace: 2
 
     property string name: "white" // = "dark" or "white"
-    property string pathPrefix: "./Theme/" //this will later be sth like qrc:///.../Theme/
+    property string pathPrefix: "qrc:///" + name + "_icons/resources/" + name + "/" //this will later be sth like qrc:///.../Theme/
 
     property var mapNameSource: {
         "document-new": "",
@@ -42,9 +42,10 @@ QtObject {
         'qtodotxt-filter-due-overdue': 'FilterDueOverdue.png'
     }
 
+    // resolve icon source path from icon name
     function iconSource(iconName) {
         if (mapNameSource[iconName])
-            return pathPrefix + name + "/resources/" + mapNameSource[iconName]
+            return pathPrefix + mapNameSource[iconName]
         else return ""
     }
 }
