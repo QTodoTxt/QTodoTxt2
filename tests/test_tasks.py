@@ -1,6 +1,6 @@
 from datetime import date
 import unittest
-from qtodotxt.lib.tasklib import Task, RecursiveMode
+from qtodotxt2.lib.tasklib import Task, RecursiveMode
 
 
 class TestTasks(unittest.TestCase):

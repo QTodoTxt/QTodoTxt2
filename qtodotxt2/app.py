@@ -10,11 +10,11 @@ from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 from PyQt5.QtQml import QQmlApplicationEngine
 
-import qtodotxt.qTodoTxt_style_rc
+import qtodotxt2.qTodoTxt_style_rc
 
-from qtodotxt.main_controller import MainController
-from qtodotxt.lib.file import FileObserver
-from qtodotxt.lib.tendo_singleton import SingleInstance
+from qtodotxt2.main_controller import MainController
+from qtodotxt2.lib.file import FileObserver
+from qtodotxt2.lib.tendo_singleton import SingleInstance
 
 
 def _parseArgs():

@@ -4,7 +4,7 @@ from enum import Enum
 
 from PyQt5 import QtCore
 
-from qtodotxt.lib.task_htmlizer import TaskHtmlizer
+from qtodotxt2.lib.task_htmlizer import TaskHtmlizer
 
 
 class RecursiveMode(Enum):

@@ -2,11 +2,11 @@ import unittest
 from PyQt5 import QtCore
 from datetime import date, timedelta
 
-from qtodotxt.lib import tasklib
-from qtodotxt.lib.file import File
-from qtodotxt.lib.filters import IncompleteTasksFilter, ContextFilter, ProjectFilter, DueThisMonthFilter, \
+from qtodotxt2.lib import tasklib
+from qtodotxt2.lib.file import File
+from qtodotxt2.lib.filters import IncompleteTasksFilter, ContextFilter, ProjectFilter, DueThisMonthFilter, \
     DueThisWeekFilter, DueTodayFilter, DueOverdueFilter
-from qtodotxt.main_controller import MainController
+from qtodotxt2.main_controller import MainController
 
 
 class Test(unittest.TestCase):

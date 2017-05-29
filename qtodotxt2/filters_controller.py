@@ -1,9 +1,9 @@
 from PyQt5 import QtCore
 from PyQt5 import QtGui
-from qtodotxt.lib.filters import ContextFilter, CompleteTasksFilter, DueFilter, DueOverdueFilter, DueThisMonthFilter, \
+from qtodotxt2.lib.filters import ContextFilter, CompleteTasksFilter, DueFilter, DueOverdueFilter, DueThisMonthFilter, \
     DueThisWeekFilter, DueTodayFilter, DueTomorrowFilter, HasContextsFilter, HasDueDateFilter, HasProjectsFilter, \
     ProjectFilter, UncategorizedTasksFilter, AllTasksFilter, PriorityFilter, HasPriorityFilter
-from qtodotxt.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter
+from qtodotxt2.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter
 
 TotalCountRole = QtCore.Qt.UserRole + 1
 CompletedCountRole = QtCore.Qt.UserRole + 2
