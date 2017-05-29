@@ -3,8 +3,8 @@ import os
 
 from PyQt5 import QtCore
 
-from qtodotxt.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, DueOverdueFilter
-from qtodotxt.lib.tasklib import Task
+from qtodotxt2.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, DueOverdueFilter
+from qtodotxt2.lib.tasklib import Task
 
 logger = logging.getLogger(__name__)
 

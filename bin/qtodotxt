@@ -8,7 +8,7 @@ realpath = os.path.realpath(__file__)
 
 sys.path.insert(1, os.path.join(os.path.dirname(realpath), '..'))
 
-from qtodotxt import app
+from qtodotxt2 import app
 
 app.run()
 

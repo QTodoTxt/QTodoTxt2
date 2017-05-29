@@ -1,4 +1,4 @@
-from qtodotxt.lib import task_htmlizer, tasklib
+from qtodotxt2.lib import task_htmlizer, tasklib
 import unittest
 
 

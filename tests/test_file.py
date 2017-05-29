@@ -4,9 +4,9 @@ from os import remove
 from datetime import date, datetime, timedelta
 from sys import version
 
-from qtodotxt.lib.file import File
-from qtodotxt.lib.tasklib import Task
-from qtodotxt.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, DueOverdueFilter
+from qtodotxt2.lib.file import File
+from qtodotxt2.lib.tasklib import Task
+from qtodotxt2.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, DueOverdueFilter
 
 
 PYTHON_VERSION = version[:3]
@@ -115,6 +115,7 @@ class TestFile(unittest.TestCase):
         ])
         self.saveAndReload()
         due = self.file.getAllDueRanges()
+        print(due)
         self.assertEqual(due[DueTodayFilter()], [2, 1])
         self.assertEqual(due[DueOverdueFilter()], [1, 0])
         self.assertEqual(due[DueThisWeekFilter()], [2, 1])

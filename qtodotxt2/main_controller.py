@@ -4,10 +4,9 @@ import string
 
 from PyQt5 import QtCore
 
-from qtodotxt.lib import tasklib
-from qtodotxt.lib.file import File
-
-from qtodotxt.filters_controller import FiltersController
+from qtodotxt2.lib import tasklib
+from qtodotxt2.lib.file import File
+from qtodotxt2.filters_controller import FiltersController
 
 logger = logging.getLogger(__name__)
 
