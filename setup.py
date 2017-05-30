@@ -4,7 +4,7 @@ import sys
 
 
 setup(name="qtodotxt2", 
-      version="2.0.0a4",
+      version="2.0.0a6",
       description="Cross Platform todo.txt GUI",
       author="QTT Development Team",
       author_email="qtodotxt@googlegroups.com",
@@ -13,7 +13,7 @@ setup(name="qtodotxt2",
       packages=find_packages(),
       #packages=['qtodotxt', 'qtodotxt/lib'],
       package_data={
-          'qtodotxt2':['qml/*.qml', 'qml/Theme/*.qml']
+          'qtodotxt2':['qml/*.qml', 'qml/Theme/*.qml', 'qml/Theme/qmldir']
           },
       #include_package_data=True,
       provides=["qtodotxt2"],
