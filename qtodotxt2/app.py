@@ -95,9 +95,10 @@ def run():
     engine = QQmlApplicationEngine(parent=app)
     controller = MainController(args)
     engine.rootContext().setContextProperty("mainController", controller)
-    path = os.path.dirname(__file__)
-    engine.addImportPath(path + '/qml/')
-    engine.load(path + '/qml/QTodoTxt.qml')
+    path = os.path.join(os.path.dirname(__file__), 'qml')
+    engine.addImportPath(path)
+    mainqml = os.path.join(path, 'QTodoTxt.qml')
+    engine.load(mainqml)
 
     setupAnotherInstanceEvent(controller)
 
