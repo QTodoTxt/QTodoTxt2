@@ -32,6 +32,8 @@ ApplicationWindow {
 
     Settings {
         category: "WindowState"
+        property alias window_x: appWindow.x
+        property alias window_y: appWindow.y
         property alias window_width: appWindow.width
         property alias window_height: appWindow.height
         property alias filters_tree_width: filtersTree.width
