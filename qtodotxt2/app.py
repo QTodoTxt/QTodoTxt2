@@ -8,6 +8,7 @@ import os
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtQml import QQmlApplicationEngine
 
 import qtodotxt2.qTodoTxt_style_rc
@@ -103,6 +104,7 @@ def run():
     setupAnotherInstanceEvent(controller)
 
     controller.start()
+    app.setWindowIcon(QtGui.QIcon(":/qtodotxt"))
     app.exec_()
     sys.exit()
 
