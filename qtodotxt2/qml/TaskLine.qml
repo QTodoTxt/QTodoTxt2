@@ -53,6 +53,7 @@ Loader {
                 text: taskLine.html
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
+                width: taskLine.width
 
                 onLinkActivated:  Qt.openUrlExternally(link)
             }
