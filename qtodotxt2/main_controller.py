@@ -286,3 +286,14 @@ class MainController(QtCore.QObject):
         self.applyFilters()
         self._updateCompletionStrings()
         self._updateFilterTree()
+
+    @QtCore.pyqtSlot('QVariant')
+    def completeTask(self, task):
+        if not task.is_complete:
+            if task.recursion is not None and task.due is not None:
+                new_task = tasklib.recurTask(task)
+                self._file.addTask(new_task)
+            task.setCompleted()
+        else:
+            task.setPending()
+

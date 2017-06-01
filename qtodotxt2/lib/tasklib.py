@@ -1,4 +1,4 @@
-from datetime import datetime, date, time, MAXYEAR
+from datetime import datetime, date, time, MAXYEAR, timedelta
 import re
 from enum import Enum
 
@@ -300,20 +300,63 @@ class Task(QtCore.QObject):
         return (self.is_complete, prio1, self._text) < (other.is_complete, prio2, other.text)
 
 
-def dateString(date):
+def dateString(dato):
     """
     Return a datetime as a nicely formatted string
     """
-    if date.time() == time.min:
-        return date.strftime('%Y-%m-%d')
+    if dato.time() == time.min:
+        return dato.strftime('%Y-%m-%d')
     else:
-        return date.strftime('%Y-%m-%d %H:%M')
+        return dato.strftime('%Y-%m-%d %H:%M')
 
 
-def updateDateInTask(text, newDate):
-    # (A) 2016-12-08 Feed Schrodinger's Cat rec:9w due:2016-11-23
-    text = re.sub(r'\sdue\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' due:' + str(newDate)[0:10], text)
-    return text
+def _incrWorkDays(startDate, daysToIncrement):
+    while daysToIncrement > 0:
+        if startDate.weekday() == 4:  # Friday
+            startDate = startDate + timedelta(days=3)
+        elif startDate.weekday() == 5:  # Saturday
+            startDate = startDate + timedelta(days=2)
+        else:
+            startDate = startDate + timedelta(days=1)
+        daysToIncrement -= 1
+    return startDate
+
+
+def recurTask(task):
+    """
+    Create the next task from a recurring task
+    """
+    if task.recursion.interval == 'd':
+        if task.recursion.mode == RecursiveMode.originalDueDate:
+            next_due_date = task.due + timedelta(days=int(task.recursion.increment))
+        else:
+            next_due_date = date.today() + timedelta(days=int(task.recursion.increment))
+    elif task.recursion.interval == 'b':
+        if task.recursion.mode == RecursiveMode.originalDueDate:
+            next_due_date = _incrWorkDays(task.due, int(task.recursion.increment))
+        else:
+            next_due_date = _incrWorkDays(date.today(), int(task.recursion.increment))
+    elif task.recursion.interval == 'w':
+        if task.recursion.mode == RecursiveMode.originalDueDate:
+            next_due_date = task.due + timedelta(weeks=int(task.recursion.increment))
+        else:
+            next_due_date = date.today() + timedelta(weeks=int(task.recursion.increment))
+    elif task.recursion.interval == 'm':
+        if task.recursion.mode == RecursiveMode.originalDueDate:
+            next_due_date = task.due + timedelta(weeks=int(task.recursion.increment) * 4)  # 4 weeks in a month
+        else:
+            next_due_date = date.today() + timedelta(weeks=int(task.recursion.increment) * 4)  # 4 weeks in a month
+    elif task.recursion.interval == 'y':
+        if task.recursion.mode == RecursiveMode.originalDueDate:
+            next_due_date = task.due + timedelta(weeks=int(task.recursion.increment) * 52)  # 52 weeks in a year
+        else:
+            next_due_date = date.today() + timedelta(weeks=int(task.recursion.increment) * 52)  # 52 weeks in a year
+    else:
+        # Test already made during line parsing - shouldn't be a problem here
+        pass
+    # Set new due date in old task text
+    text = re.sub(r'\sdue\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' due:' + dateString(next_due_date)[0:10], task.text)
+    return Task(text)
 
 
 def _parseDate(string):
