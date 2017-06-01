@@ -12,7 +12,7 @@ ListView {
         }
     }
 
-    spacing: 10
+    spacing: 2
     highlight: Rectangle {
         color: systemPalette.highlight
         opacity: 0.5
