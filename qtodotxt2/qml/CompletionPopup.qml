@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQml 2.0
 
 Item {
     property QtObject completerParent: appWindow.contentItem
@@ -8,12 +9,12 @@ Item {
     Connections {
         target: parent
         onActiveFocusChanged: {
-//            console.log("activeFocus: ",target.activeFocus)
             if (target.activeFocus) connectCompleter()
             else disconnectCompleter()
         }
     }
 
+    //not used yet
     function findRootContentItem(c){
         console.log(c, typeof c, "on", c.objectName)
         if (c.toString().startsWith("Content")) {
@@ -30,7 +31,6 @@ Item {
     }
 
     function createCompleter() {
-//        console.log("creating for", parent)
         if (completer !== null) {
             console.log("Completer already there.")
             return false
@@ -50,7 +50,6 @@ Item {
     }
 
     function destroyCompleter() {
-//        console.log("destroying")
         disconnectCompleter()
         completer.destroy()
     }
@@ -81,16 +80,14 @@ Item {
                 var globalCoords = textItem.mapToItem(parent, _x, _y)
                 var xMax = parent.width - popup.width
                 var yMax = parent.height - popup.height
-                console.log(globalCoords.x, parent.width, xMax)
-                console.log(globalCoords.y, parent.height, yMax)
                 x = Math.min(globalCoords.x, xMax)
                 y = Math.min(globalCoords.y, yMax)
-                //        console.log(x, y)
-                //        x=0;y=0
             }
 
-            onWidthChanged: console.log("width", width)
-            onSourceComponentChanged: console.log("width", width)
+            onWidthChanged: Qt.callLater(setPosition)
+            onHeightChanged: Qt.callLater(setPosition)
+
+//            onSourceComponentChanged: setPosition()
 
             Text {
                 //this is just for the calculation of text width in setPosition
@@ -99,14 +96,13 @@ Item {
             }
 
             function insertSelection(selectedText) {
-                //        console.log(popup.textItem.cursorPosition, selectedText)
                 if (state === "list")
                     popup.textItem.remove(popup.textItem.cursorPosition
                                           - completionModel.prefix.length,
                                           popup.textItem.cursorPosition)
                 popup.textItem.insert(popup.textItem.cursorPosition, selectedText)
                 completionModel.clear()
-                if (["due:", "t:"].indexOf(selectedText) >= 0) state = "calendar"
+                if (completionModel.calendarKeywords.indexOf(selectedText) >= 0) state = "calendar"
             }
 
             Keys.forwardTo: [popup.item]
@@ -115,8 +111,6 @@ Item {
                 else event.accepted = false
             }
 
-            //    onTextItemChanged: console.log("state: ", textItem, state)
-//            onStateChanged: console.log("state: ", textItem, state)
 
             state: "unconnected"
 
@@ -124,7 +118,7 @@ Item {
                 State {
                     name: "calendar"
                     extend: "invisible"
-                    when: (textItem !== null && ["due:", "t:"].indexOf(completionModel.prefix) >= 0 )
+                    when: (textItem !== null && completionModel.calendarKeywords.indexOf(completionModel.prefix) >= 0 )
                     PropertyChanges {
                         target: popup
                         sourceComponent: calendarComp
@@ -155,16 +149,8 @@ Item {
                     }
                     PropertyChanges {
                         target: textItemConnections
-                        //                enabled: true
                         connTarget: textItem
                     }
-                    PropertyChanges {
-                        //                target: textItem
-                        //                Keys.forwardTo: [popup, popup.item]
-                    }
-                    //            StateChangeScript {
-                    //                script: textItem.Keys.fowardTo = [popup, popup.item]
-                    //            }
                 },
                 State {
                     name: "unconnected"
@@ -187,13 +173,13 @@ Item {
             ListModel {
 
                 id: completionModel
-                property var sourceModel: mainController.completionStrings
+                property var calendarKeywords: ["due:", "t:"]
+                property var sourceModel: mainController.completionStrings //.concat(calendarKeywords)
 
                 property string prefix: ""
 
                 function getPrefix() {
                     var match = textItem.text.substring(0, textItem.cursorPosition).match(/(^.*\s|^)(\S+)$/)
-                    //            console.log("cpos",textItem.cursorPosition, "ttc", textItem.text.substring(0, textItem.cursorPosition),match)
                     if (match) {
                         prefix =  match[2]
                     }
@@ -207,15 +193,12 @@ Item {
                         return (completionItem.substring(0, prefix.length) === prefix)
                     })
                     filteredList.forEach(function(i){
-                        //                console.log(prefix, i)
                         append({"text": i})
                     })
                 }
 
                 function triggered(manual) {
-                    //            console.log("text", textItem.text,"cursorpos", textItem.cursorPosition)
                     completionModel.getPrefix()
-                    //            if (prefix === "due:") popup.state = "calendar"
                     if (manual || (!manual && prefix.length > 0)) populateModel()
                     else clear()
                 }
@@ -224,11 +207,8 @@ Item {
             Component {
                 id: keyHandler
                 Item {
-                    //                    focus: true
                     Keys.onSpacePressed: {
-                        //                console.log("Space pressed.")
                         if (event.modifiers === Qt.ControlModifier) {
-                            //                    console.log("Ctrl+Space pressed.")
                             completionModel.triggered(true)
                             event.accepted = true
                         }
@@ -282,10 +262,6 @@ Item {
                     }
                     Keys.onReturnPressed: selected()
                     Keys.onEnterPressed: selected()
-                    Component.onCompleted: {
-                        console.log ("width, height: ", width, height);
-                        popup.setPosition();
-                    }
                 }
             }
 
@@ -340,10 +316,6 @@ Item {
                         }
                         Keys.onReturnPressed: selected()
                         Keys.onEnterPressed: selected()
-                    }
-                    Component.onCompleted: {
-                        console.log ("width, height: ", width, height);
-                        popup.setPosition();
                     }
                 }
             }
