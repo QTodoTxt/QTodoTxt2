@@ -73,6 +73,7 @@ Item {
 
             function setPosition() {
                 prefixItem.text = completionModel.prefix
+                console.log(textItem.cursorRectangle)
                 var _x = textItem.cursorRectangle.x
                         + textItem.cursorRectangle.width - prefixItem.contentWidth
                 var _y = textItem.cursorRectangle.y
@@ -80,11 +81,16 @@ Item {
                 var globalCoords = textItem.mapToItem(parent, _x, _y)
                 var xMax = parent.width - popup.width
                 var yMax = parent.height - popup.height
+                console.log(globalCoords.x, parent.width, xMax)
+                console.log(globalCoords.y, parent.height, yMax)
                 x = Math.min(globalCoords.x, xMax)
                 y = Math.min(globalCoords.y, yMax)
                 //        console.log(x, y)
                 //        x=0;y=0
             }
+
+            onWidthChanged: console.log("width", width)
+            onSourceComponentChanged: console.log("width", width)
 
             Text {
                 //this is just for the calculation of text width in setPosition
@@ -123,9 +129,9 @@ Item {
                         target: popup
                         sourceComponent: calendarComp
                     }
-                    StateChangeScript {
-                        script: setPosition()
-                    }
+//                    StateChangeScript {
+//                        script: setPosition()
+//                    }
                 },
                 State {
                     name: "list"
@@ -135,9 +141,9 @@ Item {
                         target: popup
                         sourceComponent: listComp
                     }
-                    StateChangeScript {
-                        script: setPosition()
-                    }
+//                    StateChangeScript {
+//                        script: setPosition()
+//                    }
                 },
                 State {
                     name: "invisible"
@@ -276,6 +282,10 @@ Item {
                     }
                     Keys.onReturnPressed: selected()
                     Keys.onEnterPressed: selected()
+                    Component.onCompleted: {
+                        console.log ("width, height: ", width, height);
+                        popup.setPosition();
+                    }
                 }
             }
 
@@ -330,6 +340,10 @@ Item {
                         }
                         Keys.onReturnPressed: selected()
                         Keys.onEnterPressed: selected()
+                    }
+                    Component.onCompleted: {
+                        console.log ("width, height: ", width, height);
+                        popup.setPosition();
                     }
                 }
             }
