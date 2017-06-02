@@ -100,7 +100,7 @@ Item {
                                           popup.textItem.cursorPosition)
                 popup.textItem.insert(popup.textItem.cursorPosition, selectedText)
                 completionModel.clear()
-                if (selectedText === "due:") state = "calendar"
+                if (["due:", "t:"].indexOf(selectedText) >= 0) state = "calendar"
             }
 
             Keys.forwardTo: [popup.item]
@@ -118,7 +118,7 @@ Item {
                 State {
                     name: "calendar"
                     extend: "invisible"
-                    when: (textItem !== null && completionModel.prefix === "due:")
+                    when: (textItem !== null && ["due:", "t:"].indexOf(completionModel.prefix) >= 0 )
                     PropertyChanges {
                         target: popup
                         sourceComponent: calendarComp
