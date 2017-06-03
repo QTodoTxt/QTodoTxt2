@@ -104,12 +104,12 @@ class Task(QtCore.QObject):
         self.completion_date = None
         self.creation_date = None
         self.is_future = False
+        self._threshold = None
         self.threshold_error = ""
         self._text = ''
         self.description = ''
-        self.due = None
-        self.due_error = ""
-        self.threshold = None
+        self._due = None
+        self._due_error = ""
         self.keywords = {}
         self.recursion = None
 
@@ -157,7 +157,7 @@ class Task(QtCore.QObject):
     @QtCore.pyqtProperty('QString', notify=modified)
     def priority(self):
         return self._priority
-
+    
     @QtCore.pyqtProperty('QString', notify=modified)
     def priorityHtml(self):
         htmlizer = TaskHtmlizer()
@@ -176,22 +176,22 @@ class Task(QtCore.QObject):
         key, val = word.split(":", 1)
         self.keywords[key] = val
         if word.startswith('due:'):
-            self.due = _parseDateTime(word[4:])
-            if not self.due:
+            self._due = _parseDateTime(word[4:])
+            if not self._due:
                 print("Error parsing due date '{}'".format(word))
-                self.due_error = word[4:]
+                self._due_error = word[4:]
         elif word.startswith('t:'):
             self._parseFuture(word)
         elif word.startswith('rec:'):
             self._parseRecurrence(word)
 
     def _parseFuture(self, word):
-        self.threshold = _parseDateTime(word[2:])
-        if not self.threshold:
+        self._threshold = _parseDateTime(word[2:])
+        if not self._threshold:
             print("Error parsing threshold '{}'".format(word))
             self.threshold_error = word[2:]
         else:
-            if self.threshold > datetime.today():
+            if self._threshold > datetime.today():
                 self.is_future = True
 
     def _parseRecurrence(self, word):
@@ -209,14 +209,39 @@ class Task(QtCore.QObject):
                 self.recursion = Recursion(RecursiveMode.completitionDate, word[4], word[5])
             else:
                 print("Error parsing recurrence '{}'".format(word))
+    
+    @property
+    def due(self):
+        return self._due
+
+    @due.setter
+    def due(self, val):
+        if isinstance(val, datetime):
+            val = dateString(val)
+        self.text = self._replace_date(self._text, val, 'due')
 
     @property
     def dueString(self):
-        return dateString(self.due)
+        return dateString(self._due)
+
+    @property
+    def threshold(self):
+        return self._threshold
+
+    @threshold.setter
+    def threshold(self, val):
+        if isinstance(val, datetime):
+            val = dateString(val)
+        self.text = self._replace_date(self._text, val, 't')
+
+    @staticmethod
+    def _replace_date(text, date_text, prefix):
+        return re.sub(r'\s' + prefix + r'\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' {}:{}'.format(prefix, date_text), text)
+
 
     @property
     def thresholdString(self):
-        return dateString(self.threshold)
+        return dateString(self._threshold)
 
     @QtCore.pyqtSlot()
     def toggleCompletion(self):

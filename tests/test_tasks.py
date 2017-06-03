@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 import unittest
-from qtodotxt2.lib.tasklib import Task, RecursiveMode
+from qtodotxt2.lib.tasklib import Task, RecursiveMode, dateString
 
 
 class TestTasks(unittest.TestCase):
@@ -144,12 +144,16 @@ class TestTasks(unittest.TestCase):
         self.assertFalse(task.completion_date)
 
     def test_future(self):
-        task = Task('(D) do something +project1 t:2030-10-06')
+        dt_string = dateString(datetime.now() + timedelta(days=1))
+        task = Task('(D) do something +project1 t:' + dt_string)
         self.assertEqual(task.contexts, [])
         self.assertEqual(task.projects, ['project1'])
         self.assertFalse(task.is_complete)
         self.assertTrue(task.priority)
         self.assertTrue(task.is_future)
+
+        task.threshold -= timedelta(days=2)
+        self.assertFalse(task.is_future)
 
     def test_custom_keywords(self):
         task = Task('(B) do something +project1 mykey:myval titi:toto @context1 rest + of line pri:C')
@@ -220,3 +224,13 @@ class TestTasks(unittest.TestCase):
         self.assertTrue(task.recursion.mode == RecursiveMode.originalDueDate)
         self.assertTrue(task.recursion.increment == str(1))
         self.assertTrue(task.recursion.interval == 'y')
+
+    def test_due(self):
+        task = Task('(D) do something +project1 due:2030-10-06')
+        other = Task('(D) do something +project1 due:2030-10-08')
+        self.assertIsInstance(task.due, datetime)
+        task.due += timedelta(days=2)
+        self.assertIsInstance(task.due, datetime)
+        self.assertEqual(task.due, other.due)
+        self.assertEqual(task.text, other.text)
+        self.assertEqual(task, other)
