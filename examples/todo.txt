@@ -8,3 +8,5 @@ Check if http://google.com is available
 Download code from <br/> https://github.com/QTodoTxt/QTodoTxt/archive/master.zip <br/>and give it a try!
 Think about <u>future</u> t:2099-12-31
 x 2016-02-21 (B) Seal ship's cracks with biomatter +GalacticaRepairs
+h:1 @CIC +GalacticaRepairs @work
+Find the question due:2017-06-10 rec:6d t:2017-06-09
