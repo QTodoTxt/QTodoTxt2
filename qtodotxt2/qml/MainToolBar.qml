@@ -9,6 +9,7 @@ ToolBar {
             ToolButton { action: actions.showFilterPanel}
             ToolButton { action: actions.showCompleted}
             ToolButton { action: actions.showFuture}
+            ToolButton { action: actions.showHidden}
             ToolBarSeparator { }
             ToolButton { action: actions.fileSave }
             ToolBarSeparator { }

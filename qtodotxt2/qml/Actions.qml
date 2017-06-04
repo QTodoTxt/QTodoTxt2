@@ -15,6 +15,7 @@ Item {
         property alias filter_panel_visible: showFilterPanel.checked
         property alias show_completed: showCompleted.checked
         property alias show_future: showFuture.checked
+        property alias show_hidden: showHidden.checked
     }
 
     property Action fileNew: Action{
@@ -196,6 +197,18 @@ Item {
         checkable: true
         checked: true
         onToggled: mainController.showFuture = checked
+    }
+
+    property Action showHidden: Action{
+        id:showHidden
+        iconName: "show-hidden"
+        iconSource: Theme.iconSource(iconName)
+
+        text: qsTr("Show Hidden Tasks")
+        shortcut: "Ctrl+H"
+        checkable: true
+        checked: false
+        onToggled: mainController.showHidden = checked
     }
 
     property Action archive: Action{

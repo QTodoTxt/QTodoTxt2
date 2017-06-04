@@ -3,7 +3,7 @@ from PyQt5 import QtGui
 from qtodotxt2.lib.filters import ContextFilter, CompleteTasksFilter, DueFilter, DueOverdueFilter, DueThisMonthFilter, \
     DueThisWeekFilter, DueTodayFilter, DueTomorrowFilter, HasContextsFilter, HasDueDateFilter, HasProjectsFilter, \
     ProjectFilter, UncategorizedTasksFilter, AllTasksFilter, PriorityFilter, HasPriorityFilter
-from qtodotxt2.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter
+from qtodotxt2.lib.filters import SimpleTextFilter, FutureFilter, IncompleteTasksFilter, VisibleFilter
 
 TotalCountRole = QtCore.Qt.UserRole + 1
 CompletedCountRole = QtCore.Qt.UserRole + 2
@@ -146,8 +146,9 @@ class FiltersController(QtCore.QObject):
         QtCore.QObject.__init__(self)
         self._settings = QtCore.QSettings()
         self.model = FiltersModel(self)
-        self.showCompleted = self._settings.value("show_completed", False)
-        self.showFuture = self._settings.value("show_completed", True)
+        self.showCompleted = False
+        self.showFuture = True
+        self.showHidden = False
         self.searchText = ""
         # self.currentFilters = self._settings.value("current_filters", ["All"])  # move to QML
         self.currentFilters = []
@@ -160,7 +161,11 @@ class FiltersController(QtCore.QObject):
         self.currentFilters = filters
 
     def filter(self, tasks):
-        # First we filter with filters tree
+        # First we remove hidden tasks
+        if not self.showHidden:
+            tasks = filterTasks([VisibleFilter()], tasks)
+        tasks = filterTasks(self.currentFilters, tasks)
+        # then we filter with filters tree
         tasks = filterTasks(self.currentFilters, tasks)
         # Then with our search text
         if self.searchText:

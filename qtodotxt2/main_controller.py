@@ -105,6 +105,18 @@ class MainController(QtCore.QObject):
         self.showFutureChanged.emit(val)
         self.applyFilters()
 
+    showHiddenChanged = QtCore.pyqtSignal('bool')
+
+    @QtCore.pyqtProperty('bool', notify=showHiddenChanged)
+    def showHidden(self):
+        return self.filtersController.showHidden
+
+    @showHidden.setter
+    def showHidden(self, val):
+        self.filtersController.showHidden = val
+        self.showHiddenChanged.emit(val)
+        self.applyFilters()
+
     sortingModeChanged = QtCore.pyqtSignal(str)
 
     @QtCore.pyqtProperty(str, notify=showFutureChanged)
