@@ -196,7 +196,7 @@ class MainController(QtCore.QObject):
         done = [task for task in self._file.tasks if task.is_complete]
         for task in done:
             self._file.saveDoneTask(task)
-            self._file.deleteTasl(task)
+            self._file.deleteTask(task)
         self.applyFilters()
         self.auto_save()
 
