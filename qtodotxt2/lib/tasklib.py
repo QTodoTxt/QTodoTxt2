@@ -112,6 +112,7 @@ class Task(QtCore.QObject):
         self._due_error = ""
         self.keywords = {}
         self.recursion = None
+        self._hidden = False
 
     def _parse(self, line):
         """
@@ -130,6 +131,9 @@ class Task(QtCore.QObject):
         elif re.search(r'^\([A-Z]\)$', words[0]):
             self._priority = words[0][1:-1]
             words = words[1:]
+
+        if 'h:1' in line:
+            self._hidden = True
 
         dato = _parseDate(words[0])
         if dato:
@@ -153,6 +157,20 @@ class Task(QtCore.QObject):
     @QtCore.pyqtProperty('QString', notify=modified)
     def html(self):
         return self.toHtml()
+
+    @QtCore.pyqtProperty(bool, notify=modified)
+    def hidden(self):
+        return self._hidden
+
+    @hidden.setter
+    def hidden(self, val):
+        if self._hidden == val:
+            return
+        if val:
+            self.text = self._text + ' h:1'
+        else:
+            txt = self._text.replace(' h:1', '')
+            self.text = txt.replace('h:1', '')  # also take the case whe h_1 is at the begynning
 
     @QtCore.pyqtProperty('QString', notify=modified)
     def priority(self):

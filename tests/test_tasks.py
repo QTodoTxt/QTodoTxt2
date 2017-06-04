@@ -234,3 +234,12 @@ class TestTasks(unittest.TestCase):
         self.assertEqual(task.due, other.due)
         self.assertEqual(task.text, other.text)
         self.assertEqual(task, other)
+
+    def test_hidden(self):
+        task = Task('(D) do something +project1 due:2030-10-06')
+        self.assertFalse(task.hidden)
+        task.hidden = True
+        self.assertTrue(task.hidden)
+        self.assertIn("h:1", task.text)
+        task.hidden = False
+        self.assertNotIn("h:1", task.text)
