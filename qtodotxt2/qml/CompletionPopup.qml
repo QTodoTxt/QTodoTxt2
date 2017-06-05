@@ -165,8 +165,8 @@ Item {
             ListModel {
 
                 id: completionModel
-                property var calendarKeywords: ["due:", "t:"]
-                property var sourceModel: mainController.completionStrings //.concat(calendarKeywords)
+                property var calendarKeywords: mainController.calendarKeywords //["due:", "t:"]
+                property var sourceModel: mainController.completionStrings
 
                 property string prefix: ""
 
@@ -215,7 +215,7 @@ Item {
                     signal selected()
                     onSelected: {
                         insertSelection(selectedDate.toLocaleString(Qt.locale("en_US"), 'yyyy-MM-dd'))
-                        popup.state = "invisible"mainController
+                        popup.state = "invisible"
                     }
 
                     onClicked: selected()
