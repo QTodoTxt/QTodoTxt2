@@ -43,14 +43,18 @@ class MainController(QtCore.QObject):
     def completionStrings(self):
         return self._completionStrings
 
+    @QtCore.pyqtProperty('QStringList', notify=completionChanged)
+    def calendarKeywords(self):
+        return ['due:', 't:']
+
     def _updateCompletionStrings(self):
         contexts = ['@' + name for name in self._file.getAllContexts()]
         projects = ['+' + name for name in self._file.getAllProjects()]
         lowest_priority = self._settings.value("lowest_priority", "D")
         idx = string.ascii_uppercase.index(lowest_priority) + 1
         priorities = ['(' + val + ')' for val in string.ascii_uppercase[:idx]]
-        keywords = ['due:', 't:', 'rec:', 'h:1']
-        self._completionStrings = contexts + projects + priorities + keywords
+        keywords = ['rec:', 'h:1'] #['due:', 't:', 'rec:', 'h:1']
+        self._completionStrings = contexts + projects + priorities + self.calendarKeywords + keywords
         self.completionChanged.emit()
 
     @QtCore.pyqtSlot('QModelIndexList')
