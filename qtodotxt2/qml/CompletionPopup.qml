@@ -1,6 +1,5 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
-import QtQml 2.0
 
 Item {
     property QtObject completerParent: appWindow.contentItem
@@ -72,7 +71,7 @@ Item {
 
             function setPosition() {
                 prefixItem.text = completionModel.prefix
-                console.log(textItem.cursorRectangle)
+//                console.log(textItem.cursorRectangle)
                 var _x = textItem.cursorRectangle.x
                         + textItem.cursorRectangle.width - prefixItem.contentWidth
                 var _y = textItem.cursorRectangle.y
@@ -84,10 +83,9 @@ Item {
                 y = Math.min(globalCoords.y, yMax)
             }
 
-            onWidthChanged: Qt.callLater(setPosition)
-            onHeightChanged: Qt.callLater(setPosition)
+            onWidthChanged: setPosition()
+            onHeightChanged: setPosition()
 
-//            onSourceComponentChanged: setPosition()
 
             Text {
                 //this is just for the calculation of text width in setPosition
@@ -123,9 +121,6 @@ Item {
                         target: popup
                         sourceComponent: calendarComp
                     }
-//                    StateChangeScript {
-//                        script: setPosition()
-//                    }
                 },
                 State {
                     name: "list"
@@ -135,9 +130,6 @@ Item {
                         target: popup
                         sourceComponent: listComp
                     }
-//                    StateChangeScript {
-//                        script: setPosition()
-//                    }
                 },
                 State {
                     name: "invisible"
@@ -223,7 +215,7 @@ Item {
                     signal selected()
                     onSelected: {
                         insertSelection(selectedDate.toLocaleString(Qt.locale("en_US"), 'yyyy-MM-dd'))
-                        popup.state = "invisible"
+                        popup.state = "invisible"mainController
                     }
 
                     onClicked: selected()
