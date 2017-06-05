@@ -22,4 +22,5 @@ but why?
 Main differences to QTodoTxt 1:
 * Much cleaner code, simpler packaging
 * calendar widget for due: and t:
+* support of hidden tasks: h:1
 * Remove support for some legacy options ans technologies like systray
