@@ -31,6 +31,7 @@ Loader {
             onClicked: {
                 taskLine.activated()
                 if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
+                mouse.accepted = false
             }
             onDoubleClicked: {
                 taskLine.activated()
