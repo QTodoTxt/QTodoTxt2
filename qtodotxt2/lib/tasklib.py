@@ -400,7 +400,8 @@ def recurTask(task):
     new = Task(task.text)
     if task.recursion.mode == RecursiveMode.originalDueDate:
         new.due += delta
-        new.threshold += delta
+        if new.threshold:
+            new.threshold += delta
     else:
         new.due = date.today() + delta
         if new.threshold:
