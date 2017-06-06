@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 
+import Theme 1.0
+
 
 Loader {
     id: taskLine
@@ -94,7 +96,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: labelComp
-                height: taskLine.item.lblHeight
+                height: Math.max(taskLine.item.lblHeight, Theme.minRowHeight)
             }
         },
         State {
@@ -102,7 +104,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: editorComp
-                height: taskLine.item.contentHeight
+                height: Math.max(taskLine.item.contentHeight, Theme.minRowHeight)
             }
         }
     ]

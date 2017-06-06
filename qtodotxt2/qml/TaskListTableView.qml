@@ -5,9 +5,6 @@ import Theme 1.0
 
 TableView {
 
-    //TODO contextmenu?
-    //TODO MouseArea propagateEvents not working properly?
-    //TODO lineheight via rowDelegate??
     //TODO delete (all selected)
 
     id: listView
@@ -47,7 +44,7 @@ TableView {
         Connections {
             target: listView
             onRowHeightChanged: {
-                console.log("rhc", row, height)
+//                console.log("rhc", row, height)
                 if (styleData.row === row) rect.height = height
             }
         }
@@ -58,22 +55,23 @@ TableView {
         delegate: TaskLine {
             width: listView.width
 
-            text: taskList[styleData.row].text
+            text: {
+                if (taskList[styleData.row]) taskList[styleData.row].text;
+                else ""
+            }
             html: styleData.value //taskList[styleData.row].html
 
             current: (listView.currentRow === styleData.row)
             onCurrentChanged: {
-                console.log("current", current, styleData.row)
+//                console.log("current", current, styleData.row)
                 if (current) listView.currentItem = this
             }
-
-//            onShowContextMenu: contextMenu.popup()
             onHeightChanged: {
-                console.log("rh", height)
+//                console.log("rh", height)
                 listView.rowHeightChanged(styleData.row, height)
             }
             onInputAccepted: {
-                console.log("input acccepted text: ", newText)
+//                console.log("input acccepted text: ", newText)
                 taskList[styleData.row].text = newText
             }
         }
