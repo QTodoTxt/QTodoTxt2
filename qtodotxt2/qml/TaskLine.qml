@@ -13,8 +13,8 @@ Loader {
 //        console.log("currentCh")
         if (!current) state = "show"
     }
-    signal activated()
-    signal showContextMenu()
+//    signal activated()
+//    signal showContextMenu()
     signal inputAccepted(string newText)
     onInputAccepted: state = "show"
 
@@ -94,7 +94,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: labelComp
-                height: taskLine.item.lblHeight + 10
+                height: taskLine.item.lblHeight
             }
         },
         State {
@@ -102,7 +102,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: editorComp
-                height: taskLine.item.contentHeight + 10
+                height: taskLine.item.contentHeight
             }
         }
     ]
