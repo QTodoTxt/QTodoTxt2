@@ -5,6 +5,7 @@ TableView {
     id: listView
     property var taskList
     property alias currentIndex: listView.currentRow
+    property Item currentItem
     property int _lastIndex: 0
 
     function editCurrentTask() {
@@ -16,8 +17,8 @@ TableView {
     headerVisible: false
 
     focus: true
-    Keys.onReturnPressed: listView.currentItem.state = "edit"
-    selectionMode: SelectionMode.MultiSelection
+    Keys.onReturnPressed: editCurrentTask()
+    selectionMode: SelectionMode.ExtendedSelection
 
     model: taskList
     TableViewColumn {
@@ -29,15 +30,13 @@ TableView {
             html: taskList[model.index].html
             priority: taskList[model.index].priorityHtml
 
-            current: (currentIndex === styleData.row)
-
-            onActivated: {
-                console.log(listView.currentIndex, model.index)
-                listView.activated(model.index)
-//                listView.selection.select(model.index)
+            current: (listView.currentRow === styleData.row)
+            onCurrentChanged: {
+                console.log("current", current, styleData.row)
+                if (current) listView.currentItem = this
             }
+
             onShowContextMenu: contextMenu.popup()
-    //        onStateChanged: if (state === "show") listView.focus = true
             onInputAccepted: {
                 console.log("input acccepted text: ", newText)
                 taskList[model.index].text = newText
@@ -45,6 +44,7 @@ TableView {
         }
     }
 
-    onClicked: console.log(row)
+    onClicked: console.log("tv cl", row)
+    onDoubleClicked: editCurrentTask()//console.log("tv dc", row)
 }
 

@@ -23,33 +23,25 @@ Loader {
 
     Component {
         id: labelComp
-        MouseArea {
+        Item {
             anchors.fill: parent
             property alias lblHeight: label.height
 
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: {
-                taskLine.activated()
-                if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
-                mouse.accepted = false
-            }
-            onDoubleClicked: {
-                taskLine.activated()
-                taskLine.state = "edit"
-            }
-            //Label {
-                //id: prioLbl
-                //anchors.verticalCenter: parent.verticalCenter
-                //width: 20
-//
-                //text: taskLine.priority
-                //textFormat: Qt.RichText
-            //}
+//            propagateComposedEvents: true
+//            acceptedButtons: Qt.LeftButton | Qt.RightButton
+//            onClicked: {
+//                taskLine.activated()
+//                if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
+//                mouse.accepted = false
+//            }
+//            onDoubleClicked: {
+//                taskLine.activated()
+//                taskLine.state = "edit"
+//                mouse.accepted = false
+//            }
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
-                //anchors.right: parent.right
-                //anchors.left: prioLbl.right
 
                 text: taskLine.html
                 textFormat: Qt.RichText
