@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Dialogs 1.1
 import QtQuick.Controls 1.4
 
 import Theme 1.0
@@ -20,6 +21,31 @@ TableView {
             currentItem.state = "edit"
         }
     }
+
+    function deleteSelectedTasks() {
+        if (selection.count > 0) deleteDialog.open()
+    }
+
+    MessageDialog {
+        id: deleteDialog
+        title: "QTodotTxt Delete Tasks"
+        text: "Do you really want to delete " + (selection.count === 1 ? "1 task?" : "%1 tasks?".arg(selection.count))
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: {
+            console.log("deleting tasks %1".arg(getSelectedIndexes()))
+            //TODO mainController.deleteTasks(getSelectedIndexes())
+        }
+    }
+
+    function getSelectedIndexes() {
+        var indexes = []
+        selection.forEach(function(rowIndex) {
+            indexes.push(rowIndex);
+        })
+        return indexes;
+    }
+
+    selection.onSelectionChanged: console.log("sc", getSelectedIndexes());
 
     focus: true
     Keys.onReturnPressed: editCurrentTask()
@@ -53,7 +79,7 @@ TableView {
     TableViewColumn {
         role: "html"
         delegate: TaskLine {
-            width: listView.width
+            //width: listView.width
 
             text: {
                 if (taskList[styleData.row]) taskList[styleData.row].text;
@@ -77,7 +103,7 @@ TableView {
         }
     }
 
-    onClicked: console.log("tv cl", row)
+//    onClicked: console.log("sc",getSelectionIndexes());
     onDoubleClicked: editCurrentTask()//console.log("tv dc", row)
 
     Menu {

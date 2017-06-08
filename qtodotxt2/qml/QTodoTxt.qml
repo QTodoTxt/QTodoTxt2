@@ -62,18 +62,6 @@ ApplicationWindow {
     }
 
     MessageDialog {
-        id: confirmDialog
-        title: "QTodotTxt Confirm"
-        text: "Do you really want to delete current task" 
-        standardButtons: StandardButton.Yes | StandardButton.No
-        onYes: {
-            var idx = taskListView.currentIndex
-            mainController.deleteTask(taskListView.currentIndex)
-            if ( idx > 0 ) { taskListView.currentIndex = idx - 1 }
-        }
-    }
-
-    MessageDialog {
         id: errorDialog
         title: "QTodotTxt Error"
         text: "Error message should be here!"

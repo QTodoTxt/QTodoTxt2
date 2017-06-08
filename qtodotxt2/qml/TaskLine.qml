@@ -44,11 +44,11 @@ Loader {
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
+                width: taskLine.width
 
                 text: taskLine.html
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
-                width: taskLine.width
 
                 onLinkActivated:  Qt.openUrlExternally(link)
             }
