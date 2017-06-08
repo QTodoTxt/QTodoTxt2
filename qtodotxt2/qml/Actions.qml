@@ -88,7 +88,7 @@ Item {
 
         text: qsTr("Delete Task")
         shortcut: "Del"
-        onTriggered: confirmDialog.open()
+        onTriggered: taskListView.deleteSelectedTasks()
     }
 
     property Action editTask: Action{
@@ -112,7 +112,7 @@ Item {
         shortcut: "X"
         onTriggered: {
             var idx = taskListView.currentIndex
-            mainController.completeTask(taskListView.model[taskListView.currentIndex])
+            mainController.completeTasks(taskListView.getSelectedIndexes()) //TODO in python
             //taskListView.model[taskListView.currentIndex].toggleCompletion()
             //if (  ( !showCompleted.checked )  && idx > 0) { taskListView.currentIndex = idx -1 }
             if (idx > 0) { taskListView.currentIndex = idx -1 }
