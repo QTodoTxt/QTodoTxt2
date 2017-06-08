@@ -2,8 +2,11 @@ pragma Singleton
 import QtQuick  2.5
 
 QtObject {
-    property SystemPalette systemPalette: SystemPalette { }
+    property SystemPalette activePalette: SystemPalette {
+        colorGroup: SystemPalette.Active
+    }
 
+    property real minRowHeight: 30
 
     property int mediumSpace: 10
     property int smallSpace: 5

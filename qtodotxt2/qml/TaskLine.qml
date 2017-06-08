@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 
+import Theme 1.0
+
 
 Loader {
     id: taskLine
@@ -13,8 +15,8 @@ Loader {
 //        console.log("currentCh")
         if (!current) state = "show"
     }
-    signal activated()
-    signal showContextMenu()
+//    signal activated()
+//    signal showContextMenu()
     signal inputAccepted(string newText)
     onInputAccepted: state = "show"
 
@@ -23,32 +25,25 @@ Loader {
 
     Component {
         id: labelComp
-        MouseArea {
+        Item {
             anchors.fill: parent
             property alias lblHeight: label.height
 
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: {
-                taskLine.activated()
-                if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
-            }
-            onDoubleClicked: {
-                taskLine.activated()
-                taskLine.state = "edit"
-            }
-            //Label {
-                //id: prioLbl
-                //anchors.verticalCenter: parent.verticalCenter
-                //width: 20
-//
-                //text: taskLine.priority
-                //textFormat: Qt.RichText
-            //}
+//            propagateComposedEvents: true
+//            acceptedButtons: Qt.LeftButton | Qt.RightButton
+//            onClicked: {
+//                taskLine.activated()
+//                if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
+//                mouse.accepted = false
+//            }
+//            onDoubleClicked: {
+//                taskLine.activated()
+//                taskLine.state = "edit"
+//                mouse.accepted = false
+//            }
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
-                //anchors.right: parent.right
-                //anchors.left: prioLbl.right
 
                 text: taskLine.html
                 textFormat: Qt.RichText
@@ -101,7 +96,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: labelComp
-                height: taskLine.item.lblHeight + 10
+                height: Math.max(taskLine.item.lblHeight, Theme.minRowHeight)
             }
         },
         State {
@@ -109,7 +104,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: editorComp
-                height: taskLine.item.contentHeight + 10
+                height: Math.max(taskLine.item.contentHeight, Theme.minRowHeight)
             }
         }
     ]

@@ -141,7 +141,7 @@ ApplicationWindow {
                 CompletionPopup { }
             }
 
-            TaskListView {
+            TaskListTableView {
                 id: taskListView
                 Layout.fillHeight: true
                 Layout.fillWidth: true
