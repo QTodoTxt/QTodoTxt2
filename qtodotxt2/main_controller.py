@@ -80,7 +80,6 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot('QModelIndexList')
     @QtCore.pyqtSlot('QVariantList')
     def deleteTasks(self, tasks):
-        print("TASKS in oython", tasks, type(tasks[0]))
         for task in tasks:
             if not isinstance(task, tasklib.Task):
                 # if task is not a task assume it is an int

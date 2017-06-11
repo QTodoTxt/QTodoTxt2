@@ -32,18 +32,14 @@ TableView {
         text: "Do you really want to delete " + (selection.count === 1 ? "1 task?" : "%1 tasks?".arg(selection.count))
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
+            var idx = taskListView.currentIndex
             console.log("deleting tasks %1".arg(getSelectedIndexes()))
-            var idxs = getSelectedIndexes()
-            if ( idxs.length == 0 ) return
             mainController.deleteTasks(getSelectedIndexes())
-            console.log(idxs.length -1, idxs[idxs.length -1], listView.model.length)
-            if (idxs[idxs.length -1] < listView.model.length ) {
-                console.log("SETTING indeX", idxs[idxs.length -1])
-                listView.currentRow = idxs[idxs.length -1]
-            } else {
-                console.log("SETTING indeX 222", listView.model.length - 1)
-                listView.currentRow = listView.model.length - 1
+            if ( idx >= taskListView.rowCount ) {
+                idx = taskListView.rowCount -1
             }
+            taskListView.selection.select(idx)
+            taskListView.currentRow = idx
         }
     }
 
@@ -55,7 +51,7 @@ TableView {
         return indexes;
     }
 
-    selection.onSelectionChanged: console.log("sc", getSelectedIndexes());
+    //selection.onSelectionChanged: console.log("sc", getSelectedIndexes());
 
     focus: true
     Keys.onReturnPressed: editCurrentTask()
@@ -99,7 +95,6 @@ TableView {
 
             current: (listView.currentRow === styleData.row)
             onCurrentChanged: {
-//                console.log("current", current, styleData.row)
                 if (current) listView.currentItem = this
             }
             onHeightChanged: {

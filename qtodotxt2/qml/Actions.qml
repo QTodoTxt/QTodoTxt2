@@ -113,9 +113,11 @@ Item {
         onTriggered: {
             var idx = taskListView.currentIndex
             mainController.completeTasks(taskListView.getSelectedIndexes())
-            //taskListView.model[taskListView.currentIndex].toggleCompletion()
-            //if (  ( !showCompleted.checked )  && idx > 0) { taskListView.currentIndex = idx -1 }
-            if (idx > 0) { taskListView.currentIndex = idx -1 }
+            if ( idx >= taskListView.rowCount ) {
+                idx = taskListView.rowCount -1
+            }
+            taskListView.selection.select(idx)
+            taskListView.currentRow = idx
         }
     }
 
