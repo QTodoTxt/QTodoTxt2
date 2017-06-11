@@ -112,7 +112,7 @@ Item {
         shortcut: "X"
         onTriggered: {
             var idx = taskListView.currentIndex
-            mainController.completeTasks(taskListView.getSelectedIndexes()) //TODO in python
+            mainController.completeTasks(taskListView.getSelectedIndexes())
             //taskListView.model[taskListView.currentIndex].toggleCompletion()
             //if (  ( !showCompleted.checked )  && idx > 0) { taskListView.currentIndex = idx -1 }
             if (idx > 0) { taskListView.currentIndex = idx -1 }
