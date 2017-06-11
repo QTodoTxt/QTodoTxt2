@@ -63,7 +63,7 @@ class Test(unittest.TestCase):
         idx = self.ctrl.newTask("My funny new task + PeaceProject")
         self.assertEqual(count + 1,  len(self.ctrl.allTasks))
         task = self.ctrl.filteredTasks[idx]
-        self.ctrl.deleteTask(task)
+        self.ctrl.deleteTasks([task])
         self.assertEqual(count,  len(self.ctrl.allTasks))
 
     def test_filter(self):
