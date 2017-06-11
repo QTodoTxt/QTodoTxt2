@@ -66,6 +66,5 @@ MenuBar {
     Menu {
         title: qsTr("Help")
         MenuItem { action: actions.helpShowAbout }
-        MenuItem { action: actions.helpShowShortcuts }
     }
 }
