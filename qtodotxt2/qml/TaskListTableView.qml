@@ -33,7 +33,17 @@ TableView {
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
             console.log("deleting tasks %1".arg(getSelectedIndexes()))
-            //TODO mainController.deleteTasks(getSelectedIndexes())
+            var idxs = getSelectedIndexes()
+            if ( idxs.length == 0 ) return
+            mainController.deleteTasks(getSelectedIndexes())
+            console.log(idxs.length -1, idxs[idxs.length -1], listView.model.length)
+            if (idxs[idxs.length -1] < listView.model.length ) {
+                console.log("SETTING indeX", idxs[idxs.length -1])
+                listView.currentRow = idxs[idxs.length -1]
+            } else {
+                console.log("SETTING indeX 222", listView.model.length - 1)
+                listView.currentRow = listView.model.length - 1
+            }
         }
     }
 

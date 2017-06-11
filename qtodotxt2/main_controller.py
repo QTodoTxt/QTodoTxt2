@@ -77,12 +77,15 @@ class MainController(QtCore.QObject):
         self.filteredTasksChanged.emit()
         return after + 1
 
-    @QtCore.pyqtSlot('QVariant')
-    def deleteTask(self, task):
-        if not isinstance(task, tasklib.Task):
-            # if task is not a task assume it is an int
-            task = self._filteredTasks[task]
-        self._file.deleteTask(task)
+    @QtCore.pyqtSlot('QModelIndexList')
+    @QtCore.pyqtSlot('QVariantList')
+    def deleteTasks(self, tasks):
+        print("TASKS in oython", tasks, type(tasks[0]))
+        for task in tasks:
+            if not isinstance(task, tasklib.Task):
+                # if task is not a task assume it is an int
+                task = self._filteredTasks[int(task)]
+            self._file.deleteTask(task)
 
     @property
     def allTasks(self):
