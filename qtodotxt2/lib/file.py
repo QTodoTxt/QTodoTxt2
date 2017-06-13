@@ -75,6 +75,7 @@ class File(QtCore.QObject):
             self.filename = self._createNewFilename()
         elif filename:
             self.filename = filename
+        self.tasks = sorted(self.tasks)  # we sort for users using simple text editors
         self._saveTasks()
         self.modified = False
         self.fileModified.emit(False)

@@ -56,22 +56,22 @@ class TestFile(unittest.TestCase):
             Task(task2)
         ])
         self.saveAndReload()
-        self.assertEqual(self.file.tasks[0].text, task1)
-        self.assertEqual(self.file.tasks[1].text, task2)
+        self.assertEqual(self.file.tasks[0].text, task2)
+        self.assertEqual(self.file.tasks[1].text, task1)
 
     def test_five_tasks(self):
         task1 = Task('do something +project1 @context1')
         task2 = Task('(A) do something else +project1 @context2')
-        task3 = Task('do something else +project1 @context2')
+        task3 = Task('x do something else +project1 @context2')
         task4 = Task('something else +project1 @context2')
         task5 = Task('abc +project1 @context2')
         self.file.tasks.extend([task1, task2, task3, task4, task5])
         self.saveAndReload()
-        self.assertEqual(self.file.tasks[0].text, task1.text)
-        self.assertEqual(self.file.tasks[1].text, task2.text)
-        self.assertEqual(self.file.tasks[2].text, task3.text)
+        self.assertEqual(self.file.tasks[0].text, task2.text)
+        self.assertEqual(self.file.tasks[1].text, task5.text)
+        self.assertEqual(self.file.tasks[2].text, task1.text)
         self.assertEqual(self.file.tasks[3].text, task4.text)
-        self.assertEqual(self.file.tasks[4].text, task5.text)
+        self.assertEqual(self.file.tasks[4].text, task3.text)
 
     def test_get_all_contexts(self):
         self.file.tasks.extend([
