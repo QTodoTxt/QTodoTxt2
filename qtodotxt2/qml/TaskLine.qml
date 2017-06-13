@@ -6,17 +6,11 @@ import Theme 1.0
 
 Loader {
     id: taskLine
-    property int index: 0
-    property string text: ""
-    property string html: ""
-    property string priority: ""
+    property var task
+    property string text: task.text
+    property string html: task.html
 
     property bool current: false
-//    onCurrentChanged: {
-//        if (!current) state = "show"
-//    }
-    signal inputAccepted(int index, string newText)
-//    onInputAccepted: state = "show"
 
     state: "show"
     sourceComponent: labelComp
@@ -47,14 +41,11 @@ Loader {
             property bool discard: false
             property bool accepted: false
 
-//            text: taskLine.text
-
             focus: true
 
             Keys.onReturnPressed: taskLine.state = "show"
             Keys.onEnterPressed: taskLine.state = "show"
             Keys.onEscapePressed: {
-//                discard = true
                 if (taskLine.text === "") text = ""
                 else discard = true
                 taskLine.state = "show"
@@ -68,7 +59,7 @@ Loader {
                 cursorPosition = text.length
             }
 
-            Component.onDestruction: if (!discard) taskLine.inputAccepted(index, text)
+            Component.onDestruction: if (!discard) task.text = text
 
             CompletionPopup { }
         }
