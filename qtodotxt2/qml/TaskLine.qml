@@ -6,16 +6,17 @@ import Theme 1.0
 
 Loader {
     id: taskLine
+    property int index: 0
     property string text: ""
     property string html: ""
     property string priority: ""
 
     property bool current: false
-    onCurrentChanged: {
-        if (!current) state = "show"
-    }
-    signal inputAccepted(string newText)
-    onInputAccepted: state = "show"
+//    onCurrentChanged: {
+//        if (!current) state = "show"
+//    }
+    signal inputAccepted(int index, string newText)
+//    onInputAccepted: state = "show"
 
     state: "show"
     sourceComponent: labelComp
@@ -45,35 +46,31 @@ Loader {
         TextArea {
             property bool discard: false
             property bool accepted: false
-            function acceptInput() {
-                console.log("acceptInput", accepted, discard)
-                if (!accepted && !discard) {
-                    accepted = true;
-                    taskLine.inputAccepted(text)
-                }
-            }
 
-            text: taskLine.text
+//            text: taskLine.text
 
             focus: true
 
             Keys.onReturnPressed: taskLine.state = "show"
             Keys.onEnterPressed: taskLine.state = "show"
             Keys.onEscapePressed: {
-                discard = true
+//                discard = true
+                if (taskLine.text === "") text = ""
+                else discard = true
                 taskLine.state = "show"
             }
 
-            CompletionPopup { }
+            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
 
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
+                text = taskLine.text
                 cursorPosition = text.length
             }
 
-            Component.onDestruction: if (!discard) acceptInput()
+            Component.onDestruction: if (!discard) taskLine.inputAccepted(index, text)
 
-            onActiveFocusChanged: taskLine.state = "show"
+            CompletionPopup { }
         }
     }
 

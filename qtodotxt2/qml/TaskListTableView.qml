@@ -108,9 +108,10 @@ TableView {
                 listView.rowHeightChanged(styleData.row, height)
             }
             onInputAccepted: {
-                console.log("input acccepted text: ", newText, styleData.row)
-                taskList[styleData.row].text = newText
+                console.log("input acccepted text: ", newText, index)
+                taskList[index].text = newText
             }
+            Component.onCompleted: index = styleData.row
         }
     }
 
