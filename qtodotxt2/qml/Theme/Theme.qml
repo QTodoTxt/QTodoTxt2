@@ -20,6 +20,7 @@ QtObject {
         "document-open": "",
         "document-save": "FileSave.png",
         "list-add": "TaskCreate.png",
+        "new-from": "TaskNewFrom.png",
         "list-remove": "TaskDelete.png",
         "document-edit": "TaskEdit.png",
         "checkmark": "TaskComplete.png",

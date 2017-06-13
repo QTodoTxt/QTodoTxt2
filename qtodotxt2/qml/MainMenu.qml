@@ -38,8 +38,9 @@ MenuBar {
         //style: MyStyle.MenuStyle{}
     }
     Menu {
-        title: qsTr("Edit")
+        title: qsTr("Actions")
         MenuItem { action: actions.newTask }
+        MenuItem { action: actions.newTaskFrom }
         MenuItem { action: actions.editTask }
         MenuItem { action: actions.deleteTask }
         MenuSeparator {}
@@ -55,6 +56,7 @@ MenuBar {
         MenuItem { action: actions.showToolBarAction}
         MenuItem { action: actions.showCompleted}
         MenuItem { action: actions.showFuture}
+        MenuItem { action: actions.showHidden}
     }
     Menu {
         title: qsTr("Sorting")

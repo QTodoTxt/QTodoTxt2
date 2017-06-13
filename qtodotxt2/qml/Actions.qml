@@ -80,6 +80,22 @@ Item {
         }
     }
 
+    property Action newTaskFrom: Action{
+
+        iconName: "new-from"
+        iconSource: Theme.iconSource(iconName)
+        text: qsTr("Create New Task from Template")
+
+        //shortcut: 'Ctrl-Y'
+        onTriggered: {
+            if ( taskListView.currentIndex < 0 ) { return; }
+            var text = taskListView.model[taskListView.currentIndex].text
+            var idx = mainController.newTask(text, taskListView.currentIndex)
+            taskListView.currentIndex = idx
+            taskListView.editCurrentTask()
+        }
+    }
+
     property Action deleteTask: Action{
         //id:deleteTask
 

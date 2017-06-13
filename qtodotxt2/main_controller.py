@@ -80,10 +80,14 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtSlot('QModelIndexList')
     @QtCore.pyqtSlot('QVariantList')
     def deleteTasks(self, tasks):
+        new_tasks = []
         for task in tasks:
-            if not isinstance(task, tasklib.Task):
-                # if task is not a task assume it is an int
-                task = self._filteredTasks[int(task)]
+            if isinstance(task, tasklib.Task):
+                t = task
+            else:
+                t = self._filteredTasks[int(task)]
+            new_tasks.append(t)
+        for task in new_tasks:
             self._file.deleteTask(task)
 
     @property

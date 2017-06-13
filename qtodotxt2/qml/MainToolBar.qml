@@ -8,12 +8,11 @@ ToolBar {
             ToolButton { action: actions.showSearchAction}
             ToolButton { action: actions.showFilterPanel}
             ToolButton { action: actions.showCompleted}
-            ToolButton { action: actions.showFuture}
-            ToolButton { action: actions.showHidden}
             ToolBarSeparator { }
             ToolButton { action: actions.fileSave }
             ToolBarSeparator { }
             ToolButton { action: actions.newTask }
+            ToolButton { action: actions.newTaskFrom }
             ToolButton { action: actions.editTask }
             ToolButton { action: actions.deleteTask }
             ToolButton { action: actions.completeTasks}
