@@ -16,6 +16,12 @@ TableView {
 
     signal rowHeightChanged(int row, real height)
 
+    function newTask() {
+        var idx = mainController.newTask('', taskListView.currentIndex)
+        currentRow = idx
+        editCurrentTask()
+    }
+
     function editCurrentTask() {
         if (currentItem !== null) {
             currentItem.state = "edit"
@@ -102,7 +108,7 @@ TableView {
                 listView.rowHeightChanged(styleData.row, height)
             }
             onInputAccepted: {
-//                console.log("input acccepted text: ", newText)
+                console.log("input acccepted text: ", newText, styleData.row)
                 taskList[styleData.row].text = newText
             }
         }

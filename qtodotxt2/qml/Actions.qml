@@ -74,9 +74,7 @@ Item {
 
         shortcut: "Ins"|StandardKey.New
         onTriggered: {
-            var idx = mainController.newTask('', taskListView.currentIndex)
-            taskListView.currentIndex = idx
-            taskListView.editCurrentTask()
+            taskListView.newTask()
         }
     }
 

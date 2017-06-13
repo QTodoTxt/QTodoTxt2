@@ -12,11 +12,8 @@ Loader {
 
     property bool current: false
     onCurrentChanged: {
-//        console.log("currentCh")
         if (!current) state = "show"
     }
-//    signal activated()
-//    signal showContextMenu()
     signal inputAccepted(string newText)
     onInputAccepted: state = "show"
 
@@ -29,18 +26,6 @@ Loader {
             anchors.fill: parent
             property alias lblHeight: label.height
 
-//            propagateComposedEvents: true
-//            acceptedButtons: Qt.LeftButton | Qt.RightButton
-//            onClicked: {
-//                taskLine.activated()
-//                if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
-//                mouse.accepted = false
-//            }
-//            onDoubleClicked: {
-//                taskLine.activated()
-//                taskLine.state = "edit"
-//                mouse.accepted = false
-//            }
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
@@ -58,34 +43,37 @@ Loader {
     Component {
         id: editorComp
         TextArea {
-//            id: editor
             property bool discard: false
+            property bool accepted: false
+            function acceptInput() {
+                console.log("acceptInput", accepted, discard)
+                if (!accepted && !discard) {
+                    accepted = true;
+                    taskLine.inputAccepted(text)
+                }
+            }
+
             text: taskLine.text
 
             focus: true
-            onEditingFinished: {
-//                taskLine.state = "show"
-            }
-            Keys.onReturnPressed: taskLine.inputAccepted(text)
-            Keys.onEnterPressed: taskLine.inputAccepted(text)
+
+            Keys.onReturnPressed: taskLine.state = "show"
+            Keys.onEnterPressed: taskLine.state = "show"
             Keys.onEscapePressed: {
-                //text = taskLine.text
                 discard = true
                 taskLine.state = "show"
             }
 
             CompletionPopup { }
+
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
                 cursorPosition = text.length
             }
 
-            onActiveFocusChanged: {
-                if ( ! discard && ! activeFocus ) {
-                    taskLine.inputAccepted(text)
-                }
-            }
+            Component.onDestruction: if (!discard) acceptInput()
 
+            onActiveFocusChanged: taskLine.state = "show"
         }
     }
 
@@ -108,5 +96,4 @@ Loader {
             }
         }
     ]
-//    Component.onCompleted: console.log(text.substring(0,10))
 }
