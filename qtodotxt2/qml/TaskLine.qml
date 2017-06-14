@@ -7,8 +7,8 @@ import Theme 1.0
 Loader {
     id: taskLine
     property var task
-    property string text: (task !== null ? task.text : "")
-    property string html: (task !== null ? task.html : "")
+//    property string text: (task !== null ? task.text : "")
+//    property string html: (task !== null ? task.html : "")
 
     property bool current: false
 
@@ -27,7 +27,7 @@ Loader {
                 anchors.verticalCenter: parent.verticalCenter
                 width: taskLine.width
 
-                text: taskLine.html
+                text: (task !== null ? task.html : "")
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
 
@@ -41,17 +41,6 @@ Loader {
         TextArea {
             property bool runQuitEdit: true
             property bool discard: false
-
-//            function quitEdit(acceptInput) {
-//                console.log("quitting edit", runQuitEdit)
-//                if (runQuitEdit) {
-//                    runQuitEdit = false
-//                    console.log("setting new text")
-//                    if (acceptInput) task.text = text
-//                    else if (taskLine.text === "") task.text = ""
-//                    taskLine.state = "show"
-//                }
-//            }
 
             focus: true
 
@@ -72,7 +61,7 @@ Loader {
 
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
-                text = taskLine.text
+                text = task.text
                 cursorPosition = text.length
             }
 
