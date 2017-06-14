@@ -69,7 +69,7 @@ class File(QtCore.QObject):
         task.modified.connect(self._taskModified)
 
     def save(self, filename=''):
-        logger.debug('File.save called with filename="%s"', filename)
+#        logger.debug('File.save called with filename="%s"', filename)
         self._fileObserver.clear()
         if not filename and not self.filename:
             self.filename = self._createNewFilename()
@@ -94,7 +94,7 @@ class File(QtCore.QObject):
     def _saveTasks(self):
         with open(self.filename, 'wt', encoding='utf-8') as fd:
             fd.writelines([(task.text + self.newline) for task in self.tasks])
-        logger.debug('%s was saved to disk.', self.filename)
+#        logger.debug('%s was saved to disk.', self.filename)
 
     def saveDoneTask(self, task):
         doneFilename = os.path.join(os.path.dirname(self.filename), 'done.txt')
@@ -183,5 +183,5 @@ class FileObserver(QtCore.QFileSystemWatcher):
 
     def clear(self):
         if self.files():
-            logger.debug('Clearing watchlist.')
+#            logger.debug('Clearing watchlist.')
             self.removePaths(self.files())

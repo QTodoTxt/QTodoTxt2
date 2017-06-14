@@ -198,6 +198,7 @@ class MainController(QtCore.QObject):
             self.filtersController.setFilters(filters)
         tasks = self.filtersController.filter(self._file.tasks)
         tasks = getattr(tasklib.TaskSorter, self._sortingMode)(tasks)
+        print("filteredTasks about to change in python")
         self._filteredTasks = tasks
         self.filteredTasksChanged.emit()
 
@@ -234,7 +235,7 @@ class MainController(QtCore.QObject):
             path = path.toLocalFile()
         self._file.filename = path
 
-        logger.debug('MainController, saving file: %s.', path)
+#        logger.debug('MainController, saving file: %s.', path)
         try:
             self._file.save(path)
         except OSError as ex:

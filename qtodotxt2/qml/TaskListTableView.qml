@@ -9,7 +9,7 @@ TableView {
     //TODO delete (all selected)
 
     id: listView
-    property var taskList
+    property var taskList: []
     property alias currentIndex: listView.currentRow
     property Item currentItem
     property int _lastIndex: 0

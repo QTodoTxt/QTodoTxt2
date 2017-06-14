@@ -7,10 +7,20 @@ import Theme 1.0
 Loader {
     id: taskLine
     property var task
-    property string text: task.text
-    property string html: task.html
+    property string text: (task !== null ? task.text : "")
+    property string html: (task !== null ? task.html : "")
 
     property bool current: false
+
+    property bool runQuitEdit: true
+    function quitEdit(acceptInput, newText) {
+        if (runQuitEdit) {
+            runQuitEdit = false
+            console.log("setting new text")
+            task.text = newText
+            taskLine.state = "show"
+        }
+    }
 
     state: "show"
     sourceComponent: labelComp
@@ -38,20 +48,24 @@ Loader {
     Component {
         id: editorComp
         TextArea {
-            property bool discard: false
-            property bool accepted: false
+//            property bool discard: false
 
             focus: true
 
-            Keys.onReturnPressed: taskLine.state = "show"
-            Keys.onEnterPressed: taskLine.state = "show"
+            Keys.onReturnPressed: quitEdit(true, text) //taskLine.state = "show"
+            Keys.onEnterPressed: quitEdit(true, text) //taskLine.state = "show"
             Keys.onEscapePressed: {
-                if (taskLine.text === "") text = ""
-                else discard = true
-                taskLine.state = "show"
+                if (taskLine.text === "") quitEdit(true, "")
+                else quitEdit(false, "")
             }
 
-            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
+            onActiveFocusChanged: {
+                console.log("activeFocusChanged", activeFocus, taskLine.state)
+                if (!activeFocus) {
+                    console.log("lost focus")
+                    quitEdit(true, text)
+                }
+            }
 
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
@@ -59,7 +73,7 @@ Loader {
                 cursorPosition = text.length
             }
 
-            Component.onDestruction: if (!discard) task.text = text
+//            Component.onDestruction: if (!discard) task.text = text
 
             CompletionPopup { }
         }
