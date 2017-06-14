@@ -10,15 +10,27 @@ TableView {
 
     id: listView
     property var taskList: []
+    onTaskListChanged: {
+        console.log("taskListChanged", currentRow)
+        restoreSelection()
+    }
     property alias currentIndex: listView.currentRow
     property Item currentItem
-    property int _lastIndex: 0
-//    property bool editing: currentItem.state === "edit"
-//    onEditingChanged: console.log("editing", editing)
+    onCurrentItemChanged: console.log("currentItem", currentRow, currentItem, typeof currentItem)
+    onCurrentRowChanged: {
+        console.log("currentRow", currentRow)
+//        selection.select(currentRow, currentRow)
+    }
+    property int lastIndex: 0
+    property bool editing: (currentItem !== null ? currentItem.state === "edit" : false)
+    onEditingChanged: console.log("editing", editing)
+
+    selection.onSelectionChanged: console.log("selection.count", selection.count)
 
     signal rowHeightChanged(int row, real height)
 
     function newTask() {
+        quitEditing()
         var idx = mainController.newTask('', taskListView.currentIndex)
         currentRow = idx
         editCurrentTask()
@@ -40,16 +52,26 @@ TableView {
         text: "Do you really want to delete " + (selection.count === 1 ? "1 task?" : "%1 tasks?".arg(selection.count))
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            var idx = taskListView.currentIndex
+            taskListView.storeSelection()
             console.log("deleting tasks %1".arg(getSelectedIndexes()))
             mainController.deleteTasks(getSelectedIndexes())
-            if ( idx >= taskListView.rowCount ) {
-                idx = taskListView.rowCount -1
-            }
-            taskListView.selection.select(idx)
-            taskListView.currentRow = idx
+            taskListView.restoreSelection()
         }
     }
+
+    function quitEditing() {
+        if (editing) currentItem.state = "show"
+    }
+
+    function storeSelection() {
+        lastIndex = currentRow
+    }
+
+    function restoreSelection() {
+        currentRow = Math.min(lastIndex, taskListView.rowCount - 1)
+        selection.select(currentRow)
+    }
+
 
     function getSelectedIndexes() {
         var indexes = []

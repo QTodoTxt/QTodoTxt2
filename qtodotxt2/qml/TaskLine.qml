@@ -12,17 +12,8 @@ Loader {
 
     property bool current: false
 
-    property bool runQuitEdit: true
-    function quitEdit(acceptInput, newText) {
-        if (runQuitEdit) {
-            runQuitEdit = false
-            console.log("setting new text")
-            task.text = newText
-            taskLine.state = "show"
-        }
-    }
-
     state: "show"
+    onStateChanged: console.log("taskline.state", state)
     sourceComponent: labelComp
 
     Component {
@@ -48,22 +39,34 @@ Loader {
     Component {
         id: editorComp
         TextArea {
-//            property bool discard: false
+            property bool runQuitEdit: true
+            property bool discard: false
+
+//            function quitEdit(acceptInput) {
+//                console.log("quitting edit", runQuitEdit)
+//                if (runQuitEdit) {
+//                    runQuitEdit = false
+//                    console.log("setting new text")
+//                    if (acceptInput) task.text = text
+//                    else if (taskLine.text === "") task.text = ""
+//                    taskLine.state = "show"
+//                }
+//            }
 
             focus: true
 
-            Keys.onReturnPressed: quitEdit(true, text) //taskLine.state = "show"
-            Keys.onEnterPressed: quitEdit(true, text) //taskLine.state = "show"
+            Keys.onReturnPressed: taskLine.state = "show"
+            Keys.onEnterPressed: taskLine.state = "show"
             Keys.onEscapePressed: {
-                if (taskLine.text === "") quitEdit(true, "")
-                else quitEdit(false, "")
+                discard = true;
+                taskLine.state = "show";
             }
 
             onActiveFocusChanged: {
                 console.log("activeFocusChanged", activeFocus, taskLine.state)
                 if (!activeFocus) {
                     console.log("lost focus")
-                    quitEdit(true, text)
+                    taskLine.state = "show"
                 }
             }
 
@@ -73,7 +76,10 @@ Loader {
                 cursorPosition = text.length
             }
 
-//            Component.onDestruction: if (!discard) task.text = text
+            Component.onDestruction: {
+                if (!discard) task.text = text
+                else if (task.text === "") task.text = ""
+            }
 
             CompletionPopup { }
         }

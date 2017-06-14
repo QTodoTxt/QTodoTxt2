@@ -31,6 +31,7 @@ Item {
         iconName: "document-open"
         text: qsTr("Open")
         shortcut: StandardKey.Open
+        enabled: !taskListView.editing
         onTriggered: {
             fileDialog.selectExisting = true
             fileDialog.open()
@@ -43,6 +44,7 @@ Item {
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Save")
         shortcut: StandardKey.Save
+        enabled: !taskListView.editing
         onTriggered: mainController.save()
     }
 
@@ -51,6 +53,7 @@ Item {
         iconName: "document-save-as"
         text: qsTr("Save As")
         shortcut: StandardKey.SaveAs
+        enabled: !taskListView.editing
         onTriggered: {
             fileDialog.selectExisting = false
             fileDialog.open()
@@ -66,13 +69,13 @@ Item {
     }
 
     property Action newTask: Action{
-        //id:newTask
-
         iconName: "list-add"
         iconSource: Theme.iconSource(iconName) //appWindow.theme + "TaskCreate.png"
         text: qsTr("Create New Task")
 
         shortcut: "Ins"|StandardKey.New
+
+        enabled: !taskListView.editing
         onTriggered: {
             taskListView.newTask()
         }
@@ -83,8 +86,8 @@ Item {
         iconName: "new-from"
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Create New Task from Template")
-
         //shortcut: 'Ctrl-Y'
+        enabled: !taskListView.editing
         onTriggered: {
             if ( taskListView.currentIndex < 0 ) { return; }
             var text = taskListView.model[taskListView.currentIndex].text
@@ -99,9 +102,9 @@ Item {
 
         iconName: "list-remove"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Delete Task")
         shortcut: "Del"
+        enabled: !taskListView.editing
         onTriggered: taskListView.deleteSelectedTasks()
     }
 
@@ -113,7 +116,7 @@ Item {
 
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
-        enabled: taskListView.currentIndex > -1
+        enabled: (taskListView.currentIndex > -1 && !taskListView.editing)
         onTriggered: { taskListView.editCurrentTask() }
     }
 
@@ -124,14 +127,11 @@ Item {
 
         text: qsTr("Complete Task")
         shortcut: "X"
+        enabled: !taskListView.editing
         onTriggered: {
-            var idx = taskListView.currentIndex
+            taskListView.storeSelection()
             mainController.completeTasks(taskListView.getSelectedIndexes())
-            if ( idx >= taskListView.rowCount ) {
-                idx = taskListView.rowCount -1
-            }
-            taskListView.selection.select(idx)
-            taskListView.currentRow = idx
+            taskListView.restoreSelection()
         }
     }
 
@@ -142,6 +142,7 @@ Item {
 
         text: qsTr("Increase Priority")
         shortcut: "+"
+        enabled: !taskListView.editing
         onTriggered: {
             taskListView.model[taskListView.currentIndex].increasePriority()
         }
@@ -154,6 +155,7 @@ Item {
 
         text: qsTr("Decrease Priority")
         shortcut: "-"
+        enabled: !taskListView.editing
         onTriggered: {
             taskListView.model[taskListView.currentIndex].decreasePriority()
         }
@@ -200,6 +202,7 @@ Item {
         shortcut: "Ctrl+C"
         checkable: true
         checked: false
+        enabled: !taskListView.editing
         onToggled: mainController.showCompleted = checked
     }
 
@@ -212,6 +215,7 @@ Item {
         shortcut: "Ctrl+F"
         checkable: true
         checked: true
+        enabled: !taskListView.editing
         onToggled: mainController.showFuture = checked
     }
 
@@ -224,6 +228,7 @@ Item {
         shortcut: "Ctrl+H"
         checkable: true
         checked: false
+        enabled: !taskListView.editing
         onToggled: mainController.showHidden = checked
     }
 
@@ -234,6 +239,7 @@ Item {
 
         text: qsTr("Archive Completed Tasks")
         shortcut: "Ctrl+A"
+        enabled: !taskListView.editing
         onTriggered: mainController.archiveCompletedTasks()
     }
 
@@ -272,18 +278,21 @@ Item {
     property Action sortDefault: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Default"
+        enabled: !taskListView.editing
         onTriggered: mainController.sortingMode = "default"
     }
 
     property Action sortByProjects: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Projects"
+        enabled: !taskListView.editing
         onTriggered: mainController.sortingMode = "projects"
     }
 
     property Action sortByContexts: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Contexts"
+        enabled: !taskListView.editing
         onTriggered: mainController.sortingMode = "contexts"
     }
 
@@ -291,6 +300,7 @@ Item {
         //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"
         text: "Due Date"
+        enabled: !taskListView.editing
         onTriggered: mainController.sortingMode = "due"
     }
 
