@@ -13,8 +13,16 @@ TableView {
     property alias currentIndex: listView.currentRow
     property Item currentItem
     property int _lastIndex: 0
+//    property bool editing: currentItem.state === "edit"
+//    onEditingChanged: console.log("editing", editing)
 
     signal rowHeightChanged(int row, real height)
+
+    function newTask() {
+        var idx = mainController.newTask('', taskListView.currentIndex)
+        currentRow = idx
+        editCurrentTask()
+    }
 
     function editCurrentTask() {
         if (currentItem !== null) {
@@ -76,7 +84,6 @@ TableView {
         Connections {
             target: listView
             onRowHeightChanged: {
-//                console.log("rhc", row, height)
                 if (styleData.row === row) rect.height = height
             }
         }
@@ -85,30 +92,18 @@ TableView {
     TableViewColumn {
         role: "html"
         delegate: TaskLine {
-            //width: listView.width
-
-            text: {
-                if (taskList[styleData.row]) taskList[styleData.row].text;
-                else ""
-            }
-            html: styleData.value //taskList[styleData.row].html
 
             current: (listView.currentRow === styleData.row)
             onCurrentChanged: {
                 if (current) listView.currentItem = this
             }
             onHeightChanged: {
-//                console.log("rh", height)
                 listView.rowHeightChanged(styleData.row, height)
             }
-            onInputAccepted: {
-//                console.log("input acccepted text: ", newText)
-                taskList[styleData.row].text = newText
-            }
+            Component.onCompleted: task = taskList[styleData.row]
         }
     }
 
-//    onClicked: console.log("sc",getSelectionIndexes());
     onDoubleClicked: editCurrentTask()//console.log("tv dc", row)
 
     Menu {

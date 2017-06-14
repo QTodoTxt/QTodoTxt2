@@ -6,19 +6,11 @@ import Theme 1.0
 
 Loader {
     id: taskLine
-    property string text: ""
-    property string html: ""
-    property string priority: ""
+    property var task
+    property string text: task.text
+    property string html: task.html
 
     property bool current: false
-    onCurrentChanged: {
-//        console.log("currentCh")
-        if (!current) state = "show"
-    }
-//    signal activated()
-//    signal showContextMenu()
-    signal inputAccepted(string newText)
-    onInputAccepted: state = "show"
 
     state: "show"
     sourceComponent: labelComp
@@ -29,18 +21,6 @@ Loader {
             anchors.fill: parent
             property alias lblHeight: label.height
 
-//            propagateComposedEvents: true
-//            acceptedButtons: Qt.LeftButton | Qt.RightButton
-//            onClicked: {
-//                taskLine.activated()
-//                if (mouse.button === Qt.RightButton) taskLine.showContextMenu()
-//                mouse.accepted = false
-//            }
-//            onDoubleClicked: {
-//                taskLine.activated()
-//                taskLine.state = "edit"
-//                mouse.accepted = false
-//            }
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
@@ -58,34 +38,30 @@ Loader {
     Component {
         id: editorComp
         TextArea {
-//            id: editor
             property bool discard: false
-            text: taskLine.text
+            property bool accepted: false
 
             focus: true
-            onEditingFinished: {
-//                taskLine.state = "show"
-            }
-            Keys.onReturnPressed: taskLine.inputAccepted(text)
-            Keys.onEnterPressed: taskLine.inputAccepted(text)
+
+            Keys.onReturnPressed: taskLine.state = "show"
+            Keys.onEnterPressed: taskLine.state = "show"
             Keys.onEscapePressed: {
-                //text = taskLine.text
-                discard = true
+                if (taskLine.text === "") text = ""
+                else discard = true
                 taskLine.state = "show"
             }
 
-            CompletionPopup { }
+            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
+
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
+                text = taskLine.text
                 cursorPosition = text.length
             }
 
-            onActiveFocusChanged: {
-                if ( ! discard && ! activeFocus ) {
-                    taskLine.inputAccepted(text)
-                }
-            }
+            Component.onDestruction: if (!discard) task.text = text
 
+            CompletionPopup { }
         }
     }
 
@@ -108,5 +84,4 @@ Loader {
             }
         }
     ]
-//    Component.onCompleted: console.log(text.substring(0,10))
 }
