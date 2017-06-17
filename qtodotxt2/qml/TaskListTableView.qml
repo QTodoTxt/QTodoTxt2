@@ -4,9 +4,9 @@ import QtQuick.Controls 1.4
 
 import Theme 1.0
 
-TableView {
 
-    //TODO delete (all selected)
+TableView {
+    //TODO select after start and new filter
 
     id: listView
     property var taskList: []
@@ -25,15 +25,30 @@ TableView {
     property bool editing: (currentItem !== null ? currentItem.state === "edit" : false)
     onEditingChanged: console.log("editing", editing)
 
-    selection.onSelectionChanged: console.log("selection.count", selection.count)
+    selection.onSelectionChanged: {
+        console.log("selection.count", selection.count)
+        if (selection.count === 0) currentItem = null
+    }
+
 
     signal rowHeightChanged(int row, real height)
 
-    function newTask() {
+    function newTask(template) {
         quitEditing()
-        var idx = mainController.newTask('', taskListView.currentIndex)
+//        console.log("creating new task")
+        var idx = mainController.newTask(template, taskListView.currentIndex)
+//        console.log("selecting new task")
         currentRow = idx
+        selection.select(idx)
+//        console.log("editing new task")
         editCurrentTask()
+    }
+
+    function newFromTask() {
+        if ( taskListView.currentItem !== null ) {
+            var text = taskListView.currentItem.task.text
+            newTask(text)
+        }
     }
 
     function editCurrentTask() {
@@ -64,10 +79,12 @@ TableView {
     }
 
     function storeSelection() {
+        console.log("storing selection")
         lastIndex = currentRow
     }
 
     function restoreSelection() {
+        console.log("restoring selection", lastIndex)
         currentRow = Math.min(lastIndex, taskListView.rowCount - 1)
         selection.select(currentRow)
     }
@@ -115,7 +132,7 @@ TableView {
         role: "html"
         delegate: TaskLine {
 
-            current: (listView.currentRow === styleData.row)
+            current: (styleData.selected && listView.currentRow === styleData.row)
             onCurrentChanged: {
                 if (current) listView.currentItem = this
             }

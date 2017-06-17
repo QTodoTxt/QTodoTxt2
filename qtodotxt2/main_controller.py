@@ -326,3 +326,10 @@ class MainController(QtCore.QObject):
             else:
                 task.setPending()
 
+    docPathChanged = QtCore.pyqtSignal()
+
+    @QtCore.pyqtProperty('QUrl', notify=docPathChanged)
+    def docPath(self):
+        return QtCore.QUrl(QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation))
+
+
