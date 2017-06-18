@@ -122,7 +122,9 @@ Item {
         shortcut: "+"
         enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: {
+            taskListView.storeSelection()
             taskListView.currentItem.task.increasePriority()
+            taskListView.restoreSelection()
         }
     }
 
@@ -133,7 +135,9 @@ Item {
         shortcut: "-"
         enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: {
+            taskListView.storeSelection()
             taskListView.currentItem.task.decreasePriority()
+            taskListView.restoreSelection()
         }
     }
 
@@ -174,7 +178,11 @@ Item {
         checkable: true
         checked: false
         enabled: !taskListView.editing
-        onToggled: mainController.showCompleted = checked
+        onToggled: {
+            taskListView.storeSelection()
+            mainController.showCompleted = checked
+            taskListView.restoreSelection()
+        }
     }
 
     property Action showFuture: Action{
@@ -186,7 +194,11 @@ Item {
         checkable: true
         checked: true
         enabled: !taskListView.editing
-        onToggled: mainController.showFuture = checked
+        onToggled: {
+            taskListView.storeSelection()
+            mainController.showFuture = checked
+            taskListView.restoreSelection()
+        }
     }
 
     property Action showHidden: Action{
@@ -198,7 +210,11 @@ Item {
         checkable: true
         checked: false
         enabled: !taskListView.editing
-        onToggled: mainController.showHidden = checked
+        onToggled: {
+            taskListView.storeSelection()
+            mainController.showHidden = checked
+            taskListView.restoreSelection()
+        }
     }
 
     property Action archive: Action{
@@ -207,7 +223,11 @@ Item {
         text: qsTr("Archive Completed Tasks")
         shortcut: "Ctrl+A"
         enabled: !taskListView.editing
-        onTriggered: mainController.archiveCompletedTasks()
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.archiveCompletedTasks()
+            taskListView.restoreSelection()
+        }
     }
 
     property Action addLink: Action{
@@ -242,21 +262,33 @@ Item {
         iconName: "view-sort-ascending-symbolic"
         text: "Default"
         enabled: !taskListView.editing
-        onTriggered: mainController.sortingMode = "default"
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "default"
+            taskListView.restoreSelection()
+        }
     }
 
     property Action sortByProjects: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Projects"
         enabled: !taskListView.editing
-        onTriggered: mainController.sortingMode = "projects"
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "projects"
+            taskListView.restoreSelection()
+        }
     }
 
     property Action sortByContexts: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Contexts"
         enabled: !taskListView.editing
-        onTriggered: mainController.sortingMode = "contexts"
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "contexts"
+            taskListView.restoreSelection()
+        }
     }
 
     property Action sortByDueDate: Action{
@@ -264,7 +296,11 @@ Item {
         iconName: "view-sort-ascending-symbolic"
         text: "Due Date"
         enabled: !taskListView.editing
-        onTriggered: mainController.sortingMode = "due"
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "due"
+            taskListView.restoreSelection()
+        }
     }
 
     FileDialog {
@@ -284,7 +320,9 @@ Item {
         id: linkDialog
         selectExisting: true
         onAccepted: {
+            taskListView.storeSelection()
             taskListView.currentItem.task.text += ' ' + fileUrl.toString()
+            taskListView.restoreSelection()
         }
     }
 }

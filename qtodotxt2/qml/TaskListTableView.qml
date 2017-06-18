@@ -12,7 +12,7 @@ TableView {
     property var taskList: []
     onTaskListChanged: {
         console.log("taskListChanged", currentRow)
-        restoreSelection()
+//        restoreSelection()
     }
     property alias currentIndex: listView.currentRow
     property Item currentItem
