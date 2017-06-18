@@ -11,6 +11,7 @@ Loader {
 //    property string html: (task !== null ? task.html : "")
 
     property bool current: false
+    property bool hovered: false
 
     state: "show"
     onStateChanged: console.log("taskline.state", state)
@@ -18,22 +19,25 @@ Loader {
 
     Component {
         id: labelComp
-        Item {
-            anchors.fill: parent
-            property alias lblHeight: label.height
-
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
-                width: taskLine.width
+//                width: taskLine.width
 
                 text: (task !== null ? task.html : "")
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
 
                 onLinkActivated:  Qt.openUrlExternally(link)
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    propagateComposedEvents: true
+                    acceptedButtons: Qt.NoButton
+                    onEntered: taskLine.hovered = true
+                    onExited: taskLine.hovered = false
+                }
             }
-        }
     }
 
     Component {
@@ -81,7 +85,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: labelComp
-                height: Math.max(taskLine.item.lblHeight, Theme.minRowHeight)
+                height: Math.max(taskLine.item.height, Theme.minRowHeight)
             }
         },
         State {

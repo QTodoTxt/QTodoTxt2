@@ -32,6 +32,7 @@ TableView {
 
 
     signal rowHeightChanged(int row, real height)
+    signal rowHoveredChanged(int row, bool rowHovered)
 
     function newTask(template) {
         quitEditing()
@@ -110,20 +111,39 @@ TableView {
     rowDelegate: Rectangle {
         id: rect
         height: 30
+        property bool hovered: false
         color: {
-           var baseColor = styleData.alternate?Theme.activePalette.alternateBase:Theme.activePalette.base
-           return styleData.selected?Theme.activePalette.highlight:baseColor
+            var baseColor = styleData.alternate ? Theme.activePalette.alternateBase : Theme.activePalette.base
+            var hoverBaseColor = rect.hovered ? Theme.inactivePalette.highlight : baseColor
+            var highlightColor = listView.activeFocus ? Theme.activePalette.highlight : Theme.inactivePalette.highlight
+            var hoverHighlightColor = rect.hovered ? Qt.lighter(highlightColor, 1.2) : highlightColor
+            return styleData.selected ? hoverHighlightColor : hoverBaseColor
         }
+        opacity: hovered && !styleData.selected ? 0.5 : 1
+//        onColorChanged: console.log(color)
+
         MouseArea {
             anchors.fill: parent
             propagateComposedEvents: true
             acceptedButtons: Qt.RightButton
+            hoverEnabled: true
             onClicked: contextMenu.popup()
+            onEntered: rect.hovered = true
+            onExited: {
+                rect.hovered = false
+//                console.log("exited")
+            }
         }
         Connections {
             target: listView
             onRowHeightChanged: {
                 if (styleData.row === row) rect.height = height
+            }
+        }
+        Connections {
+            target: listView
+            onRowHoveredChanged: {
+                if (styleData.row === row) rect.hovered = rowHovered
             }
         }
      }
@@ -139,6 +159,9 @@ TableView {
             onHeightChanged: {
                 listView.rowHeightChanged(styleData.row, height)
             }
+            onHoveredChanged: {
+                listView.rowHoveredChanged(styleData.row, hovered)
+            }
             Component.onCompleted: task = taskList[styleData.row]
         }
     }
@@ -149,6 +172,10 @@ TableView {
         id: contextMenu
         MenuItem { action: actions.newTask }
         MenuItem { action: actions.editTask }
+    }
+
+    Component.onCompleted: {
+        console.log("complete")
     }
 }
 
