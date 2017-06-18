@@ -7,59 +7,72 @@ import Theme 1.0
 Loader {
     id: taskLine
     property var task
-    property string text: task.text
-    property string html: task.html
+//    property string text: (task !== null ? task.text : "")
+//    property string html: (task !== null ? task.html : "")
 
     property bool current: false
+    property bool hovered: false
 
     state: "show"
+    onStateChanged: console.log("taskline.state", state)
     sourceComponent: labelComp
 
     Component {
         id: labelComp
-        Item {
-            anchors.fill: parent
-            property alias lblHeight: label.height
-
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
-                width: taskLine.width
+//                width: taskLine.width
 
-                text: taskLine.html
+                text: (task !== null ? task.html : "")
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
 
                 onLinkActivated:  Qt.openUrlExternally(link)
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    propagateComposedEvents: true
+                    acceptedButtons: Qt.NoButton
+                    onEntered: taskLine.hovered = true
+                    onExited: taskLine.hovered = false
+                }
             }
-        }
     }
 
     Component {
         id: editorComp
         TextArea {
+            property bool runQuitEdit: true
             property bool discard: false
-            property bool accepted: false
 
             focus: true
 
             Keys.onReturnPressed: taskLine.state = "show"
             Keys.onEnterPressed: taskLine.state = "show"
             Keys.onEscapePressed: {
-                if (taskLine.text === "") text = ""
-                else discard = true
-                taskLine.state = "show"
+                discard = true;
+                taskLine.state = "show";
             }
 
-            onActiveFocusChanged: if (!activeFocus) taskLine.state = "show"
+            onActiveFocusChanged: {
+                console.log("activeFocusChanged", activeFocus, taskLine.state)
+                if (!activeFocus) {
+                    console.log("lost focus")
+                    taskLine.state = "show"
+                }
+            }
 
             Component.onCompleted: {
                 forceActiveFocus() //helps, when searchbar is active
-                text = taskLine.text
+                text = task.text
                 cursorPosition = text.length
             }
 
-            Component.onDestruction: if (!discard) task.text = text
+            Component.onDestruction: {
+                if (!discard) task.text = text
+                else if (task.text === "") task.text = ""
+            }
 
             CompletionPopup { }
         }
@@ -72,7 +85,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: labelComp
-                height: Math.max(taskLine.item.lblHeight, Theme.minRowHeight)
+                height: Math.max(taskLine.item.height, Theme.minRowHeight)
             }
         },
         State {

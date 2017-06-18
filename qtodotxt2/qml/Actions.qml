@@ -19,7 +19,6 @@ Item {
     }
 
     property Action fileNew: Action{
-            //id:fileNew
             iconName: "document-new"
             text: qsTr("New")
             //shortcut: StandardKey.New
@@ -27,10 +26,10 @@ Item {
     }
 
     property Action fileOpen: Action {
-//        id: fileOpen
         iconName: "document-open"
         text: qsTr("Open")
         shortcut: StandardKey.Open
+        enabled: !taskListView.editing
         onTriggered: {
             fileDialog.selectExisting = true
             fileDialog.open()
@@ -38,19 +37,19 @@ Item {
     }
 
     property Action fileSave: Action{
-        //id:fileSave
         iconName: "document-save"
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Save")
         shortcut: StandardKey.Save
+        enabled: !taskListView.editing
         onTriggered: mainController.save()
     }
 
     property Action fileSaveAs: Action{
-        //id:fileSaveAs
         iconName: "document-save-as"
         text: qsTr("Save As")
         shortcut: StandardKey.SaveAs
+        enabled: !taskListView.editing
         onTriggered: {
             fileDialog.selectExisting = false
             fileDialog.open()
@@ -58,7 +57,6 @@ Item {
     }
 
     property Action quitApp: Action{
-        //id:quitApp
         iconName: "application-exit"
         text: qsTr("Exit")
         shortcut: StandardKey.Quit
@@ -66,125 +64,105 @@ Item {
     }
 
     property Action newTask: Action{
-        //id:newTask
-
         iconName: "list-add"
-        iconSource: Theme.iconSource(iconName) //appWindow.theme + "TaskCreate.png"
+        iconSource: Theme.iconSource(iconName)
         text: qsTr("Create New Task")
-
         shortcut: "Ins"|StandardKey.New
+        enabled: !taskListView.editing
         onTriggered: {
-            taskListView.newTask()
+            taskListView.newTask('')
         }
     }
 
     property Action newTaskFrom: Action{
-
         iconName: "new-from"
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Create New Task from Template")
-
-        //shortcut: 'Ctrl-Y'
+        enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: {
-            if ( taskListView.currentIndex < 0 ) { return; }
-            var text = taskListView.model[taskListView.currentIndex].text
-            var idx = mainController.newTask(text, taskListView.currentIndex)
-            taskListView.currentIndex = idx
-            taskListView.editCurrentTask()
+            taskListView.newFromTask();
         }
     }
 
     property Action deleteTask: Action{
-        //id:deleteTask
-
         iconName: "list-remove"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Delete Task")
         shortcut: "Del"
+        enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: taskListView.deleteSelectedTasks()
     }
 
     property Action editTask: Action{
-        //id:editTask
-
         iconName: "document-edit"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Edit Task")
         shortcut: "Ctrl+E"
-        enabled: taskListView.currentIndex > -1
+        enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: { taskListView.editCurrentTask() }
     }
 
     property Action completeTasks: Action{
-        //id:completeTasks
         iconName: "checkmark"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Complete Task")
         shortcut: "X"
+        enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: {
-            var idx = taskListView.currentIndex
+            taskListView.storeSelection()
             mainController.completeTasks(taskListView.getSelectedIndexes())
-            if ( idx >= taskListView.rowCount ) {
-                idx = taskListView.rowCount -1
-            }
-            taskListView.selection.select(idx)
-            taskListView.currentRow = idx
+            taskListView.restoreSelection()
         }
     }
 
     property Action increasePriority: Action{
-        //id:increasePriority
         iconName: "arrow-up"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Increase Priority")
         shortcut: "+"
+        enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: {
-            taskListView.model[taskListView.currentIndex].increasePriority()
+            taskListView.storeSelection()
+            taskListView.currentItem.task.increasePriority()
+            taskListView.restoreSelection()
         }
     }
 
     property Action decreasePriority: Action{
-        //id:decreasePriority
         iconName: "arrow-down"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Decrease Priority")
         shortcut: "-"
+        enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: {
-            taskListView.model[taskListView.currentIndex].decreasePriority()
+            taskListView.storeSelection()
+            taskListView.currentItem.task.decreasePriority()
+            taskListView.restoreSelection()
         }
     }
 
     property Action showSearchAction: Action{
-        id:showSearchAction
+        id: showSearchAction
         iconName: "search"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Show Search Field")
         shortcut: "Ctrl+F"
         checkable: true
     }
 
     property Action showFilterPanel: Action{
-        id:showFilterPanel
+        id: showFilterPanel
         iconName: "view-filter"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Show Filter Panel")
-        //        shortcut: "Ctrl+T"
         checkable: true
         checked: true
     }
 
     property Action showToolBarAction: Action{
-        id:showToolBarAction
+        id: showToolBarAction
         iconName: "configure-toolbars"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Show ToolBar")
         shortcut: "Ctrl+T"
         checkable: true
@@ -192,66 +170,78 @@ Item {
     }
 
     property Action showCompleted: Action{
-        id:showCompleted
+        id: showCompleted
         iconName: "show-completed"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Show Completed Tasks")
         shortcut: "Ctrl+C"
         checkable: true
         checked: false
-        onToggled: mainController.showCompleted = checked
+        enabled: !taskListView.editing
+        onToggled: {
+            taskListView.storeSelection()
+            mainController.showCompleted = checked
+            taskListView.restoreSelection()
+        }
     }
 
     property Action showFuture: Action{
-        id:showFuture
+        id: showFuture
         iconName: "future"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Show Future Tasks")
         shortcut: "Ctrl+F"
         checkable: true
         checked: true
-        onToggled: mainController.showFuture = checked
+        enabled: !taskListView.editing
+        onToggled: {
+            taskListView.storeSelection()
+            mainController.showFuture = checked
+            taskListView.restoreSelection()
+        }
     }
 
     property Action showHidden: Action{
-        id:showHidden
+        id: showHidden
         iconName: "show-hidden"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Show Hidden Tasks")
         shortcut: "Ctrl+H"
         checkable: true
         checked: false
-        onToggled: mainController.showHidden = checked
+        enabled: !taskListView.editing
+        onToggled: {
+            taskListView.storeSelection()
+            mainController.showHidden = checked
+            taskListView.restoreSelection()
+        }
     }
 
     property Action archive: Action{
-        //id:archive
         iconName: "archive"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Archive Completed Tasks")
         shortcut: "Ctrl+A"
-        onTriggered: mainController.archiveCompletedTasks()
+        enabled: !taskListView.editing
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.archiveCompletedTasks()
+            taskListView.restoreSelection()
+        }
     }
 
     property Action addLink: Action{
-        //id:addLink
         iconName: "addLink"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("Add link to current task")
         shortcut: "Ctrl+L"
+        enabled: !taskListView.editing && taskListView.currentItem !== null
         onTriggered: linkDialog.open()
     }
 
     property Action helpShowAbout: Action{
-        //id:helpShowAbout
         iconName: "help-about"
         iconSource: Theme.iconSource(iconName)
-
         text: qsTr("About");
         shortcut: "F1"
         onTriggered: {
@@ -262,7 +252,6 @@ Item {
     }
 
     property Action helpShowShortcuts: Action{
-        //id:helpShowShortcuts
         iconName: "help-about"
         text: qsTr("Shortcuts list");
         shortcut: "Ctrl+F1"
@@ -272,50 +261,68 @@ Item {
     property Action sortDefault: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Default"
-        onTriggered: mainController.sortingMode = "default"
+        enabled: !taskListView.editing
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "default"
+            taskListView.restoreSelection()
+        }
     }
 
     property Action sortByProjects: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Projects"
-        onTriggered: mainController.sortingMode = "projects"
+        enabled: !taskListView.editing
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "projects"
+            taskListView.restoreSelection()
+        }
     }
 
     property Action sortByContexts: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Contexts"
-        onTriggered: mainController.sortingMode = "contexts"
+        enabled: !taskListView.editing
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "contexts"
+            taskListView.restoreSelection()
+        }
     }
 
     property Action sortByDueDate: Action{
         //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"
         text: "Due Date"
-        onTriggered: mainController.sortingMode = "due"
+        enabled: !taskListView.editing
+        onTriggered: {
+            taskListView.storeSelection()
+            mainController.sortingMode = "due"
+            taskListView.restoreSelection()
+        }
     }
 
-
-
     FileDialog {
-        //FIXME set default folder!
-            id: fileDialog
-            nameFilters: ["Text files (*.txt)"]
-            onAccepted: {
-                if (fileDialog.selectExisting) {
-                    mainController.open(fileUrl)
-                } else {
-                    mainController.save(fileUrl)
-                }
+        id: fileDialog
+        nameFilters: ["Text files (*.txt)"]
+        folder: mainController.docPath
+        onAccepted: {
+            if (fileDialog.selectExisting) {
+                mainController.open(fileUrl)
+            } else {
+                mainController.save(fileUrl)
             }
+        }
     }
 
     FileDialog {
         id: linkDialog
-        //nameFilters: ["Text files (*.txt)"]
-        selectExisting: false
+        selectExisting: true
         onAccepted: {
-            taskListView.model[taskListView.currentIndex].text += ' '
-            taskListView.model[taskListView.currentIndex].text += fileUrl.toString()
+            taskListView.storeSelection()
+            taskListView.currentItem.task.text += ' ' + fileUrl.toString()
+            taskListView.restoreSelection()
         }
     }
 }

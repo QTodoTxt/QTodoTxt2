@@ -4,24 +4,52 @@ import QtQuick.Controls 1.4
 
 import Theme 1.0
 
-TableView {
 
-    //TODO delete (all selected)
+TableView {
+    //TODO select after start and new filter
 
     id: listView
-    property var taskList
+    property var taskList: []
+    onTaskListChanged: {
+        console.log("taskListChanged", currentRow)
+//        restoreSelection()
+    }
     property alias currentIndex: listView.currentRow
     property Item currentItem
-    property int _lastIndex: 0
-//    property bool editing: currentItem.state === "edit"
-//    onEditingChanged: console.log("editing", editing)
+    onCurrentItemChanged: console.log("currentItem", currentRow, currentItem, typeof currentItem)
+    onCurrentRowChanged: {
+        console.log("currentRow", currentRow)
+//        selection.select(currentRow, currentRow)
+    }
+    property int lastIndex: 0
+    property bool editing: (currentItem !== null ? currentItem.state === "edit" : false)
+    onEditingChanged: console.log("editing", editing)
+
+    selection.onSelectionChanged: {
+        console.log("selection.count", selection.count)
+        if (selection.count === 0) currentItem = null
+    }
+
 
     signal rowHeightChanged(int row, real height)
+    signal rowHoveredChanged(int row, bool rowHovered)
 
-    function newTask() {
-        var idx = mainController.newTask('', taskListView.currentIndex)
+    function newTask(template) {
+        quitEditing()
+//        console.log("creating new task")
+        var idx = mainController.newTask(template, taskListView.currentIndex)
+//        console.log("selecting new task")
         currentRow = idx
+        selection.select(idx)
+//        console.log("editing new task")
         editCurrentTask()
+    }
+
+    function newFromTask() {
+        if ( taskListView.currentItem !== null ) {
+            var text = taskListView.currentItem.task.text
+            newTask(text)
+        }
     }
 
     function editCurrentTask() {
@@ -40,16 +68,28 @@ TableView {
         text: "Do you really want to delete " + (selection.count === 1 ? "1 task?" : "%1 tasks?".arg(selection.count))
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
-            var idx = taskListView.currentIndex
+            taskListView.storeSelection()
             console.log("deleting tasks %1".arg(getSelectedIndexes()))
             mainController.deleteTasks(getSelectedIndexes())
-            if ( idx >= taskListView.rowCount ) {
-                idx = taskListView.rowCount -1
-            }
-            taskListView.selection.select(idx)
-            taskListView.currentRow = idx
+            taskListView.restoreSelection()
         }
     }
+
+    function quitEditing() {
+        if (editing) currentItem.state = "show"
+    }
+
+    function storeSelection() {
+        console.log("storing selection")
+        lastIndex = currentRow
+    }
+
+    function restoreSelection() {
+        console.log("restoring selection", lastIndex)
+        currentRow = Math.min(lastIndex, taskListView.rowCount - 1)
+        selection.select(currentRow)
+    }
+
 
     function getSelectedIndexes() {
         var indexes = []
@@ -71,20 +111,39 @@ TableView {
     rowDelegate: Rectangle {
         id: rect
         height: 30
+        property bool hovered: false
         color: {
-           var baseColor = styleData.alternate?Theme.activePalette.alternateBase:Theme.activePalette.base
-           return styleData.selected?Theme.activePalette.highlight:baseColor
+            var baseColor = styleData.alternate ? Theme.activePalette.alternateBase : Theme.activePalette.base
+            var hoverBaseColor = rect.hovered ? Theme.inactivePalette.highlight : baseColor
+            var highlightColor = listView.activeFocus ? Theme.activePalette.highlight : Theme.inactivePalette.highlight
+            var hoverHighlightColor = rect.hovered ? Qt.lighter(highlightColor, 1.2) : highlightColor
+            return styleData.selected ? hoverHighlightColor : hoverBaseColor
         }
+        opacity: hovered && !styleData.selected ? 0.5 : 1
+//        onColorChanged: console.log(color)
+
         MouseArea {
             anchors.fill: parent
             propagateComposedEvents: true
             acceptedButtons: Qt.RightButton
+            hoverEnabled: true
             onClicked: contextMenu.popup()
+            onEntered: rect.hovered = true
+            onExited: {
+                rect.hovered = false
+//                console.log("exited")
+            }
         }
         Connections {
             target: listView
             onRowHeightChanged: {
                 if (styleData.row === row) rect.height = height
+            }
+        }
+        Connections {
+            target: listView
+            onRowHoveredChanged: {
+                if (styleData.row === row) rect.hovered = rowHovered
             }
         }
      }
@@ -93,12 +152,15 @@ TableView {
         role: "html"
         delegate: TaskLine {
 
-            current: (listView.currentRow === styleData.row)
+            current: (styleData.selected && listView.currentRow === styleData.row)
             onCurrentChanged: {
                 if (current) listView.currentItem = this
             }
             onHeightChanged: {
                 listView.rowHeightChanged(styleData.row, height)
+            }
+            onHoveredChanged: {
+                listView.rowHoveredChanged(styleData.row, hovered)
             }
             Component.onCompleted: task = taskList[styleData.row]
         }
@@ -110,6 +172,10 @@ TableView {
         id: contextMenu
         MenuItem { action: actions.newTask }
         MenuItem { action: actions.editTask }
+    }
+
+    Component.onCompleted: {
+        console.log("complete")
     }
 }
 
