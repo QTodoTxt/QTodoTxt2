@@ -48,9 +48,6 @@ ApplicationWindow {
         }
     }
 
-//    onActiveFocusItemChanged: console.log("activeFI: ", activeFocusItem)
-//    onActiveChanged: console.log("active: ", active)
-
     Actions {
         id: actions
     }
@@ -99,12 +96,10 @@ ApplicationWindow {
 
         FilterView {
             id: filtersTree
-//            width: 400
             Layout.minimumWidth: 150
             Layout.fillHeight: true
 
             visible: actions.showFilterPanel.checked
-
         }
 
         ColumnLayout {
@@ -118,7 +113,6 @@ ApplicationWindow {
                 Layout.fillWidth: true
 
                 visible: actions.showSearchAction.checked
-//                focus: true
 
                 placeholderText: "Search"
                 onTextChanged: {
@@ -137,5 +131,8 @@ ApplicationWindow {
                 taskList: mainController.filteredTasks
             }
         }
+    }
+    Component.onDestruction: {
+        taskListView.quitEditing()
     }
 }
