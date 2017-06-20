@@ -11,14 +11,14 @@ TableView {
     id: listView
     property var taskList: []
     onTaskListChanged: {
-        console.log("taskListChanged", currentRow)
+//        console.log("taskListChanged", currentRow)
 //        restoreSelection()
     }
     property alias currentIndex: listView.currentRow
     property Item currentItem
-    onCurrentItemChanged: console.log("currentItem", currentRow, currentItem, typeof currentItem)
+//    onCurrentItemChanged: console.log("currentItem", currentRow, currentItem, typeof currentItem)
     onCurrentRowChanged: {
-        console.log("currentRow", currentRow)
+//        console.log("currentRow", currentRow)
 //        selection.select(currentRow, currentRow)
     }
     property int lastIndex: 0
@@ -26,12 +26,18 @@ TableView {
     onEditingChanged: console.log("editing", editing)
 
     selection.onSelectionChanged: {
-        console.log("selection.count", selection.count)
-        if (selection.count === 0) currentItem = null
+//        console.log("selection.count", selection.count, currentRow)
+        if (selection.count === 0) {
+            if (currentRow > -1) {
+                selection.select(currentRow)
+            } else {
+                currentItem = null
+            }
+        }
     }
 
 
-    signal rowHeightChanged(int row, real height)
+    signal rowHeightChanged(int row, real rowHeight)
     signal rowHoveredChanged(int row, bool rowHovered)
 
     function newTask(template) {
@@ -80,12 +86,12 @@ TableView {
     }
 
     function storeSelection() {
-        console.log("storing selection")
+//        console.log("storing selection")
         lastIndex = currentRow
     }
 
     function restoreSelection() {
-        console.log("restoring selection", lastIndex)
+//        console.log("restoring selection", lastIndex)
         currentRow = Math.min(lastIndex, taskListView.rowCount - 1)
         selection.select(currentRow)
     }
@@ -110,7 +116,7 @@ TableView {
 
     rowDelegate: Rectangle {
         id: rect
-        height: 30
+        height: Theme.minRowHeight
         property bool hovered: false
         color: {
             var baseColor = styleData.alternate ? Theme.activePalette.alternateBase : Theme.activePalette.base
@@ -137,7 +143,8 @@ TableView {
         Connections {
             target: listView
             onRowHeightChanged: {
-                if (styleData.row === row) rect.height = height
+//                console.log("rhc", row, rowHeight)
+                if (styleData.row === row) rect.height = rowHeight
             }
         }
         Connections {
@@ -172,10 +179,6 @@ TableView {
         id: contextMenu
         MenuItem { action: actions.newTask }
         MenuItem { action: actions.editTask }
-    }
-
-    Component.onCompleted: {
-        console.log("complete")
     }
 }
 
