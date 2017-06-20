@@ -93,6 +93,7 @@ TableView {
     function restoreSelection() {
 //        console.log("restoring selection", lastIndex)
         currentRow = Math.min(lastIndex, taskListView.rowCount - 1)
+        selection.clear()
         selection.select(currentRow)
     }
 
