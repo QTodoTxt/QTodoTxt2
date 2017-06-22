@@ -290,6 +290,18 @@ Item {
                             id: complItemTxt
                             text: model.text
                             width: parent.width - 6
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: {
+                                    list.currentIndex = model.index
+                                }
+                                onClicked: {
+                                    list.currentIndex = model.index
+                                    list.selected()
+                                }
+                            }
                         }
 
                         highlight: Rectangle {
