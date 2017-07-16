@@ -29,10 +29,10 @@
         <file>resources/white/qtodotxt.png</file>
         <file>resources/white/show_completed.png</file>
         <file>resources/white/sidepane.png</file>
-        <file>resources/white/TaskAddOnTem.png</file>
         <file>resources/white/TaskComplete.png</file>
         <file>resources/white/TaskCopy.png</file>
         <file>resources/white/TaskCreate.png</file>
+        <file>resources/white/TaskNewFrom.png</file>
         <file>resources/white/TaskDelete.png</file>
         <file>resources/white/TaskEdit.png</file>
         <file>resources/white/TaskPriorityDecrease.png</file>
