@@ -7,18 +7,20 @@ import Theme 1.0
 
 TreeView {
     id: treeView
+
     alternatingRowColors: false
 
     model: mainController.filtersModel
     selectionMode: SelectionMode.ExtendedSelection
     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
     selection: ItemSelectionModel {
+        id: selectionModel
         model: mainController.filtersModel
         onSelectedIndexesChanged: {
-//            console.log(selectedIndexes)
             taskListView.storeSelection()
             mainController.filterByIndexes(selectedIndexes)
             taskListView.restoreSelection()
+            console.log(selectedIndexes)
         }
     }
 
@@ -29,6 +31,11 @@ TreeView {
         property alias filter_completed_column_width: completedCol.width
     }
 
+    Settings {
+        id: filterStateSettings
+        category: "FilterState"
+        property alias selectedIndexes: selectionModel.selectedIndexes
+    }
 
     TableViewColumn {
         id: filterNameCol
@@ -52,7 +59,7 @@ TreeView {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width - img.width
 
-                text: /*mainController.filtersModel.iconFromIndex(styleData.index)+ */styleData.value
+                text: styleData.value
                 elide: styleData.elideMode
             }
         }
