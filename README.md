@@ -27,7 +27,19 @@ Main differences to QTodoTxt 1:
 
 Installation
 
-There are many ways to install and run QTodoTxt2. Here is one  for Windows:
+There are many ways to install and run QTodoTxt2. 
+
+On ubuntu 16.04 and up:
+
+1. sudo apt-get install python3-pyqt5 qtdeclarative5-models-plugin python3-pyqt5.qtquick qml-module-qt-labs-settings
+
+2. Download QTodoTxt2 source and unpack to a location of your choice.
+
+3. Navigate to the 'bin' subdirectory of QTodoTxt2 and run the 'qtodotxt.py' file.
+
+4. In QToDoTxt2 open/select you todo file and you should be good to go.
+
+On Windows:
 
 1. Download the file: WinPython 3.5.3.1Qt5-64bit (*) or 32 bit version at (http://winpython.github.io/)
 
