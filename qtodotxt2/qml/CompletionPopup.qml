@@ -320,6 +320,7 @@ Item {
                         }
                         Keys.onReturnPressed: selected()
                         Keys.onEnterPressed: selected()
+                        Keys.onTabPressed: selected()
                     }
                 }
             }
