@@ -38,7 +38,13 @@ GNU General Public License for more details.</p>
 along with this program.  If not, see
 <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
 '
+        onLinkActivated: Qt.openUrlExternally(link)
 
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+        }
     }
     standardButtons: StandardButton.Ok
     onVisibleChanged: if (visible === false) destroy()
