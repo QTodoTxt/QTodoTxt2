@@ -321,7 +321,9 @@ Item {
         selectExisting: true
         onAccepted: {
             taskListView.storeSelection()
-            taskListView.currentItem.task.text += ' ' + fileUrl.toString()
+            var path = fileUrl.toString()
+            path = path.replace(/ /g, "%20")
+            taskListView.currentItem.task.text += ' ' + path
             taskListView.restoreSelection()
         }
     }
