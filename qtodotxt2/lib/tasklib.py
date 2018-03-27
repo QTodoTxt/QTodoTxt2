@@ -374,6 +374,7 @@ def _recurWorkDays(task):
     new.due = next_due_date
     if new.threshold:
         delta2 = task.due - task.threshold  #FIXME: this might be wrong, maybe we should add weekends...
+        new.threshold = new.due
         new.threshold += delta2
     return new
 
