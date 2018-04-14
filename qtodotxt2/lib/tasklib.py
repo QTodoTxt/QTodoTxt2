@@ -367,7 +367,7 @@ def _incrWorkDays(startDate, daysToIncrement):
 
 def _recurWorkDays(task):
     if task.recursion.mode == RecursiveMode.originalDueDate:
-        next_due_date = _incrWorkDays(date.today(), int(task.recursion.increment))
+        next_due_date = _incrWorkDays(task.due, int(task.recursion.increment))
     else:
         next_due_date = _incrWorkDays(date.today(), int(task.recursion.increment))
     new = Task(task.text)
