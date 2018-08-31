@@ -31,7 +31,7 @@ There are many ways to install and run QTodoTxt2.
 
 On ubuntu 16.04 and up:
 
-1. sudo apt-get install python3-pyqt5 qtdeclarative5-models-plugin python3-pyqt5.qtquick qml-module-qt-labs-settings
+1. sudo apt-get install python3-pyqt5 qtdeclarative5-models-plugin python3-pyqt5.qtquick qml-module-qt-labs-settings qml-module-qtquick-controls qml-module-qtquick-dialogs
 
 2. Download QTodoTxt2 source and unpack to a location of your choice.
 
