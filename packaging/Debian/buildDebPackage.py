@@ -16,7 +16,7 @@ from subprocess import call
 tmpDir="/tmp/"
 
 def dlTagFromGitHub(version):
-    remoteFile = urllib.request.urlopen('https://github.com/QTodoTxt/QTodoTxt/archive/'+version+'.tar.gz')
+    remoteFile = urllib.request.urlopen('https://github.com/QTodoTxt/QTodoTxt2/archive/'+version+'.tar.gz')
     contentDisposition=remoteFile.info()['Content-Disposition']
     fileName=contentDisposition.split('=')[1]
 
@@ -38,13 +38,17 @@ def buildPackageFolder(folderName):
     debianDir=buildDir+'/DEBIAN/'
 
     # Tree structure
-    os.makedirs(debianDir)
-    os.makedirs(buildDir+'/usr/bin/')
-    os.makedirs(buildDir+'/usr/share/doc/qtodotxt')
-    os.makedirs(buildDir+'/usr/share/applications')
+    os.makedirs(debianDir, exist_ok=True)
+    os.makedirs(buildDir+'/usr/bin/', exist_ok=True)
+    os.makedirs(buildDir+'/usr/share/doc/qtodotxt', exist_ok=True)
+    os.makedirs(buildDir+'/usr/share/applications', exist_ok=True)
 
+    src = tmpDir+folderName
+    dst = buildDir+'/usr/share/qtodotxt'
+    if os.path.exists(dst):
+        rmtree(dst)
     #Copy tag folder to build folder except the windows script
-    copytree(tmpDir+folderName,buildDir+'/usr/share/qtodotxt',False,ignore_patterns('qtodotxt.pyw'))
+    copytree(src, dst, False, ignore_patterns('qtodotxt.pyw'))
     #Fix execution rights on bin folder
     for file in os.listdir(buildBinDir):
         filePath=os.path.join(buildBinDir,file)
@@ -98,9 +102,9 @@ def generateControl(templateFile,packageVersion,outputFilePath):
 def buildDeb(version,buildDir):
     # Adding symlink to bin folder
     os.chdir(buildDir+'/usr/bin/')
-    os.symlink('../share/qtodotxt/bin/qtodotxt','qtodotxt')
+    os.symlink('../share/qtodotxt/bin/qtodotxt','qtodotxt2')
 
-    bashCmd=" ".join(["dpkg -b",buildDir,tmpDir+"qtodotxt_"+version+"_all.deb"])
+    bashCmd=" ".join(["dpkg -b",buildDir,tmpDir+"qtodotxt2_"+version+"_all.deb"])
     call(bashCmd,shell=True)
 
 def clean(fileName,folderName):
