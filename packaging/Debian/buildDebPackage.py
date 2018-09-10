@@ -56,7 +56,7 @@ def buildPackageFolder(folderName):
     copytree(tmpDir+folderName,buildDir+'/usr/share/qtodotxt2',False,ignore_patterns('qtodotxt.pyw'))
     os.makedirs(buildDir+'/usr/share/qtodotxt2/artwork/icon/')
     dlIconFromGitHub(buildDir)
-    
+
     #Fix execution rights on bin folder
     for file in os.listdir(buildBinDir):
         filePath=os.path.join(buildBinDir,file)
