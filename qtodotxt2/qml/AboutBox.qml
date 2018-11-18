@@ -4,19 +4,20 @@ import QtQuick.Dialogs 1.2
 
 Dialog {
     width: 640
-    title: "About QTodoTxt"
+    title: "About QTodoTxt2"
     id: aboutdialog
 
     Text {
         wrapMode: Text.WordWrap
         width: aboutdialog.width
-        text: '<h1>About QTodoTxt </h1>
-<p>QTodoTxt is a cross-platform UI client for todo.txt files
+        text: '<h1>About QTodoTxt2 </h1>
+<p>QTodoTxt2 is a cross-platform UI client for todo.txt files
  (see <a href="http://todotxt.com">http://todotxt.com</a>)</p>
 Copyright &copy; QTT Development Team 2015-2017<br/>
 <h2>Links</h2>
 <ul>
-<li>Project Page: <a href="https://github.com/QTodoTxt/QTodoTxt">https://github.com/QTodoTxt/QTodoTxt</a></li>
+<li>Project Page: <a href="https://github.com/QTodoTxt/QTodoTxt2">https://github.com/QTodoTxt/QTodoTxt2</a></li>
+<li>Project Page of the first version which is no longer maintained: <a href="https://github.com/QTodoTxt/QTodoTxt">https://github.com/QTodoTxt/QTodoTxt</a></li>
 </ul>
 <h2>Credits</h2>
 <ul>

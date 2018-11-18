@@ -28,7 +28,7 @@ class MainController(QtCore.QObject):
         self._file.fileExternallyModified.connect(self.fileExternallyModified)
         self._file.fileModified.connect(self._fileModified)
         self.filtersController = FiltersController()
-        self._title = "QTodoTxt"
+        self._title = "QTodoTxt2"
         self._recentFiles = self._settings.value("recent_files", [])
         self._updateCompletionStrings()
         self._forced = None
@@ -246,7 +246,7 @@ class MainController(QtCore.QObject):
         self._settings.sync()
 
     def _updateTitle(self):
-        title = 'QTodoTxt - '
+        title = 'QTodoTxt2 - '
         if self._file.filename:
             filename = os.path.basename(self._file.filename)
             title += filename
