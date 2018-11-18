@@ -32,12 +32,12 @@ def uncompressFile(fileName):
     return fileName.rsplit(".",2)[0]
 
 def dlIconFromGitHub(buildDir):
-    remoteFile = urllib.request.urlopen('https://github.com/QTodoTxt/Images/blob/master/artwork/icon/qTodo-512.png')
+    remoteFile = urllib.request.urlopen('https://raw.githubusercontent.com/QTodoTxt/Images/master/artwork/icon/qTodo-512.png')
 #     contentDisposition=remoteFile.info()['Content-Disposition']
 #     fileName=contentDisposition.split('=')[1]
     fileName='qTodo-512.png'
 
-    localFile = open(buildDir+'/usr/share/qtodotxt2/artwork/'+fileName, 'wb')
+    localFile = open(buildDir+'/usr/share/qtodotxt2/artwork/icon/'+fileName, 'wb')
     localFile.write(remoteFile.read())
     localFile.close()
 
