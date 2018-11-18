@@ -21,7 +21,7 @@ from qtodotxt2.lib.tendo_singleton import SingleInstance
 def _parseArgs():
     if len(sys.argv) > 1 and sys.argv[1].startswith('-psn'):
         del sys.argv[1]
-    parser = argparse.ArgumentParser(description='QTodoTxt')
+    parser = argparse.ArgumentParser(description='QTodoTxt2')
     parser.add_argument('file', type=str, nargs='?', metavar='TEXTFILE', help='open the specified file')
     parser.add_argument(
         '-l',
