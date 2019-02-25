@@ -70,4 +70,5 @@ Thumbs.db
 # --------
 *.dll
 *.exe
+*portable.zip
 *.qmlc
