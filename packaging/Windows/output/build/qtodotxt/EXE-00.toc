@@ -1,8 +1,8 @@
 ('D:\\Computers\\Software_development\\git\\QTodoTxt2\\packaging\\Windows\\output\\build\\qtodotxt\\qtodotxt.exe',
- True,
+ False,
  False,
  True,
- None,
+ '..\\..\\..\\packaging\\Windows\\qTodo.ico',
  None,
  False,
  False,
@@ -44,8 +44,8 @@
  [],
  False,
  False,
- 1550929892,
- [('run.exe',
+ 1551106967,
+ [('runw.exe',
    'C:\\Program '
-   'Files\\python_installed\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit\\run.exe',
+   'Files\\python_installed\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit\\runw.exe',
    'EXECUTABLE')])

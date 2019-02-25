@@ -28,4 +28,4 @@ and call (replace the missing paths before):
 
 The current call on the developers machine looks like:
 
-	& "C:\Program Files\python_installed\python.exe" -m PyInstaller --paths "C:\Windows\System32\downlevel\" --paths "D:\Computers\Software_development\git\QTodoTxt2" --paths "C:\Qt\5.12.0\msvc2017_64\bin" --paths "C:\Program Files\python_installed\Lib" --add-data 'D:\Computers\Software_development\git\QTodoTxt2\qtodotxt2\qml;.\qtodotxt2\qml' "D:\Computers\Software_development\git\QTodoTxt2\bin\qtodotxt"
+	 & "C:\Program Files\python_installed\python.exe" -m PyInstaller --paths "C:\Windows\System32\downlevel\" --paths .\..\..\..\  --paths "C:\Qt\5.12.0\msvc2017_64\bin" --paths "C:\Program Files\python_installed\Lib" --add-data '.\..\..\..\qtodotxt2\qml;.\qtodotxt2\qml' --icon ".\..\..\..\packaging\Windows\qTodo.ico" --noconsole ".\..\..\..\bin\qtodotxt"
