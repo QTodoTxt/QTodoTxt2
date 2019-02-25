@@ -2,9 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "QTodoTxt"
-#define MyAppVersion "1.6.1"
+#define MyAppVersion "2.0.0"
 #define MyAppPublisher "QTT Development Team"
-#define MyAppURL "https://github.com/QTodoTxt/QTodoTxt"
+#define MyAppURL "https://github.com/QTodoTxt/QTodoTxt2"
 #define MyAppExeName "qtodotxt.exe"
 
 [Setup]
@@ -23,7 +23,7 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=..\..\gpl.txt
-OutputDir=build\installer
+OutputDir=output\installer
 OutputBaseFilename=qtodotxt_{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output\dist\qtodotxt\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
