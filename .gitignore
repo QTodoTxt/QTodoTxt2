@@ -72,3 +72,8 @@ Thumbs.db
 *.exe
 *portable.zip
 *.qmlc
+
+# Build and packaging
+build
+dist
+*.egg-info

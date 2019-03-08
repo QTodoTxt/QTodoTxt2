@@ -6,35 +6,32 @@ import Theme 1.0
 
 Loader {
     id: taskLine
-    property var task
-    //    property string text: (task !== null ? task.text : "")
-    //    property string html: (task !== null ? task.html : "")
+    property string text: ""
+    property string html: ""
+    property string priority: ""
 
     property bool current: false
-    property bool hovered: false
+    onCurrentChanged: {
+        if (!current) state = "show"
+    }
+    signal inputAccepted(string newText)
+    onInputAccepted: state = "show"
 
     state: "show"
-//    onStateChanged: console.log("taskline.state", state)
     sourceComponent: labelComp
 
     Component {
         id: labelComp
-        MouseArea {
+        Item {
             anchors.fill: parent
-//            width: taskLine.width
-//            height: Math.max(label.height, 1) //Theme.minRowHeight)
-            hoverEnabled: true
-            propagateComposedEvents: true
-            acceptedButtons: Qt.NoButton
-            onEntered: taskLine.hovered = true
-            onExited: taskLine.hovered = false
             property alias lblHeight: label.height
+
             Label {
                 id: label
                 anchors.verticalCenter: parent.verticalCenter
                 width: taskLine.width
 
-                text: (task !== null ? task.html : "")
+                text: taskLine.html
                 textFormat: Qt.RichText
                 wrapMode: Text.Wrap
 
@@ -46,40 +43,32 @@ Loader {
     Component {
         id: editorComp
         TextArea {
-            property bool runQuitEdit: true
             property bool discard: false
+            text: taskLine.text
 
             focus: true
-
-            height: Math.max(contentHeight, Theme.minRowHeight)
-
-            Keys.onReturnPressed: taskLine.state = "show"
-            Keys.onEnterPressed: taskLine.state = "show"
+            onEditingFinished: {
+            }
+            Keys.onReturnPressed: taskLine.inputAccepted(text)
+            Keys.onEnterPressed: taskLine.inputAccepted(text)
             Keys.onEscapePressed: {
-                discard = true;
-                taskLine.state = "show";
-            }
-
-            onActiveFocusChanged: {
-//                console.log("activeFocusChanged", activeFocus, taskLine.state)
-                if (!activeFocus) {
-                    console.log("lost focus")
-                    taskLine.state = "show"
-                }
-            }
-
-            Component.onCompleted: {
-                forceActiveFocus() //helps, when searchbar is active
-                text = task.text
-                cursorPosition = text.length
-            }
-
-            Component.onDestruction: {
-                if (!discard) task.text = text
-                else if (task.text === "") task.text = ""
+                //text = taskLine.text
+                discard = true
+                taskLine.state = "show"
             }
 
             CompletionPopup { }
+            Component.onCompleted: {
+                forceActiveFocus() //helps, when searchbar is active
+                cursorPosition = text.length
+            }
+
+            onActiveFocusChanged: {
+                if ( ! discard && ! activeFocus ) {
+                    taskLine.inputAccepted(text)
+                }
+            }
+
         }
     }
 
@@ -98,7 +87,7 @@ Loader {
             PropertyChanges {
                 target: taskLine
                 sourceComponent: editorComp
-//                height: Math.max(taskLine.item.contentHeight, Theme.minRowHeight)
+                height: Math.max(taskLine.item.contentHeight, Theme.minRowHeight)
             }
         }
     ]
