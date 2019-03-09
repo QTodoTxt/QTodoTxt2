@@ -11,6 +11,8 @@ Loader {
     property string priority: ""
 
     property bool current: false
+    property bool hovered: false
+
     onCurrentChanged: {
         if (!current) state = "show"
     }
@@ -22,8 +24,14 @@ Loader {
 
     Component {
         id: labelComp
-        Item {
+        MouseArea {
             anchors.fill: parent
+            hoverEnabled: true
+            propagateComposedEvents: true
+            acceptedButtons: Qt.NoButton
+            onEntered: taskLine.hovered = true
+            onExited: taskLine.hovered = false
+
             property alias lblHeight: label.height
 
             Label {
@@ -43,16 +51,15 @@ Loader {
     Component {
         id: editorComp
         TextArea {
+            property bool runQuitEdit: true
             property bool discard: false
             text: taskLine.text
 
             focus: true
-            onEditingFinished: {
-            }
+
             Keys.onReturnPressed: taskLine.inputAccepted(text)
             Keys.onEnterPressed: taskLine.inputAccepted(text)
             Keys.onEscapePressed: {
-                //text = taskLine.text
                 discard = true
                 taskLine.state = "show"
             }
@@ -64,11 +71,11 @@ Loader {
             }
 
             onActiveFocusChanged: {
-                if ( ! discard && ! activeFocus ) {
-                    taskLine.inputAccepted(text)
+                if (!activeFocus) {
+                    console.log("lost focus")
+                    taskLine.state = "show"
                 }
             }
-
         }
     }
 
