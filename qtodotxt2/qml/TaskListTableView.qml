@@ -159,18 +159,24 @@ TableView {
     TableViewColumn {
         role: "html"
         delegate: TaskLine {
+            //width: listView.width
 
-            current: (styleData.selected && listView.currentRow === styleData.row)
+            text: {
+                if (taskList[styleData.row]) taskList[styleData.row].text;
+                else ""
+            }
+            html: styleData.value //taskList[styleData.row].html
+
+            current: (listView.currentRow === styleData.row)
             onCurrentChanged: {
                 if (current) listView.currentItem = this
             }
             onHeightChanged: {
                 listView.rowHeightChanged(styleData.row, height)
             }
-            onHoveredChanged: {
-                listView.rowHoveredChanged(styleData.row, hovered)
+            onInputAccepted: {
+                taskList[styleData.row].text = newText
             }
-            Component.onCompleted: task = taskList[styleData.row]
         }
     }
 
