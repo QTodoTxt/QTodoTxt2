@@ -177,7 +177,8 @@ TableView {
             onInputAccepted: {
                 taskList[styleData.row].text = newText
             }
-            Component.onCompleted: task = taskList[styleData.row]
+            //Component.onCompleted: task = taskList[styleData.row]
+            task: taskList[styleData.row]
         }
     }
 
