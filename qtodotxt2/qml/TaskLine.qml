@@ -6,6 +6,7 @@ import Theme 1.0
 
 Loader {
     id: taskLine
+    property var task
     property string text: ""
     property string html: ""
     property string priority: ""
