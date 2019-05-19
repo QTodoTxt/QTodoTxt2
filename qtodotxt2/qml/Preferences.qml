@@ -8,6 +8,7 @@ Dialog {
     Settings {
         category: "Preferences"
         property alias auto_save: autoSaveCB.checked
+        property alias auto_reload: autoReloadCB.checked
         property alias singleton: singletonCB.checked
         property alias lowest_priority: lowestPriorityField.text
         property alias add_creation_date: creationDateCB.checked
@@ -24,6 +25,11 @@ Dialog {
                 id: autoSaveCB
                 text: qsTr("Autosave") 
                 checked: true
+            }
+            CheckBox {
+                id: autoReloadCB
+                text: qsTr("Auto-reload")
+                checked: false
             }
             CheckBox {
                 id:creationDateCB
