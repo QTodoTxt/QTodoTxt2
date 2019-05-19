@@ -273,6 +273,10 @@ class MainController(QtCore.QObject):
             self._file = File()
             self._loadFileToUI()
 
+    @QtCore.pyqtSlot(result='bool')
+    def canAutoReload(self):
+        return bool(self._settings.value("Preferences/auto_reload", False, type=bool))
+
     @QtCore.pyqtSlot()
     def reload(self):
         self.open(self._file.filename)

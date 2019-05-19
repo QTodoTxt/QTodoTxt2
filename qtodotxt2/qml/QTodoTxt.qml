@@ -23,7 +23,11 @@ ApplicationWindow {
             errorDialog.open()
         }
         onFileExternallyModified: {
-            reloadDialog.open()
+            if ( mainController.canAutoReload() ) {
+                mainController.reload()
+            } else {
+                reloadDialog.open()
+            }
         }
         onFiltersUpdated: {
             filtersTree.expandAll()
