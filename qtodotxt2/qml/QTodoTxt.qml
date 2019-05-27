@@ -16,6 +16,23 @@ ApplicationWindow {
     height: 768
     title: mainController.title
 
+    Timer {
+        id: timer
+    }
+
+    // Adapted from:
+    // https://stackoverflow.com/questions/28507619/how-to-create-delay-function-in-qml
+    function delay(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.triggered.connect(function release () {
+            timer.triggered.disconnect(cb);
+            timer.triggered.disconnect(release);
+        });
+        timer.start();
+    }
+
     Connections {
         target: mainController
         onError: {
@@ -24,7 +41,9 @@ ApplicationWindow {
         }
         onFileExternallyModified: {
             if ( mainController.canAutoReload() ) {
-                mainController.reload()
+                delay(1000, function() {
+                    mainController.reload()
+                })
             } else {
                 reloadDialog.open()
             }
