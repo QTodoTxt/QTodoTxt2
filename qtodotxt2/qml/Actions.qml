@@ -260,7 +260,7 @@ Item {
 
     property Action sortDefault: Action{
         iconName: "view-sort-ascending-symbolic"
-        text: "Default"
+        text: "Priority (Default)"
         enabled: !taskListView.editing
         onTriggered: {
             taskListView.storeSelection()
