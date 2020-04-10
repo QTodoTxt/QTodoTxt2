@@ -70,7 +70,7 @@ TableView {
 
     MessageDialog {
         id: deleteDialog
-        title: "QTodoTxt Delete Tasks"
+        title: "QTodotTxt Delete Tasks"
         text: "Do you really want to delete " + (selection.count === 1 ? "1 task?" : "%1 tasks?".arg(selection.count))
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {

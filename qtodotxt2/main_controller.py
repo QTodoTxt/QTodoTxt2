@@ -50,7 +50,7 @@ class MainController(QtCore.QObject):
     def _updateCompletionStrings(self):
         contexts = ['@' + name for name in self._file.getAllContexts()]
         projects = ['+' + name for name in self._file.getAllProjects()]
-        lowest_priority = self._settings.value("lowest_priority", "G")
+        lowest_priority = self._settings.value("lowest_priority", "D")
         idx = string.ascii_uppercase.index(lowest_priority) + 1
         priorities = ['(' + val + ')' for val in string.ascii_uppercase[:idx]]
         keywords = ['rec:', 'h:1'] #['due:', 't:', 'rec:', 'h:1']
