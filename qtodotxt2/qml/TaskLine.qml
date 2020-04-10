@@ -67,7 +67,7 @@ Loader {
 
             CompletionPopup { }
             Component.onCompleted: {
-                forceActiveFocus() //helps, when search bar is active
+                forceActiveFocus() //helps, when searchbar is active
                 cursorPosition = text.length
             }
 
