@@ -52,8 +52,8 @@ def setupAnotherInstanceEvent(controller):
         dirname = os.path.dirname(sys.argv[0])
         fileObserver = FileObserver()
         fileObserver.addPath(dirname)
-        #FIXME maybe do something in qml
-        #fileObserver.dirChangetSig.connect(controller.anotherInstanceEvent)
+        # FIXME maybe do something in qml
+        # fileObserver.dirChangetSig.connect(controller.anotherInstanceEvent)
 
 
 def setupSingleton(args):
@@ -105,6 +105,7 @@ def run():
 
     controller.start()
     app.setWindowIcon(QtGui.QIcon(":/qtodotxt"))
+
     app.exec_()
     sys.exit()
 
