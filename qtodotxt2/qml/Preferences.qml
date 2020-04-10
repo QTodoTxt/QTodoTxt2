@@ -40,7 +40,7 @@ Dialog {
                 Label {text: "Lowest task priority:"}
                 TextField { 
                     id: lowestPriorityField; 
-                    text: "D"; 
+                    text: "G";
                     inputMask: "A" 
                 }
             }
