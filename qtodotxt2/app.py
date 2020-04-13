@@ -53,8 +53,8 @@ def setupAnotherInstanceEvent(controller):
         dirname = os.path.dirname(sys.argv[0])
         fileObserver = FileObserver()
         fileObserver.addPath(dirname)
-        #FIXME maybe do something in qml
-        #fileObserver.dirChangetSig.connect(controller.anotherInstanceEvent)
+        # FIXME maybe do something in qml
+        # fileObserver.dirChangetSig.connect(controller.anotherInstanceEvent)
 
 
 def setupSingleton(args):
@@ -106,9 +106,13 @@ def run():
 
     controller.start()
     app.setWindowIcon(QtGui.QIcon(":/qtodotxt"))
+<<<<<<< HEAD
     # This line added to change the font and size if the default is too small.
     # Working on a fontDialog so it can be changed that way.  2020-04-08
     app.setFont(QtGui.QFont('Trebuchet MS', 12))
+=======
+
+>>>>>>> master
     app.exec_()
     sys.exit()
 

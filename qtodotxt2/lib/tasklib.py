@@ -7,6 +7,7 @@ from PyQt5 import QtCore
 from qtodotxt2.lib.task_htmlizer import TaskHtmlizer
 
 
+
 class RecursiveMode(Enum):
     completitionDate = 0  # Original due date mode: Task recurs from original due date
     originalDueDate = 1  # Completion date mode: Task recurs from completion date
@@ -24,12 +25,13 @@ class Recursion:
 
 
 class TaskSorter(object):
-    
+
     @staticmethod
     def projects(tasks):
         def tmp(task):
             prj = task.projects if task.projects else ["zz"]
             return prj, task
+
         return sorted(tasks, key=tmp)
 
     @staticmethod
@@ -37,6 +39,7 @@ class TaskSorter(object):
         def tmp(task):
             ctx = task.contexts if task.contexts else ["zz"]
             return ctx, task
+
         return sorted(tasks, key=tmp)
 
     @staticmethod
@@ -46,6 +49,7 @@ class TaskSorter(object):
                 return task.due, task
             else:
                 return datetime(MAXYEAR, 1, 1), task
+
         return sorted(tasks, key=tmp, reverse=False)
 
     @staticmethod
@@ -143,6 +147,8 @@ class Task(QtCore.QObject):
         self.description = " ".join(words)
         for word in words:
             self._parseWord(word)
+        #if 'rtl' in line:
+          #  QtCore.
         self._text = line
 
     @QtCore.pyqtProperty('QString', notify=modified)
@@ -172,10 +178,12 @@ class Task(QtCore.QObject):
             txt = self._text.replace(' h:1', '')
             self.text = txt.replace('h:1', '')  # also take the case whe h_1 is at the begynning
 
+    # def alignment(self, val):
+
     @QtCore.pyqtProperty('QString', notify=modified)
     def priority(self):
         return self._priority
-    
+
     @QtCore.pyqtProperty('QString', notify=modified)
     def priorityHtml(self):
         htmlizer = TaskHtmlizer()
@@ -227,7 +235,9 @@ class Task(QtCore.QObject):
                 self.recursion = Recursion(RecursiveMode.completitionDate, word[4], word[5])
             else:
                 print("Error parsing recurrence '{}'".format(word))
-    
+    # def alignright(self):
+    #     self.text.setAlignment(Qt.AlignRight)
+
     @property
     def due(self):
         return self._due
@@ -255,7 +265,6 @@ class Task(QtCore.QObject):
     @staticmethod
     def _replace_date(text, date_text, prefix):
         return re.sub(r'\s' + prefix + r'\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' {}:{}'.format(prefix, date_text), text)
-
 
     @property
     def thresholdString(self):
@@ -373,7 +382,7 @@ def _recurWorkDays(task):
     new = Task(task.text)
     new.due = next_due_date
     if new.threshold:
-        delta2 = task.due - task.threshold  #FIXME: this might be wrong, maybe we should add weekends...
+        delta2 = task.due - task.threshold  # FIXME: this might be wrong, maybe we should add weekends...
         new.threshold = new.due
         new.threshold += delta2
     return new
