@@ -9,7 +9,7 @@ from qtodotxt2.lib.task_htmlizer import TaskHtmlizer
 
 
 class RecursiveMode(Enum):
-    completitionDate = 0  # Original due date mode: Task recurs from original due date
+    completionDate = 0  # Original due date mode: Task recurs from original due date
     originalDueDate = 1  # Completion date mode: Task recurs from completion date
 
 
@@ -120,7 +120,7 @@ class Task(QtCore.QObject):
 
     def _parse(self, line):
         """
-        parse a task formated as string in todo.txt format
+        parse a task formatted as string in todo.txt format
         """
         self._reset()
         words = line.split(' ')
@@ -176,7 +176,7 @@ class Task(QtCore.QObject):
             self.text = self._text + ' h:1'
         else:
             txt = self._text.replace(' h:1', '')
-            self.text = txt.replace('h:1', '')  # also take the case whe h_1 is at the begynning
+            self.text = txt.replace('h:1', '')  # also take the case whe h_1 is at the beginning
 
     # def alignment(self, val):
 
