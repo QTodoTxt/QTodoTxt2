@@ -83,7 +83,7 @@ ApplicationWindow {
 
     MessageDialog {
         id: errorDialog
-        title: "QTodotTxt Error"
+        title: "QTodoTxt Error"
         text: "Error message should be here!"
     }
 

@@ -4,7 +4,6 @@ import QtQuick.Controls 1.4
 
 import Theme 1.0
 
-
 TableView {
     //TODO select after start and new filter
 
