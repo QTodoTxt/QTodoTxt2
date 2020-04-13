@@ -3,6 +3,7 @@
 (B) test2 @work @home
 (C)  test 3 @space
 (D) test4 @work
-@home @CIC
+@home
+@CIC
 h:1 @CIC +GalacticaRepairs @work
 x 2016-02-21 (B) Seal ship's cracks with biomatter +GalacticaRepairs
