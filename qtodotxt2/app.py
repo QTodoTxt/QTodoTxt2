@@ -80,7 +80,7 @@ def run():
     # Now set up our application and start
     app = QtWidgets.QApplication(sys.argv)
     # it is said, that this is lighter:
-    # (without qwidgets, as we probably don't need them anymore, when transition to qml is done)
+    # (without QWidgets, as we probably don't need them anymore, when transition to qml is done)
     # app = QtGui.QGuiApplication(sys.argv)
 
     name = QtCore.QLocale.system().name()
@@ -106,13 +106,9 @@ def run():
 
     controller.start()
     app.setWindowIcon(QtGui.QIcon(":/qtodotxt"))
-<<<<<<< HEAD
     # This line added to change the font and size if the default is too small.
     # Working on a fontDialog so it can be changed that way.  2020-04-08
     app.setFont(QtGui.QFont('Trebuchet MS', 12))
-=======
-
->>>>>>> master
     app.exec_()
     sys.exit()
 
