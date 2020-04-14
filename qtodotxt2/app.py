@@ -18,7 +18,6 @@ from qtodotxt2.lib.file import FileObserver
 from qtodotxt2.lib.tendo_singleton import SingleInstance
 
 
-
 def _parseArgs():
     if len(sys.argv) > 1 and sys.argv[1].startswith('-psn'):
         del sys.argv[1]

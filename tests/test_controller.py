@@ -19,12 +19,12 @@ class Test(unittest.TestCase):
         cls.ctrl = MainController([])
         cls.ctrl.allTasks = cls.make_tasks()
         cls.ctrl.showCompleted = True
-    
+
     @staticmethod
     def make_tasks():
         today = date.today().isoformat()
         tomorrow = (date.today() + timedelta(days=1)).isoformat()
-        nextweek = (date.today() + timedelta(days=8)).isoformat()
+        # nextweek = (date.today() + timedelta(days=8)).isoformat()
         tasks = []
         t = tasklib.Task("(A) Task home due:{} +project1 @context2".format(today))
         tasks.append(t)
@@ -44,7 +44,6 @@ class Test(unittest.TestCase):
         tasks.append(t)
         return tasks
 
-
     @classmethod
     def tearDownClass(cls):
         pass
@@ -61,10 +60,10 @@ class Test(unittest.TestCase):
     def test_new_delete(self):
         count = len(self.ctrl.allTasks)
         idx = self.ctrl.newTask("My funny new task + PeaceProject")
-        self.assertEqual(count + 1,  len(self.ctrl.allTasks))
+        self.assertEqual(count + 1, len(self.ctrl.allTasks))
         task = self.ctrl.filteredTasks[idx]
         self.ctrl.deleteTasks([task])
-        self.assertEqual(count,  len(self.ctrl.allTasks))
+        self.assertEqual(count, len(self.ctrl.allTasks))
 
     def test_filter(self):
         self.ctrl.applyFilters([DueTodayFilter()])

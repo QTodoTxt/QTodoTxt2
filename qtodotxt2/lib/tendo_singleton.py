@@ -71,7 +71,7 @@ class SingleInstance:
                 # os.close(self.fp)
                 if os.path.isfile(self.lockfile):
                     os.unlink(self.lockfile)
-        except Exception as e:
+        except Exception:
             raise
 
 

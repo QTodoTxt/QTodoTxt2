@@ -72,7 +72,7 @@ class MainController(QtCore.QObject):
         self._filteredTasks.insert(after + 1, task)  # force the new task to be visible
         self._file.tasks.append(task)
 
-        self._file.connectTask(task)  #Ensure task will be added
+        self._file.connectTask(task)  # Ensure task will be added
         self.filteredTasksChanged.emit()
         return after + 1
 
@@ -333,5 +333,3 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtProperty('QUrl', notify=docPathChanged)
     def docPath(self):
         return QtCore.QUrl(QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation))
-
-

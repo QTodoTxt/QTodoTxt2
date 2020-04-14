@@ -347,7 +347,6 @@ class SimpleTextFilter(BaseFilter):
     # Characters that negate a term
     _negates = ('!', '~')
 
-
     @staticmethod
     def _term2re(term):
         # Don't translate separators

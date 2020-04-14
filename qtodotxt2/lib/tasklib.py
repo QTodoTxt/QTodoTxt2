@@ -7,7 +7,6 @@ from PyQt5 import QtCore
 from qtodotxt2.lib.task_htmlizer import TaskHtmlizer
 
 
-
 class RecursiveMode(Enum):
     completitionDate = 0  # Original due date mode: Task recurs from original due date
     originalDueDate = 1  # Completion date mode: Task recurs from completion date
@@ -147,8 +146,6 @@ class Task(QtCore.QObject):
         self.description = " ".join(words)
         for word in words:
             self._parseWord(word)
-        #if 'rtl' in line:
-          #  QtCore.
         self._text = line
 
     @QtCore.pyqtProperty('QString', notify=modified)
@@ -435,5 +432,3 @@ def _parseDateTime(string):
             return datetime.strptime(string, '%Y-%m-%dT%H:%M')
         except ValueError:
             return None
-
-
