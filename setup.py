@@ -9,13 +9,10 @@ setup(name="qtodotxt2",
       author="QTT Development Team",
       author_email="qtodotxt@googlegroups.com",
       url='https://github.com/QTodoTxt/QTodoTxt2',
-      #  packages=find_packages(where='.', include=["*.py", "*.qrc", "*.qml"], exclude=["tests"]),
       packages=find_packages(),
-      #  packages=['qtodotxt', 'qtodotxt/lib'],
       package_data={
           'qtodotxt2':['qml/*.qml', 'qml/Theme/*.qml', 'qml/Theme/qmldir']
       },
-      #  include_package_data=True,
       provides=["qtodotxt2"],
       install_requires=["python-dateutil"],
       license="GNU General Public License v3 or later",
