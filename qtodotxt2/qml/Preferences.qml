@@ -53,7 +53,7 @@ Dialog {
                 TextField { 
                     id: lowestPriorityField;
                     text: "G"
-                    inputMask: "A"
+                    inputMask: ""
                 }
             }
         }
@@ -68,7 +68,6 @@ Dialog {
             anchors.horizontalCenter: parent
             onClicked: {
                 fontDialogId.open()
-
             }
         }
 
