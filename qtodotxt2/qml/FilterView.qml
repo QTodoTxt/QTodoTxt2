@@ -3,7 +3,7 @@ import QtQuick.Controls 1.4
 import QtQml.Models 2.2
 import Qt.labs.settings 1.0
 
-import Theme 1.0
+//import Theme 1.0 as Theme
 
 TreeView {
     id: treeView
@@ -52,7 +52,7 @@ TreeView {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width - img.width
 
-                text: /*mainController.filtersModel.iconFromIndex(styleData.index)+ */styleData.value
+                text: */mainController.filtersModel.iconFromIndex(styleData.index)+/*styleData.value
                 elide: styleData.elideMode
             }
         }
@@ -84,3 +84,9 @@ TreeView {
     }
 }
 
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/
