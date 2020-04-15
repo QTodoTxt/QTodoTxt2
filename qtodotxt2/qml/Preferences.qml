@@ -53,7 +53,7 @@ Dialog {
                 TextField { 
                     id: lowestPriorityField;
                     text: "G"
-                    inputMask: ""
+                    inputMask: "A"
                 }
             }
         }
@@ -91,10 +91,3 @@ Dialog {
     onVisibleChanged: if (visible === false) destroy()
 }
 
-
-
-/*##^##
-Designer {
-    D{i:3;anchors_height:330;anchors_width:250;anchors_x:1;anchors_y:2}D{i:2;anchors_height:300;anchors_width:250}
-}
-##^##*/

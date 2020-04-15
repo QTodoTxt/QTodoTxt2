@@ -26,6 +26,6 @@ if sys.argv[0].lower().endswith('.exe'):
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-import qtodotxt2
+from qtodotxt2 import app
 
-qtodotxt2.app.run()
+app.run()
