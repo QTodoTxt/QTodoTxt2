@@ -5,8 +5,8 @@ import Qt.labs.settings 1.0
 
 Dialog {
     id: prefWindow
-    width: 270
-    height: 350
+    width: 370
+    height: 365
     title: "Preferences"
     Settings {
         category: "Preferences"
@@ -48,11 +48,15 @@ Dialog {
                 text: qsTr("Add creation date")
                 checked: false
             }
+            CheckBox {
+                id: creationTimeCB
+                text: qsTr("Add creation time")
+                checked: false
+            }
             Row { 
                 Label {text: "Lowest task priority:"}
                 TextField { 
                     id: lowestPriorityField;
-                    text: "G"
                     inputMask: "A"
                 }
             }
@@ -60,8 +64,8 @@ Dialog {
 
         Button {
             id: button
-            x: 38
-            y: 219
+            x: 70
+            y: 250
             width: 175
             height: 30
             text: qsTr("Change Font Here")
