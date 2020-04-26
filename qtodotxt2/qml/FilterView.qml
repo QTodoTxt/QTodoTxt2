@@ -52,7 +52,7 @@ TreeView {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width - img.width
 
-                text: /*mainController.filtersModel.iconFromIndex(styleData.index)+ */styleData.value
+                text: styleData.value
                 elide: styleData.elideMode
             }
         }
@@ -83,4 +83,3 @@ TreeView {
         }
     }
 }
-
