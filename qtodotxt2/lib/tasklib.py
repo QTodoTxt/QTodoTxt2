@@ -198,9 +198,10 @@ class Task(QtCore.QObject):
     def _parseKeyword(self, word):
         key, val = word.split(":", 1)
         self.keywords[key] = val
-        if word.startswith('due:'):
+        if word.startswith('due: '):
             self._due = _parseDateTime(word[4:])
             if not self._due:
+                print("the error is here")
                 print("Error parsing due date '{}'".format(word))
                 self._due_error = word[4:]
         elif word.startswith('t:'):
@@ -243,7 +244,7 @@ class Task(QtCore.QObject):
     def due(self, val):
         if isinstance(val, datetime):
             val = dateString(val)
-        self.text = self._replace_date(self._text, val, 'due')
+        self.text = self._replace_date(self._text, val, 'due: ')
 
     @property
     def dueString(self):

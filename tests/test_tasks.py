@@ -198,36 +198,36 @@ class TestTasks(unittest.TestCase):
 
     # Positive tests
     def test_recurring_task_input_days(self):
-        task = Task('(C) do something due:2016-09-05 rec:5d')
+        task = Task('(C) do something due: 2016-09-05 rec:5d')
         self.assertIsNotNone(task.recursion)
         self.assertTrue(task.recursion.mode == RecursiveMode.completitionDate)
         self.assertTrue(task.recursion.increment == str(5))
         self.assertTrue(task.recursion.interval == 'd')
 
     def test_recurring_task_input_weeks(self):
-        task = Task('(C) do something due:2016-09-05 rec:+7w')
+        task = Task('(C) do something due: 2016-09-05 rec:+7w')
         self.assertIsNotNone(task.recursion)
         self.assertTrue(task.recursion.mode == RecursiveMode.originalDueDate)
         self.assertTrue(task.recursion.increment == str(7))
         self.assertTrue(task.recursion.interval == 'w')
 
     def test_recurring_task_input_months(self):
-        task = Task('(C) do something due:2016-09-05 rec:3m')
+        task = Task('(C) do something due: 2016-09-05 rec:3m')
         self.assertIsNotNone(task.recursion)
         self.assertTrue(task.recursion.mode == RecursiveMode.completitionDate)
         self.assertTrue(task.recursion.increment == str(3))
         self.assertTrue(task.recursion.interval == 'm')
 
     def test_recurring_task_input_years(self):
-        task = Task('(C) do something due:2016-09-05 rec:+1y')
+        task = Task('(C) do something due: 2016-09-05 rec:+1y')
         self.assertIsNotNone(task.recursion)
         self.assertTrue(task.recursion.mode == RecursiveMode.originalDueDate)
         self.assertTrue(task.recursion.increment == str(1))
         self.assertTrue(task.recursion.interval == 'y')
 
     def test_due(self):
-        task = Task('(D) do something +project1 due:2030-10-06')
-        other = Task('(D) do something +project1 due:2030-10-08')
+        task = Task('(D) do something +project1 due: 2030-10-06')
+        other = Task('(D) do something +project1 due: 2030-10-08')
         self.assertIsInstance(task.due, datetime)
         task.due += timedelta(days=2)
         self.assertIsInstance(task.due, datetime)
@@ -236,7 +236,7 @@ class TestTasks(unittest.TestCase):
         self.assertEqual(task, other)
 
     def test_hidden(self):
-        task = Task('(D) do something +project1 due:2030-10-06')
+        task = Task('(D) do something +project1 due: 2030-10-06')
         self.assertFalse(task.hidden)
         task.hidden = True
         self.assertTrue(task.hidden)

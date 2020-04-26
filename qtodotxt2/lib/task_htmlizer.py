@@ -32,7 +32,7 @@ class TaskHtmlizer(object):
                 word = self._htmlizeContext(word)
             elif word.startswith("+"):
                 word = self._htmlizeProject(word)
-            elif word.startswith("due:"):
+            elif word.startswith("due: "):
                 word = self._htmlizeDueDate(task, word)
             elif word.startswith("t:"):
                 word = self._htmlizeThresholdDate(task, word)
@@ -99,11 +99,11 @@ class TaskHtmlizer(object):
         date_now = datetime.today()
         tdelta = task.due - date_now
         if tdelta.days > 7:
-            return '<b>due:{}</b>'.format(task.dueString)
+            return '<b>due: {}</b>'.format(task.dueString)
         elif tdelta.days > 0:
-            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[1])
+            return '<b><font style="color:{1!s}">due: {0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[1])
         else:
-            return '<b><font style="color:{1!s}">due:{0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[0])
+            return '<b><font style="color:{1!s}">due: {0!s}</font></b>'.format(task.dueString, self.priorityDuecolors[0])
 
     def _htmlizeThresholdDate(self, task, string):
         if not task.threshold:
