@@ -47,8 +47,6 @@ class File(QtCore.QObject):
 
     def _taskModified(self, task):
         self.setModified(True)
-        # if task not in self.tasks:
-        # self.tasks.append(task)
         if not task.text:
             self.deleteTask(task)
 

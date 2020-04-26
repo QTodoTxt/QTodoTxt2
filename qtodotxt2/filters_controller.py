@@ -221,5 +221,3 @@ def filterTasks(filters, tasks):
                 filteredTasks.append(task)
                 break
     return filteredTasks
-
-

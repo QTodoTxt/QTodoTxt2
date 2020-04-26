@@ -32,6 +32,7 @@ def collect_packages(path, package_name, packages, excludes=None):
                 packages.append(subpackage_name)
                 collect_packages(subpath, subpackage_name, packages)
 
+
 packages = []
 collect_packages('.', '', packages, excludes=['test'])
 
@@ -58,4 +59,4 @@ setup(name='qtodotxt',
               "build_base": os.path.join(current_dir, 'build')
           },
       }
-    )
+      )

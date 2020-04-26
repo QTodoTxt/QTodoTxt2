@@ -5,6 +5,9 @@ import Qt.labs.settings 1.0
 
 Dialog {
     id: prefWindow
+    width: 370
+    height: 365
+    title: "Preferences"
     Settings {
         category: "Preferences"
         property alias auto_save: autoSaveCB.checked
@@ -14,9 +17,18 @@ Dialog {
         property alias add_creation_date: creationDateCB.checked
     }
     GroupBox {
+        anchors.bottomMargin: 230
+        anchors.rightMargin: 365
+        anchors.fill: parent
+
         Column {
+            x: 1
+            y: 2
+            width: 250
+            height: 330
             spacing: 10
-            CheckBox { 
+
+            CheckBox {
                 id: singletonCB
                 text: qsTr("Single instance") 
                 checked: false
@@ -36,16 +48,50 @@ Dialog {
                 text: qsTr("Add creation date")
                 checked: false
             }
+            CheckBox {
+                id: creationTimeCB
+                text: qsTr("Add creation time")
+                checked: false
+            }
             Row { 
                 Label {text: "Lowest task priority:"}
                 TextField { 
-                    id: lowestPriorityField; 
-                    text: "D"; 
-                    inputMask: "A" 
+                    id: lowestPriorityField;
+                    inputMask: "A"
                 }
             }
         }
+
+        Button {
+            id: button
+            x: 70
+            y: 250
+            width: 175
+            height: 30
+            text: qsTr("Change Font Here")
+            anchors.horizontalCenter: parent
+            onClicked: {
+                fontDialogId.open()
+            }
+        }
+
+            FontDialog {
+            id: fontDialogId
+            title: "Choose a font"
+            font: Qt.font({family: "Arial", pointSize: 12, weight: Font.Normal})
+
+            onAccepted: {
+                console.log("You chose : "+font)
+                textId.font = fontDialogId.font
+            }
+
+            onRejected: {
+                console.log("Dialog rejected")
+            }
+        }
     }
+
     standardButtons:StandardButton.Ok
     onVisibleChanged: if (visible === false) destroy()
 }
+

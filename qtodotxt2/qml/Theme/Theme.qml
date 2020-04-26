@@ -10,7 +10,7 @@ QtObject {
         colorGroup: SystemPalette.Inactive
     }
 
-    property real minRowHeight: 30
+    property real minRowHeight: 40
 
     property int mediumSpace: 10
     property int smallSpace: 5

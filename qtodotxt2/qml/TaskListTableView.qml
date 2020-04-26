@@ -4,7 +4,6 @@ import QtQuick.Controls 1.4
 
 import Theme 1.0
 
-
 TableView {
     //TODO select after start and new filter
 
@@ -70,7 +69,7 @@ TableView {
 
     MessageDialog {
         id: deleteDialog
-        title: "QTodotTxt Delete Tasks"
+        title: "QTodoTxt Delete Tasks"
         text: "Do you really want to delete " + (selection.count === 1 ? "1 task?" : "%1 tasks?".arg(selection.count))
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {

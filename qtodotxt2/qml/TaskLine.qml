@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 
-import Theme 1.0
+import Theme 1.0 as Theme
 
 
 Loader {
@@ -67,7 +67,7 @@ Loader {
 
             CompletionPopup { }
             Component.onCompleted: {
-                forceActiveFocus() //helps, when searchbar is active
+                forceActiveFocus() //helps, when search bar is active
                 cursorPosition = text.length
             }
 

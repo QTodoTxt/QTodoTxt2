@@ -1,13 +1,9 @@
-(A) Make peace between Cylons and humans +PeaceProject
-(A) Review NCMR Log +Admin @work t:2017-12-22 rec:+1b due:2017-12-22
-(B) Report to <i>Admiral Adama</i> about FTL @CIC +GalacticaRepairs due:2013-05-24
-(C) 2016-12-08 Feed Schrodinger's Cat rec:+1d due:2014-02-23
-(C) Upgrade jump drives with Cylon technology +GalacticaRepairs
-2016-12-12 +GalacticaRepairs Check hull integrity rec:+7b due:2016-12-12
-Check for <b>DRADIS</b> contact @CIC
-Check if http://google.com is available
-Download code from <br/> https://github.com/QTodoTxt/QTodoTxt/archive/master.zip <br/>and give it a try!
-Find the question due:2017-06-10 rec:6d t:2017-06-09
-Think about <u>future</u> t:2099-12-31
+(A) test @work @CIC +GalacticaRepairs
+(A) test5 @work  @CIC @home
+(B) test2 @work @home
+(C)  test 3 @space
+(D) test4 @work
+@home
+@CIC
 h:1 @CIC +GalacticaRepairs @work
 x 2016-02-21 (B) Seal ship's cracks with biomatter +GalacticaRepairs
