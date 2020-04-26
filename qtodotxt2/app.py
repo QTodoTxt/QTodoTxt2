@@ -18,7 +18,6 @@ from qtodotxt2.lib.file import FileObserver
 from qtodotxt2.lib.tendo_singleton import SingleInstance
 
 
-
 def _parseArgs():
     if len(sys.argv) > 1 and sys.argv[1].startswith('-psn'):
         del sys.argv[1]
@@ -109,6 +108,7 @@ def run():
     # This line added to change the font and size if the default is too small.
     # Working on a fontDialog so it can be changed that way.  2020-04-08
     app.setFont(QtGui.QFont('Trebuchet MS', 12))
+
     app.exec_()
     sys.exit()
 
