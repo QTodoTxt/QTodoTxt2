@@ -79,7 +79,7 @@ def run():
     # Now set up our application and start
     app = QtWidgets.QApplication(sys.argv)
     # it is said, that this is lighter:
-    # (without qwidgets, as we probably don't need them anymore, when transition to qml is done)
+    # (without QWidgets, as we probably don't need them anymore, when transition to qml is done)
     # app = QtGui.QGuiApplication(sys.argv)
 
     name = QtCore.QLocale.system().name()

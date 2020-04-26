@@ -4,11 +4,11 @@
 import os
 import sys
 
-
 try:
-  __file__
+    __file__
 except NameError:
     __file__ = sys.argv[0]
+
 
 def reroute_py2exe_logs():
     appdata = os.path.expandvars("%AppData%\\QTodoTxt")
@@ -17,17 +17,15 @@ def reroute_py2exe_logs():
     sys.stdout = open(appdata + "\\stdout.log", "w")
     sys.stderr = open(appdata + "\\stderr.log", "w")
 
+
 if sys.argv[0].lower().endswith('.exe'):
-# If something goes wrong, logging information might help.
-# Uncommenting line below allows logging to be stored at same location where exe resides
+    # If something goes wrong, logging information might help.
+    # Uncommenting line below allows logging to be stored at same location where exe resides
     reroute_py2exe_logs()
     sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
-
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from qtodotxt2 import app
 
-
 app.run()
-
