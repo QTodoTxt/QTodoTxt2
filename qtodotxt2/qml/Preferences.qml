@@ -26,7 +26,7 @@ Dialog {
             y: 2
             width: 250
             height: 330
-            spacing: 10
+            spacing: 12
 
             CheckBox {
                 id: singletonCB

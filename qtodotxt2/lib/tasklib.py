@@ -70,6 +70,7 @@ class Task(QtCore.QObject):
         QtCore.QObject.__init__(self)
         self._settings = QtCore.QSettings()
         self._highest_priority = 'A'
+        self._getLowestPriority()
         # all other class attributes are defined in _reset method
         # which is called in _parse
         self._parse(text)
@@ -192,13 +193,13 @@ class Task(QtCore.QObject):
                 self.contexts.append(word[1:])
             elif word.startswith('+'):
                 self.projects.append(word[1:])
-            elif ":" in word:
+            elif ": " in word:
                 self._parseKeyword(word)
 
     def _parseKeyword(self, word):
         key, val = word.split(":", 1)
         self.keywords[key] = val
-        if word.startswith('due:'):
+        if word.startswith('due: '):
             self._due = _parseDateTime(word[4:])
             if not self._due:
                 print("Error parsing due date '{}'".format(word))
@@ -261,7 +262,7 @@ class Task(QtCore.QObject):
 
     @staticmethod
     def _replace_date(text, date_text, prefix):
-        return re.sub(r'\s' + prefix + r'\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' {}:{}'.format(prefix, date_text), text)
+        return re.sub(r'\s' + prefix + r'\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', '{}:{}'.format(prefix, date_text), text)
 
     @property
     def thresholdString(self):
@@ -310,7 +311,7 @@ class Task(QtCore.QObject):
         return htmlizer.task2html(self)
 
     def _getLowestPriority(self):
-        return self._settings.value("Preferences/lowest_priority", "D")
+        return self._settings.value("Preferences/lowest_priority", "G")
 
     @QtCore.pyqtSlot()
     def increasePriority(self):

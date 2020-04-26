@@ -32,7 +32,7 @@ class TaskHtmlizer(object):
                 word = self._htmlizeContext(word)
             elif word.startswith("+"):
                 word = self._htmlizeProject(word)
-            elif word.startswith("due:"):
+            elif word.startswith("due: "):
                 word = self._htmlizeDueDate(task, word)
             elif word.startswith("t:"):
                 word = self._htmlizeThresholdDate(task, word)

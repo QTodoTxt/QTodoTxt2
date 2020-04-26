@@ -1,9 +1,10 @@
-(A) test @work @CIC +GalacticaRepairs
-(A) test5 @work  @CIC @home
-(B) test2 @work @home
-(C)  test 3 @space
-(D) test4 @work
-@home
-@CIC
-h:1 @CIC +GalacticaRepairs @work
-x 2016-02-21 (B) Seal ship's cracks with biomatter +GalacticaRepairs
+2020-04-26 (A) due: 2020-04-26
+2020-04-26 (A) due: 2020-04-26
+2020-04-26 (C) due: 2020-04-29 
+2020-04-26 due: 2020-04-26
+2020-04-26 due: 2020-04-26
+2020-04-26 due: 2020-04-29
+2020-04-26 due: 2020-04-30
+2020-04-26 due:2020-04-20
+2020-04-26 project due:2020-04-28
+2020-04-26 task due:2020-04-26
