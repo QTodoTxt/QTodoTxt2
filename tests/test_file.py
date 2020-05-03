@@ -108,10 +108,10 @@ class TestFile(unittest.TestCase):
         yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
 
         self.file.tasks.extend([
-            Task('x due: ' + today + ' completed task of today'),
-            Task('due: ' + today + ' first task of today'),
-            Task('due: ' + today + ' second task of today'),
-            Task('due: ' + yesterday + ' task of yesterday'),
+            Task('x due:' + today + ' completed task of today'),
+            Task('due:' + today + ' first task of today'),
+            Task('due:' + today + ' second task of today'),
+            Task('due:' + yesterday + ' task of yesterday'),
         ])
         self.saveAndReload()
         due = self.file.getAllDueRanges()
