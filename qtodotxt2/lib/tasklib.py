@@ -193,13 +193,13 @@ class Task(QtCore.QObject):
                 self.contexts.append(word[1:])
             elif word.startswith('+'):
                 self.projects.append(word[1:])
-            elif ": " in word:
+            elif ":" in word:
                 self._parseKeyword(word)
 
     def _parseKeyword(self, word):
         key, val = word.split(":", 1)
         self.keywords[key] = val
-        if word.startswith('due: '):
+        if word.startswith('due:'):
             self._due = _parseDateTime(word[4:])
             if not self._due:
                 print("the error is here")
@@ -222,7 +222,7 @@ class Task(QtCore.QObject):
     def _parseRecurrence(self, word):
         # Original due date mode
         if word[4] == '+':
-            # Test if chracters have the right format
+            # Test if characters have the right format
             if re.match('^[1-9][bdwmy]', word[5:7]):
                 self.recursion = Recursion(RecursiveMode.originalDueDate, word[5], word[6])
             else:

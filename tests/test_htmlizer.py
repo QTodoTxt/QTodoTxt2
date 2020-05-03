@@ -89,84 +89,84 @@ class TestHtmlizer(unittest.TestCase):
 
     def test_12(self):
         # Test task with a valid due date
-        task = tasklib.Task('this is my task due: 2014-04-01')
+        task = tasklib.Task('this is my task due:2014-04-01')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">due: 2014-04-01</font></b>')
+                         '<font style="color:red">due:2014-04-01</font></b>')
 
     def test_13(self):
         # Test task with a valid due date and time
-        task = tasklib.Task('this is my task due:  2014-04-01T12:34')
+        task = tasklib.Task('this is my task due:2014-04-01T12:34')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">due: 2014-04-01 12:34</font></b>')
+                         '<font style="color:red">due:2014-04-01 12:34</font></b>')
 
     def test_14(self):
         # Test task with an invalid due date
-        task = tasklib.Task('this is my task due: abc')
+        task = tasklib.Task('this is my task due:abc')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">*** due: abc Invalid date format, '
+                         '<font style="color:red">*** due:abc Invalid date format, '
                          'expected yyyy-mm-dd or yyyy-mm-ddThh:mm. ***</font></b>')
 
     def test_15(self):
         # Test task with an invalid due date
-        task = tasklib.Task('this is my task due:  2014-04')
+        task = tasklib.Task('this is my task due:2014-04')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">*** due: 2014-04 Invalid date format, '
+                         '<font style="color:red">*** due:2014-04 Invalid date format, '
                          'expected yyyy-mm-dd or yyyy-mm-ddThh:mm. ***</font></b>')
 
     def test_16(self):
         # Test task with an invalid due month
-        task = tasklib.Task('this is my task due: 2014-13-01')
+        task = tasklib.Task('this is my task due:2014-13-01')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">*** due: 2014-13-01 Invalid date format, '
+                         '<font style="color:red">*** due:2014-13-01 Invalid date format, '
                          'expected yyyy-mm-dd or yyyy-mm-ddThh:mm. ***</font></b>')
 
     def test_17(self):
         # Test task with an invalid due day
-        task = tasklib.Task('this is my task due: 2014-04-31')
+        task = tasklib.Task('this is my task due:2014-04-31')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">*** due: 2014-04-31 Invalid date format, '
+                         '<font style="color:red">*** due:2014-04-31 Invalid date format, '
                          'expected yyyy-mm-dd or yyyy-mm-ddThh:mm. ***</font></b>')
 
     def test_18(self):
         # Test task with space in due time instead of T. This is valid, but gives an unexpected result
-        task = tasklib.Task('this is my task due: 2014-04-01 12:34')
+        task = tasklib.Task('this is my task due:2014-04-01 12:34')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">due: 2014-04-01</font></b> 12:34')
+                         '<font style="color:red">due:2014-04-01</font></b> 12:34')
 
     def test_19(self):
         # Test task with a valid due time corner case
-        task = tasklib.Task('this is my task due: 2014-04-01T00:00')
+        task = tasklib.Task('this is my task due:2014-04-01T00:00')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">due: 2014-04-01</font></b>')
+                         '<font style="color:red">due:2014-04-01</font></b>')
 
     def test_20(self):
         # Test task with a valid due time corner case
-        task = tasklib.Task('this is my task due: 2014-04-01T00:01')
+        task = tasklib.Task('this is my task due:2014-04-01T00:01')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">due: 2014-04-01 00:01</font></b>')
+                         '<font style="color:red">due:2014-04-01 00:01</font></b>')
 
     def test_21(self):
         # Test task with a valid due time corner case
-        task = tasklib.Task('this is my task due: 2014-04-01T23:59')
+        task = tasklib.Task('this is my task due:2014-04-01T23:59')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">due: 2014-04-01 23:59</font></b>')
+                         '<font style="color:red">due:2014-04-01 23:59</font></b>')
 
     def test_22(self):
         # Test task with an invalid due time corner case
-        task = tasklib.Task('this is my task due: 2014-04-01T24:00')
+        task = tasklib.Task('this is my task due:2014-04-01T24:00')
         self.assertEqual(self.htmlizer.task2html(task),
                          '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;this is my task <b>'
-                         '<font style="color:red">*** due: 2014-04-01T24:00 Invalid date format, '
+                         '<font style="color:red">*** due:2014-04-01T24:00 Invalid date format, '
                          'expected yyyy-mm-dd or yyyy-mm-ddThh:mm. ***</font></b>')
 
     def test_23(self):
