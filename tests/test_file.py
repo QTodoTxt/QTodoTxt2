@@ -38,7 +38,7 @@ class TestFile(unittest.TestCase):
         self.file.load(self.tmpfile)
 
     def test_single_task(self):
-        text = 'due: 1999-10-10 do something +project1 @context1'
+        text = 'due:1999-10-10 do something +project1 @context1'
         self.file.tasks.append(Task(text))
         self.saveAndReload()
         self.assertEqual(self.file.tasks[0].text, text)
