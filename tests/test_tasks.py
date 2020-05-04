@@ -81,7 +81,6 @@ class TestTasks(unittest.TestCase):
             t.decreasePriority()
         self.assertEqual(t.priority, "")
 
-
         # A task with a priority lower than our default minimal priority
         t = Task("(M) task")
         t.increasePriority()
