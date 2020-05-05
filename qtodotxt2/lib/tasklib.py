@@ -70,6 +70,7 @@ class Task(QtCore.QObject):
         QtCore.QObject.__init__(self)
         self._settings = QtCore.QSettings()
         self._highest_priority = 'A'
+        self._getLowestPriority()
         # all other class attributes are defined in _reset method
         # which is called in _parse
         self._parse(text)
@@ -201,6 +202,7 @@ class Task(QtCore.QObject):
         if word.startswith('due:'):
             self._due = _parseDateTime(word[4:])
             if not self._due:
+                print("the error is here")
                 print("Error parsing due date '{}'".format(word))
                 self._due_error = word[4:]
         elif word.startswith('t:'):
@@ -220,7 +222,7 @@ class Task(QtCore.QObject):
     def _parseRecurrence(self, word):
         # Original due date mode
         if word[4] == '+':
-            # Test if chracters have the right format
+            # Test if characters have the right format
             if re.match('^[1-9][bdwmy]', word[5:7]):
                 self.recursion = Recursion(RecursiveMode.originalDueDate, word[5], word[6])
             else:
@@ -243,7 +245,7 @@ class Task(QtCore.QObject):
     def due(self, val):
         if isinstance(val, datetime):
             val = dateString(val)
-        self.text = self._replace_date(self._text, val, 'due')
+        self.text = self._replace_date(self._text, val, 'due: ')
 
     @property
     def dueString(self):
@@ -261,7 +263,7 @@ class Task(QtCore.QObject):
 
     @staticmethod
     def _replace_date(text, date_text, prefix):
-        return re.sub(r'\s' + prefix + r'\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', ' {}:{}'.format(prefix, date_text), text)
+        return re.sub(r'\s' + prefix + r'\:[0-9]{4}\-[0-9]{2}\-[0-9]{2}', '{}:{}'.format(prefix, date_text), text)
 
     @property
     def thresholdString(self):
@@ -310,7 +312,7 @@ class Task(QtCore.QObject):
         return htmlizer.task2html(self)
 
     def _getLowestPriority(self):
-        return self._settings.value("Preferences/lowest_priority", "D")
+        return self._settings.value("Preferences/lowest_priority", "G")
 
     @QtCore.pyqtSlot()
     def increasePriority(self):

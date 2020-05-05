@@ -24,7 +24,6 @@ class Test(unittest.TestCase):
     def make_tasks():
         today = date.today().isoformat()
         tomorrow = (date.today() + timedelta(days=1)).isoformat()
-        # nextweek = (date.today() + timedelta(days=8)).isoformat()
         tasks = []
         t = tasklib.Task("(A) Task home due:{} +project1 @context2".format(today))
         tasks.append(t)
