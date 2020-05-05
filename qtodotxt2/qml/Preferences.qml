@@ -48,21 +48,17 @@ Dialog {
                 text: qsTr("Add creation date")
                 checked: false
             }
-            CheckBox {
-                id: creationTimeCB
-                text: qsTr("Add creation time")
-                checked: false
-            }
+
             Row { 
                 Label {text: "Lowest task priority:"}
                 TextField { 
                     id: lowestPriorityField;
+                    text: "G";
                     inputMask: "A"
                 }
             }
-        }
 
-        Button {
+            Button {
             id: button
             x: 70
             y: 250
@@ -80,13 +76,14 @@ Dialog {
             title: "Choose a font"
             font: Qt.font({family: "Arial", pointSize: 12, weight: Font.Normal})
 
-            onAccepted: {
-                console.log("You chose : "+font)
-                textId.font = fontDialogId.font
-            }
+                onAccepted: {
+                    console.log("You chose : "+font)
+                    textId.font = fontDialogId.font
+                }
 
-            onRejected: {
-                console.log("Dialog rejected")
+                onRejected: {
+                    console.log("Dialog rejected")
+                }
             }
         }
     }
