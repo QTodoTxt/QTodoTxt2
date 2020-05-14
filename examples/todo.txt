@@ -1,3 +1,6 @@
+2020-05-05
 2020-05-05 (A) A thing @work @school +project due:2020-05-05
-2020-05-05 (B) A thing 2 @work @school +project due:2020-05-16
-x 2020-05-05 2020-05-05 (C) complete thing @job +newProject due:2020-05-19
+2020-05-05 (B) due thing due:2020-05-05
+2020-05-05 (C) test text @test +project due:2020-05-16
+2020-05-05 more things due:2020-05-01
+x 2020-05-05 2020-05-05 finished due:2020-05-06
