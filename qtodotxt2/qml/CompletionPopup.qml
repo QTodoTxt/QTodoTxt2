@@ -98,7 +98,7 @@ Item {
                     popup.textItem.remove(popup.textItem.cursorPosition
                                           - completionModel.prefix.length,
                                           popup.textItem.cursorPosition)
-                popup.textItem.insert(popup.textItem.cursorPosition, selectedText + " ")
+                popup.textItem.insert(popup.textItem.cursorPosition, selectedText + "")
                 completionModel.clear()
                 if (completionModel.calendarKeywords.indexOf(selectedText) >= 0) state = "calendar"
             }

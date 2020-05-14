@@ -48,9 +48,9 @@ class TaskHtmlizer(object):
             # add space, so tasks get evenly aligned when there's no priority
             html = '<tt>&nbsp;&nbsp;&nbsp;</tt>&nbsp;' + html
         if task.completion_date:
-            html += ' <font color="{1!s}">(completed: {0!s})</font>'.format(task.completion_date, self.complColor)
+            html += ' <font color="{1!s}">(completed:{0!s})</font>'.format(task.completion_date, self.complColor)
         if task.creation_date:
-            html += ' <font color="{1!s}">(created: {0!s})</font>'.format(task.creation_date, self.complColor)
+            html += ' <font color="{1!s}">(created:{0!s})</font>'.format(task.creation_date, self.complColor)
         return html
 
     def _addUrl(self, word, color="none"):

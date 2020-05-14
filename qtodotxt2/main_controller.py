@@ -50,10 +50,10 @@ class MainController(QtCore.QObject):
     def _updateCompletionStrings(self):
         contexts = ['@' + name for name in self._file.getAllContexts()]
         projects = ['+' + name for name in self._file.getAllProjects()]
-        lowest_priority = self._settings.value("lowest_priority", "D")
+        lowest_priority = self._settings.value("lowest_priority", "G")
         idx = string.ascii_uppercase.index(lowest_priority) + 1
         priorities = ['(' + val + ')' for val in string.ascii_uppercase[:idx]]
-        keywords = ['rec:', 'h:1'] #['due:', 't:', 'rec:', 'h:1']
+        keywords = ['rec:', 'h:1']
         self._completionStrings = contexts + projects + priorities + self.calendarKeywords + keywords
         self.completionChanged.emit()
 
@@ -69,11 +69,10 @@ class MainController(QtCore.QObject):
             task.addCreationDate()
         if after is None:
             after = len(self._filteredTasks) - 1
-        #self._file.addTask(task)
         self._filteredTasks.insert(after + 1, task)  # force the new task to be visible
         self._file.tasks.append(task)
 
-        self._file.connectTask(task)  #Ensure task will be added
+        self._file.connectTask(task)  # Ensure task will be added
         self.filteredTasksChanged.emit()
         return after + 1
 
@@ -235,7 +234,6 @@ class MainController(QtCore.QObject):
             path = path.toLocalFile()
         self._file.filename = path
 
-#        logger.debug('MainController, saving file: %s.', path)
         try:
             self._file.save(path)
         except OSError as ex:
@@ -335,5 +333,3 @@ class MainController(QtCore.QObject):
     @QtCore.pyqtProperty('QUrl', notify=docPathChanged)
     def docPath(self):
         return QtCore.QUrl(QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DocumentsLocation))
-
-

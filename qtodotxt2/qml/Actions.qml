@@ -260,7 +260,7 @@ Item {
 
     property Action sortDefault: Action{
         iconName: "view-sort-ascending-symbolic"
-        text: "Default"
+        text: "Priority (Default)"
         enabled: !taskListView.editing
         onTriggered: {
             taskListView.storeSelection()
@@ -294,7 +294,7 @@ Item {
     property Action sortByDueDate: Action{
         //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"
-        text: "Due Date"
+        text: "Date Due"
         enabled: !taskListView.editing
         onTriggered: {
             taskListView.storeSelection()

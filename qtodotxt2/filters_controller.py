@@ -17,8 +17,6 @@ class FilterItem(QtGui.QStandardItem):
         self.setData(flt, QtCore.Qt.UserRole)
         self.filter = flt
         parent.appendRow([self])
-        #if order:
-        #self.setText(1, str(order))
         self.iconSource = icon
 
     def setCounts(self, total, completed):
@@ -100,9 +98,6 @@ class FiltersModel(QtGui.QStandardItemModel):
         icon = self._filterIconByFilterType[type(flt)]
         item = FilterItem(parentItem, flt.text, flt=flt, icon=icon, order=sortKey)
         item.setCounts(*counts)
-
-        #parentItem.setExpanded(True)
-        #parentItem.sortChildren(1, QtCore.Qt.AscendingOrder)
 
     @QtCore.pyqtSlot(result='QVariantList')
     def getRootChildren(self):
@@ -226,5 +221,3 @@ def filterTasks(filters, tasks):
                 filteredTasks.append(task)
                 break
     return filteredTasks
-
-

@@ -3,14 +3,14 @@ import os
 
 from PyQt5 import QtCore
 
-from qtodotxt2.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, DueOverdueFilter
+from qtodotxt2.lib.filters import DueTodayFilter, DueTomorrowFilter, DueThisWeekFilter, DueThisMonthFilter, \
+    DueOverdueFilter
 from qtodotxt2.lib.tasklib import Task
 
 logger = logging.getLogger(__name__)
 
 
 class File(QtCore.QObject):
-
     fileExternallyModified = QtCore.pyqtSignal()
     fileModified = QtCore.pyqtSignal(bool)
 
@@ -47,8 +47,6 @@ class File(QtCore.QObject):
 
     def _taskModified(self, task):
         self.setModified(True)
-        #if task not in self.tasks:
-            #self.tasks.append(task)
         if not task.text:
             self.deleteTask(task)
 
@@ -69,13 +67,12 @@ class File(QtCore.QObject):
         task.modified.connect(self._taskModified)
 
     def save(self, filename=''):
-#        logger.debug('File.save called with filename="%s"', filename)
         self._fileObserver.clear()
         if not filename and not self.filename:
             self.filename = self._createNewFilename()
         elif filename:
             self.filename = filename
-        self.tasks = sorted(self.tasks)  # we sort for users using simple text editors
+        self.tasks = sorted(self.tasks)
         self._saveTasks()
         self.modified = False
         self.fileModified.emit(False)
@@ -95,7 +92,6 @@ class File(QtCore.QObject):
     def _saveTasks(self):
         with open(self.filename, 'wt', encoding='utf-8') as fd:
             fd.writelines([(task.text + self.newline) for task in self.tasks])
-#        logger.debug('%s was saved to disk.', self.filename)
 
     def saveDoneTask(self, task):
         doneFilename = os.path.join(os.path.dirname(self.filename), 'done.txt')
@@ -163,7 +159,6 @@ class File(QtCore.QObject):
 
 
 class FileObserver(QtCore.QFileSystemWatcher):
-
     fileChangetSig = QtCore.pyqtSignal(str)
     dirChangetSig = QtCore.pyqtSignal(str)
 
@@ -184,5 +179,4 @@ class FileObserver(QtCore.QFileSystemWatcher):
 
     def clear(self):
         if self.files():
-#            logger.debug('Clearing watchlist.')
             self.removePaths(self.files())

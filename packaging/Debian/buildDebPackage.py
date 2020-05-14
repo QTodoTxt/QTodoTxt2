@@ -1,9 +1,9 @@
 import urllib.request
 import os
-import os.path 
+import os.path
 import sys
 import tarfile
-from shutil import copytree,ignore_patterns,copy,rmtree
+from shutil import copytree, ignore_patterns, copy, rmtree
 from stat import *
 import fnmatch
 import re
@@ -59,7 +59,7 @@ def buildPackageFolder(folderName):
 
     #Fix execution rights on bin folder
     for file in os.listdir(buildBinDir):
-        filePath=os.path.join(buildBinDir,file)
+        filePath=os.path.join(buildBinDir, file)
         if os.path.isfile(filePath):
             st = os.stat(filePath)
             os.chmod(filePath, st.st_mode | S_IEXEC)
@@ -85,7 +85,7 @@ def makeMd5sums(baseDir,outputFilePath):
 
     outputFile = open(outputFilePath, 'w')
 
-    for (root,dirs,files) in os.walk(baseDir):
+    for (root, dirs, files) in os.walk(baseDir):
         dirs[:] = [d for d in dirs if not re.match(excludes,d)]
         files = [f for f in files if not re.match(excludes,f)]
 
@@ -94,11 +94,10 @@ def makeMd5sums(baseDir,outputFilePath):
             md5 = hashlib.md5(open(path,'rb').read()).hexdigest()
             relativePath = root.replace(baseDir+'/',"",1) + os.sep + fn
             outputFile.write("%s %s\n" % (md5,relativePath))
-            
     outputFile.close()
 
+
 def generateControl(templateFile,packageVersion,outputFilePath):
-    
     templateExp = open(templateFile,'r').read()
     template = Template(templateExp)
 
@@ -127,6 +126,7 @@ def clean(fileName,folderName):
     rmtree(tmpDir+folderName+'_build')
 
 # Call this with the version as first argument
+
 
 version=sys.argv[1]
 scriptDir = os.path.dirname(os.path.realpath(sys.argv[0]))
