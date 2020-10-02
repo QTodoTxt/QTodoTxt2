@@ -1,4 +1,5 @@
 import re
+from PyQt5 import QtCore
 from datetime import date, datetime, timedelta
 
 
@@ -366,7 +367,10 @@ class SimpleTextFilter(BaseFilter):
 
         # Return a pattern that will match the beginning of a word or not,
         # anywhere in the string, without consuming any of the string.
-        return r'^(?' + ('!' if negate else '=') + r'.*' + beginning + term + r')'
+        if QtCore.QSettings().value("Preferences/match_only_beginnings_of_words_when_filtering", True, type=bool):
+            return r'^(?' + ('!' if negate else '=') + r'.*' + beginning + term + r')'
+        else:
+            return r'^(?' + ('!' if negate else '=') + r'.*' + term + r')'
 
     @staticmethod
     def compile(searchString):

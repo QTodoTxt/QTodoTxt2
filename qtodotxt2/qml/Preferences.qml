@@ -12,6 +12,7 @@ Dialog {
         property alias singleton: singletonCB.checked
         property alias lowest_priority: lowestPriorityField.text
         property alias add_creation_date: creationDateCB.checked
+        property alias match_only_beginnings_of_words_when_filtering: matchOnlyBeginningsOfWordsWhenFilteringCB.checked
     }
     GroupBox {
         Column {
@@ -35,6 +36,11 @@ Dialog {
                 id:creationDateCB
                 text: qsTr("Add creation date")
                 checked: false
+            }
+            CheckBox {
+                id:matchOnlyBeginningsOfWordsWhenFilteringCB
+                text: qsTr("Match only beginnings of words when filtering")
+                checked: true
             }
             Row { 
                 Label {text: "Lowest task priority:"}

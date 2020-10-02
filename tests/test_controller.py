@@ -16,6 +16,7 @@ class Test(unittest.TestCase):
         QtCore.QCoreApplication.setOrganizationName("QTodoTxt")
         QtCore.QCoreApplication.setApplicationName("Testing")
         QtCore.QSettings().setValue("Preferences/auto_save", False)
+        QtCore.QSettings().setValue("Preferences/match_only_beginnings_of_words_when_filtering", True)
         cls.ctrl = MainController([])
         cls.ctrl.allTasks = cls.make_tasks()
         cls.ctrl.showCompleted = True
@@ -41,6 +42,8 @@ class Test(unittest.TestCase):
         t = tasklib.Task("x (B) Task due:{} +project2 @context3".format(tomorrow))
         tasks.append(t)
         t = tasklib.Task("(B) Task home +project2 @context3")
+        tasks.append(t)
+        t = tasklib.Task("りんごを購入する") # This sentence means "Buy an apple" in Japanese.
         tasks.append(t)
         return tasks
 
@@ -81,6 +84,22 @@ class Test(unittest.TestCase):
         self.assertEqual(len(self.ctrl.filteredTasks), 4)
         self.ctrl.searchText = "!due home"
         self.assertEqual(len(self.ctrl.filteredTasks), 1)
+        self.ctrl.searchText = "2015"
+        self.assertEqual(len(self.ctrl.filteredTasks), 2)
+        QtCore.QSettings().setValue("Preferences/match_only_beginnings_of_words_when_filtering", False)
+        self.ctrl.searchText = "購入"
+        self.assertEqual(len(self.ctrl.filteredTasks), 1)
+        self.ctrl.searchText = "home"
+        self.assertEqual(len(self.ctrl.filteredTasks), 2)
+        self.ctrl.searchText = "+project2"
+        self.assertEqual(len(self.ctrl.filteredTasks), 4)
+        self.ctrl.searchText = "!due home"
+        self.assertEqual(len(self.ctrl.filteredTasks), 1)
+        self.ctrl.searchText = "2015"
+        self.assertEqual(len(self.ctrl.filteredTasks), 2)
+        QtCore.QSettings().setValue("Preferences/match_only_beginnings_of_words_when_filtering", True)
+        self.ctrl.searchText = "購入"
+        self.assertEqual(len(self.ctrl.filteredTasks), 0)
         self.ctrl.searchText = ""
 
     def test_filter_or(self):
