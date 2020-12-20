@@ -12,12 +12,12 @@ The following software is needed for building the package for windows:
 * Python installation in version 3.7.2 (64 bit)
 * Qt in Version 5.12
 
-The python installation needs the follwing packages to be installed using pip:
+The python installation needs the following packages to be installed using pip:
 * PyQt5
 * pyinstaller
 * sip
 
-Qt needs the follwing items to be installed:
+Qt needs the following items to be installed:
 * MSVC 2017 (64 bit)
 
 ## Starting the package build
