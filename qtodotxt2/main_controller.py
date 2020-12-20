@@ -300,7 +300,7 @@ class MainController(QtCore.QObject):
 
     @QtCore.pyqtProperty('QVariant', notify=recentFilesChanged)
     def recentFiles(self):
-        return self._recentFiles
+        return self._recentFiles if self._recentFiles != [] else [""]
 
     def updateRecentFile(self):
         if self._file.filename in self._recentFiles:
