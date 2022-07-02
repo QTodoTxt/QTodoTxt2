@@ -200,7 +200,7 @@ class TestTasks(unittest.TestCase):
     def test_recurring_task_input_days(self):
         task = Task('(C) do something due:2016-09-05 rec:5d')
         self.assertIsNotNone(task.recursion)
-        self.assertTrue(task.recursion.mode == RecursiveMode.completitionDate)
+        self.assertTrue(task.recursion.mode == RecursiveMode.completionDate)
         self.assertTrue(task.recursion.increment == str(5))
         self.assertTrue(task.recursion.interval == 'd')
 
@@ -214,7 +214,7 @@ class TestTasks(unittest.TestCase):
     def test_recurring_task_input_months(self):
         task = Task('(C) do something due:2016-09-05 rec:3m')
         self.assertIsNotNone(task.recursion)
-        self.assertTrue(task.recursion.mode == RecursiveMode.completitionDate)
+        self.assertTrue(task.recursion.mode == RecursiveMode.completionDate)
         self.assertTrue(task.recursion.increment == str(3))
         self.assertTrue(task.recursion.interval == 'm')
 
