@@ -1,4 +1,6 @@
 from datetime import datetime, date, time, MAXYEAR, timedelta
+from dateutil.relativedelta import relativedelta
+
 import re
 from enum import Enum
 
@@ -391,9 +393,9 @@ def recurTask(task):
     elif task.recursion.interval == 'w':
         delta = timedelta(weeks=int(task.recursion.increment))
     elif task.recursion.interval == 'm':
-        delta = timedelta(weeks=int(task.recursion.increment) * 4)  # 4 weeks in a month
+        delta = relativedelta(months=int(task.recursion.increment))  # 1 month in a month, not 4 weeks
     elif task.recursion.interval == 'y':
-        delta = timedelta(weeks=int(task.recursion.increment) * 52)  # 52 weeks in a year
+        delta = relativedelta(years=int(task.recursion.increment))  # 1 year in a year, not 52 weeks
     else:
         # Test already made during line parsing - shouldn't be a problem here
         pass
