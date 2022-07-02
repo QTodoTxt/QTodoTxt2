@@ -10,7 +10,7 @@ from qtodotxt2.lib.task_htmlizer import TaskHtmlizer
 
 
 class RecursiveMode(Enum):
-    completitionDate = 0  # Original due date mode: Task recurs from original due date
+    completionDate = 0  # Original due date mode: Task recurs from original due date
     originalDueDate = 1  # Completion date mode: Task recurs from completion date
 
 
@@ -226,7 +226,7 @@ class Task(QtCore.QObject):
         else:
             # Test if chracters have the right format
             if re.match('^[1-9][bdwmy]', word[4:6]):
-                self.recursion = Recursion(RecursiveMode.completitionDate, word[4], word[5])
+                self.recursion = Recursion(RecursiveMode.completionDate, word[4], word[5])
             else:
                 print("Error parsing recurrence '{}'".format(word))
     
