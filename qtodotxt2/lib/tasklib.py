@@ -172,7 +172,7 @@ class Task(QtCore.QObject):
             self.text = self._text + ' h:1'
         else:
             txt = self._text.replace(' h:1', '')
-            self.text = txt.replace('h:1', '')  # also take the case whe h_1 is at the begynning
+            self.text = txt.replace('h:1', '')  # also take the case whe h_1 is at the beginning
 
     @QtCore.pyqtProperty('QString', notify=modified)
     def priority(self):
@@ -217,16 +217,18 @@ class Task(QtCore.QObject):
     def _parseRecurrence(self, word):
         # Original due date mode
         if word[4] == '+':
-            # Test if chracters have the right format
-            if re.match('^[1-9][bdwmy]', word[5:7]):
-                self.recursion = Recursion(RecursiveMode.originalDueDate, word[5], word[6])
+            # check correct format for strict recurrence (with the leading '+')
+            # allow 1 or more digits for increment
+            if re.match('^[1-9]+[bdwmy]', word[5:]):
+                # send all digits as increment and last char as interval
+                self.recursion = Recursion(RecursiveMode.originalDueDate, word[5:-1], word[-1])
             else:
                 print("Error parsing recurrence '{}'".format(word))
         # Completion mode
         else:
-            # Test if chracters have the right format
-            if re.match('^[1-9][bdwmy]', word[4:6]):
-                self.recursion = Recursion(RecursiveMode.completionDate, word[4], word[5])
+            # same as above for "normal recurrence" (without leading '+')
+            if re.match('^[1-9]+[bdwmy]', word[4:]):
+                self.recursion = Recursion(RecursiveMode.completionDate, word[4:-1], word[-1])
             else:
                 print("Error parsing recurrence '{}'".format(word))
     
