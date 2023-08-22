@@ -262,7 +262,8 @@ Item {
 
     property Action sortDefault: Action{
         iconName: "view-sort-ascending-symbolic"
-        text: "Default"
+	text: "Default"
+	shortcut: "Ctrl+Shift+E" // Shortcut for 'Sort Default' <2045Tue22Aug23>
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "default"
@@ -272,7 +273,8 @@ Item {
 
     property Action sortByProjects: Action{
         iconName: "view-sort-ascending-symbolic"
-        text: "Projects"
+	text: "Projects"
+	shortcut: "Ctrl+Shift+R" // Shortcut for 'Sort Projects'. pRojects, closer to C, D and E, letting you quickly swap sort filters for easy comparison. <2046Tue22Aug23>
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "projects"
@@ -282,7 +284,8 @@ Item {
 
     property Action sortByContexts: Action{
         iconName: "view-sort-ascending-symbolic"
-        text: "Contexts"
+	text: "Contexts"
+	shortcut: "Ctrl+Shift+C" // Shortcut for 'Sort Contexts'. <2046Tue22Aug23>
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "contexts"
@@ -293,7 +296,8 @@ Item {
     property Action sortByDueDate: Action{
         //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"
-        text: "Due Date"
+	text: "Due Date"
+	shortcut: "Ctrl+Shift+D" //Shortcut for 'Due Date' D for due date. <2047Tue22Aug23>
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "due"
