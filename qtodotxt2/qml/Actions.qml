@@ -78,7 +78,8 @@ Item {
         iconName: "new-from"
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Create New Task from Template")
-        enabled: !taskListView.editing && taskListView.currentItem !== null
+	enabled: !taskListView.editing && taskListView.currentItem !== null
+	shortcut: "Ctrl+Shift+N" // Added this because it's good for workflow. <1554Tue22Aug23>
         onTriggered: {
             taskListView.newFromTask();
         }
@@ -154,7 +155,8 @@ Item {
         id: showFilterPanel
         iconName: "view-filter"
         iconSource: Theme.iconSource(iconName)
-        text: qsTr("Show Filter Panel")
+	text: qsTr("Show Filter Panel")
+	shortcut: "Ctrl+G" // Added this, this is a new shortcut. <1537Tue22Aug23>
         checkable: true
         checked: true
     }
@@ -174,7 +176,7 @@ Item {
         iconName: "show-completed"
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Show Completed Tasks")
-        shortcut: "Ctrl+C"
+        shortcut: "Ctrl+Alt+C" // Added Alt as part of the shortcut. <1537Tue22Aug23>
         checkable: true
         checked: false
         enabled: !taskListView.editing
@@ -190,7 +192,7 @@ Item {
         iconName: "future"
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Show Future Tasks")
-        shortcut: "Ctrl+F"
+        shortcut: "Ctrl+Alt+F" // Added alt here.
         checkable: true
         checked: true
         enabled: !taskListView.editing
@@ -206,7 +208,7 @@ Item {
         iconName: "show-hidden"
         iconSource: Theme.iconSource(iconName)
         text: qsTr("Show Hidden Tasks")
-        shortcut: "Ctrl+H"
+        shortcut: "Ctrl+Alt+H" // Added alt here. <1537Tue22Aug23>
         checkable: true
         checked: false
         enabled: !taskListView.editing
@@ -261,7 +263,6 @@ Item {
     property Action sortDefault: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Default"
-        enabled: !taskListView.editing
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "default"
@@ -272,7 +273,6 @@ Item {
     property Action sortByProjects: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Projects"
-        enabled: !taskListView.editing
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "projects"
@@ -283,7 +283,6 @@ Item {
     property Action sortByContexts: Action{
         iconName: "view-sort-ascending-symbolic"
         text: "Contexts"
-        enabled: !taskListView.editing
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "contexts"
@@ -295,7 +294,6 @@ Item {
         //id:sortDueDate
         iconName: "view-sort-ascending-symbolic"
         text: "Due Date"
-        enabled: !taskListView.editing
         onTriggered: {
             taskListView.storeSelection()
             mainController.sortingMode = "due"
