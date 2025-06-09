@@ -27,7 +27,7 @@ Main differences to QTodoTxt 1:
 
 Installation
 
-There are many ways to install and run QTodoTxt2. 
+There are many ways to install and run QTodoTxt2.
 
 On ubuntu 16.04 and up:
 
