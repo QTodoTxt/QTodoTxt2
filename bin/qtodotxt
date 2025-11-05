@@ -2,7 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import os
+import platform
 import sys
+
+# ensure the correct GL library is loaded
+# this only applies to Linux systems using the NVIDIA proprietary driver
+if platform.system() == 'Linux' and os.path.exists('/dev/nvidiactl'):
+    import ctypes
+    import ctypes.util
+
+    libGL = ctypes.util.find_library("GL")
+    ctypes.CDLL(libGL, ctypes.RTLD_GLOBAL)
 
 realpath = os.path.realpath(__file__)
 
